@@ -22,7 +22,9 @@ The API keeps database tables private and exposes stable topic-based endpoints.
 
 ```bash
 cp .env.example .env
+
 docker compose up -d postgres
+
 npm install
 npm run db:migrate
 ADMIN_EMAIL=admin@thaniumnine.com ADMIN_PASSWORD='Exp0ls1ve' npm run seed:admin
