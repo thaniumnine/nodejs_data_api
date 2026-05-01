@@ -12,6 +12,7 @@
     "start:dev": "nest start --watch",
     "db:migrate": "tsx scripts/migrate.ts",
     "seed:admin": "tsx scripts/seed-admin.ts",
+    "hash:password": "tsx scripts/hash-password.ts",
     "lint": "eslint \"src/**/*.ts\" \"scripts/**/*.ts\" --fix",
     "format": "prettier --write \"src/**/*.ts\" \"scripts/**/*.ts\""
   },
