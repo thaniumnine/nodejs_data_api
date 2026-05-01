@@ -56,7 +56,7 @@ Login:
 ```bash
 curl -s -X POST http://localhost:3000/api/v1/auth/login \
   -H 'content-type: application/json' \
-  -d '{"email":"admin@thaniumnine.com","password":"Exp0ls1ve"}'
+  -d '{"email":"admin@thaniumnine.com","password":"Exp0ls1ve123435"}'
 ```
 
 Use the returned access token on protected endpoints:
