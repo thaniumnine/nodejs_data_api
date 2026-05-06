@@ -1,5 +1,6 @@
 import {  Injectable } from "@nestjs/common";
 import { DatabaseService } from "src/database/database.service";
+import z from "zod";
 
 
 export type AggregationData= {
@@ -12,6 +13,14 @@ export type AggregationData= {
         this_week_cumulative_occupancy: number 
     }
 }
+
+
+export const QueryAggregationRecordsSchema = z.object({
+  from: z.string().datetime(),
+  to: z.string().datetime()
+});
+
+export type QueryAggregationRecords = z.infer<typeof QueryAggregationRecordsSchema>;
 
 @Injectable()
 export class AggregationService {
@@ -40,4 +49,29 @@ export class AggregationService {
   }
 
 
+
+
+    async queryAggregationRecords( query: QueryAggregationRecords) {
+
+        const result = await this.database.query(
+            `SELECT 
+            illuminance_sensor,
+            last_week_total_occupancy,
+            motion_event,
+            this_week_cumulative_occupancy,
+            event_timestamp,
+            device_id
+            FROM device_simmtronics_mts_agg_events
+            WHERE event_timestamp >= $1
+            AND event_timestamp < $2
+            ORDER BY device_id,event_timestamp DESC
+            `,
+        [query.from, query.to]
+    );
+    
+        return {
+
+          records: result.rows
+        };
+      }
 }
