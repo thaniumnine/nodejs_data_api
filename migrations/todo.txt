@@ -1,0 +1,3 @@
+go over each of the mts, lt, qse and compare types to firebase, correct in the current sqls inits
+next step is to only keep numerical points for agg and create the sql agg inits
+
