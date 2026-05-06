@@ -90,6 +90,17 @@ export interface AuditEventsTable {
   created_at: TimestampColumn;
 }
 
+export interface AggregationTable {
+    device_id: string;
+    event_timestamp: TimestampColumn;
+    illuminance_sensor :number;
+    last_week_total_occupancy :number;
+    motion_event:number;
+    this_week_cumulative_occupancy: number;
+    agg_type:string;
+}
+
+
 export interface DB {
   users: UsersTable;
   user_sessions: UserSessionsTable;
@@ -98,6 +109,7 @@ export interface DB {
   topic_permissions: TopicPermissionsTable;
   devices: DevicesTable;
   audit_events: AuditEventsTable;
+  device_simmtronics_mts_agg_events:AggregationTable;
 }
 
 export type User = Selectable<UsersTable>;
