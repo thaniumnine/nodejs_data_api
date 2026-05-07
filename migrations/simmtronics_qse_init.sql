@@ -5,7 +5,6 @@ CREATE TABLE device_simmtronics_qse_events (
 
   device_id TEXT NOT NULL,
   event_timestamp TIMESTAMPTZ NOT NULL,
-  agg_type TEXT NOT NULL,
 
   air_quality_index INTEGER NULL,
   co2_level NUMERIC NULL,
@@ -17,7 +16,7 @@ CREATE TABLE device_simmtronics_qse_events (
   operational_status TEXT NULL,
   operational_status_details TEXT NULL,
   operational_status_due_to TEXT NULL,
-  other_assets_affected JSONB NULL,
+  other_assets_affected TEXT NULL,
   pressure NUMERIC NULL,
   remedy TEXT NULL,
   remedy_details TEXT NULL,
@@ -35,11 +34,6 @@ CREATE INDEX idx_device_simmtronics_qse_events_device_id
 CREATE INDEX idx_device_simmtronics_qse_events_timestamp
   ON device_simmtronics_qse_events (event_timestamp);
 
-CREATE INDEX idx_device_simmtronics_qse_events_agg_type
-  ON device_simmtronics_qse_events (agg_type);
-
 CREATE INDEX idx_device_simmtronics_qse_events_device_time
   ON device_simmtronics_qse_events (device_id, event_timestamp DESC);
 
-CREATE INDEX idx_device_simmtronics_qse_events_device_time_type
-  ON device_simmtronics_qse_events (device_id, agg_type, event_timestamp DESC);
