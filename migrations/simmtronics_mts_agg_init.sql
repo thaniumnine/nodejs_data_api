@@ -7,11 +7,11 @@ CREATE TABLE device_simmtronics_mts_agg_events (
     event_timestamp TIMESTAMPTZ NOT NULL,
     agg_type TEXT NOT NULL,
 
-    illuminance_sensor INTEGER,
-   -- last_week_occupancy_spells INTEGER,
-    last_week_total_occupancy INTEGER,
-    motion_event INTEGER,
-    this_week_cumulative_occupancy INTEGER,
+    illuminance_sensor NUMERIC,
+   -- last_week_occupancy_spells NUMERIC,
+    last_week_total_occupancy NUMERIC,
+    motion_event NUMERIC,
+    this_week_cumulative_occupancy NUMERIC,
    -- this_week_occupancy_spells INTEGER,
 
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
