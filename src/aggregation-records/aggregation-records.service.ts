@@ -1,4 +1,5 @@
 import {  Injectable } from "@nestjs/common";
+import { AggregationDeviceTypeColumnRecord, AggregationService } from "src/aggregationController/aggregation.service";
 import { DatabaseService } from "src/database/database.service";
 import z from "zod";
 
@@ -8,10 +9,7 @@ export type AggregationRecord= {
     event_timestamp: string;
     agg_type:string;
     payload: {
-        illuminance_sensor :number;
-        last_week_total_occupancy :number;
-        motion_event:number;
-        this_week_cumulative_occupancy: number; 
+        [columnType:string]:number
     }
 }
 export type AggregationData = AggregationRecord[];
@@ -27,23 +25,34 @@ export type QueryAggregationRecords = z.infer<typeof QueryAggregationRecordsSche
 export class AggregationRecordsService {
   constructor(
     private readonly database: DatabaseService,
+     private readonly aggregationService: AggregationService
   ) {}
 
-  async createAggregationDataEvent(inputs: AggregationData) {
-    console.log("inputs",inputs)
+  async createAggregationDataEvent(deviceType:string,inputs: AggregationData) {
+
+    const deviceTypeData =  await this.aggregationService.getRequiredByName(deviceType)
+    //TODO check it is right type first 
+     if (!deviceTypeData) return;
+    const table_name = deviceTypeData.table_name
+    const columns = deviceTypeData.columns as AggregationDeviceTypeColumnRecord[]
+
     const event = await this.database.db
-      .insertInto("device_simmtronics_mts_agg_events")
-      .values(inputs.map((input)=>({
+      .insertInto(table_name)
+      .values(inputs.map((input)=>{
+
+          const payload = columns.map(column =>(
+            [column.name,input.payload[column.name] ?? 0]
+          ));
+        
+        return{
           device_id: input.device_id,
           agg_type: input.agg_type,
           event_timestamp: new Date(input.event_timestamp),
-          illuminance_sensor: input.payload.illuminance_sensor,
-          last_week_total_occupancy:  input.payload.last_week_total_occupancy,
-          motion_event:input.payload.motion_event,
-          this_week_cumulative_occupancy:input.payload.this_week_cumulative_occupancy
-        })))
+          ...Object.fromEntries(payload)
+        }
+      }))
       .returningAll()
-      .executeTakeFirstOrThrow();
+      .execute();
 
     return {
       event
@@ -53,18 +62,21 @@ export class AggregationRecordsService {
 
 
 
-    async queryAggregationRecords( query: QueryAggregationRecords) {
-
+    async queryAggregationRecords(deviceType:string, query: QueryAggregationRecords) {
+       console.log("overherehrehrhehrehrehrhe-------------------------------------");
+        const deviceTypeData =  await this.aggregationService.getRequiredByName(deviceType)
+        if (!deviceTypeData) return;
+        const columns = deviceTypeData.columns as AggregationDeviceTypeColumnRecord[]
+        const table_name = deviceTypeData.table_name
+        console.log("talbe name",table_name)
+        let column_names = columns.map((column)=>column.name).join(', ');
         const result = await this.database.query(
             `SELECT 
             device_id,
             agg_type,
             event_timestamp,
-            illuminance_sensor,
-            last_week_total_occupancy,
-            motion_event,
-            this_week_cumulative_occupancy
-            FROM device_simmtronics_mts_agg_events
+            ${column_names}
+            FROM ${table_name}
             WHERE event_timestamp >= $1
             AND event_timestamp < $2
             ORDER BY device_id,agg_type,event_timestamp DESC

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { number, string } from 'zod';
-import { AggregationService, AggregationTypeRecord} from './aggregation.service.js'
+import { AggregationService, AggregationDeviceTypeRecord} from './aggregation.service.js'
 import { ZodValidationPipe } from 'src/common/pipes/zod-validation.pipe.js';
 
 
@@ -13,7 +13,7 @@ export class AggregationController {
 
 @Post()
 createAggregationDeviceType(
-  @Body() aggregationTypedata: AggregationTypeRecord,
+  @Body() aggregationTypedata: AggregationDeviceTypeRecord,
 ) {
     return this.aggregationService.createDeviceType(aggregationTypedata)
     }    
