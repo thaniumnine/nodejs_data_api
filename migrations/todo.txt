@@ -8,3 +8,5 @@ insopiration from topic-record.controller.ts
 
 write an additonal route out of the python aggragator code connecting to postgresql to generate events in new format using the new api that you jujst am,de fopr mts
 keep iunn iso time as part of from and two iso8601
+
+pagination

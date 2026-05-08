@@ -24,7 +24,7 @@ export const QueryAggregationRecordsSchema = z.object({
 export type QueryAggregationRecords = z.infer<typeof QueryAggregationRecordsSchema>;
 
 @Injectable()
-export class AggregationService {
+export class AggregationRecordsService {
   constructor(
     private readonly database: DatabaseService,
   ) {}
