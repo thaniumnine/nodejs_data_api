@@ -90,23 +90,24 @@ export interface AuditEventsTable {
   created_at: TimestampColumn;
 }
 
-export interface AggregationTable {
+type BaseAggregationTable = {
     device_id: string;
     event_timestamp: TimestampColumn;
-    illuminance_sensor :number;
-    last_week_total_occupancy :number;
-    motion_event:number;
-    this_week_cumulative_occupancy: number;
     agg_type:string;
 }
+type ColumnAggregationMetrics = {
+  [columnName:string] :number
+}
+export type AggregationTable = BaseAggregationTable & ColumnAggregationMetrics
 
 export interface AggregationDeviceTypeTable {
     device_type:string
     columns:JsonValue
+    table_name:string
 }
 
 
-export interface DB {
+export type DB = {
   users: UsersTable;
   user_sessions: UserSessionsTable;
   topics: TopicsTable;
@@ -114,9 +115,11 @@ export interface DB {
   topic_permissions: TopicPermissionsTable;
   devices: DevicesTable;
   audit_events: AuditEventsTable;
-  device_simmtronics_mts_agg_events:AggregationTable;
   aggregation:AggregationDeviceTypeTable;
+} & AggregationTables
 
+interface AggregationTables {
+[tableName:string] :AggregationTable
 }
 
 export type User = Selectable<UsersTable>;

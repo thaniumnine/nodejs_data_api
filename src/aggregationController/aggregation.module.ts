@@ -8,6 +8,7 @@ import { AggregationService } from './aggregation.service';
 @Module({
   imports: [AuthModule],
   controllers: [AggregationController],
-  providers: [AggregationService]
+  providers: [AggregationService],
+  exports:[AggregationService]
 })
 export class AggregationModule {}

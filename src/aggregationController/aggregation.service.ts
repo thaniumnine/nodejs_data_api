@@ -2,14 +2,16 @@ import {  Injectable, NotFoundException } from "@nestjs/common";
 import { DatabaseService } from "src/database/database.service";
 import { JsonValue } from "src/database/db.types";
 import z from "zod";
+export type AggregationDeviceTypeColumnRecord = {
+  name:string
+  type:string
 
+}
 
-export type AggregationTypeRecord= {
+export type AggregationDeviceTypeRecord= {
     device_type:string
-    columns:{
-        name:string
-        type:string
-        }[]
+    table_name:string
+    columns:AggregationDeviceTypeColumnRecord
 
 }
 
@@ -19,10 +21,11 @@ export class AggregationService {
     private readonly database: DatabaseService,
   ) {}
 
-  async createDeviceType( input: AggregationTypeRecord) {
+  async createDeviceType( input: AggregationDeviceTypeRecord) {
     const event = await this.database.db
       .insertInto("aggregation")
       .values( {device_type: input.device_type,
+        table_name:input.table_name,
       columns: JSON.stringify(input.columns),
     
   })
