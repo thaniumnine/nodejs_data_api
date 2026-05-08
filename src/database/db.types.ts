@@ -100,6 +100,11 @@ export interface AggregationTable {
     agg_type:string;
 }
 
+export interface AggregationDeviceTypeTable {
+    device_type:string
+    columns:JsonValue
+}
+
 
 export interface DB {
   users: UsersTable;
@@ -110,6 +115,8 @@ export interface DB {
   devices: DevicesTable;
   audit_events: AuditEventsTable;
   device_simmtronics_mts_agg_events:AggregationTable;
+  aggregation:AggregationDeviceTypeTable;
+
 }
 
 export type User = Selectable<UsersTable>;

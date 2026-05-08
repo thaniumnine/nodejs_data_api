@@ -1,14 +1,14 @@
 import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { number, string } from 'zod';
-import {AggregationData, AggregationService, QueryAggregationRecords, QueryAggregationRecordsSchema} from './aggregation.service.js'
+import {AggregationData, AggregationRecordsService, QueryAggregationRecords, QueryAggregationRecordsSchema} from './aggregation-records.service.js'
 import { ZodValidationPipe } from 'src/common/pipes/zod-validation.pipe.js';
 
 
 @UseGuards(JwtAuthGuard)
 @Controller('aggregation/:device_type')
-export class AggregationController {
-  constructor(   private readonly aggregationService: AggregationService) {}
+export class AggregationRecordsController {
+  constructor(   private readonly aggregationService: AggregationRecordsService) {}
 
 @Get('data')
 queryAggregationData(
@@ -29,3 +29,5 @@ createAggregationData(
     return this.aggregationService.createAggregationDataEvent(aggregationData)
     }    
 }
+
+
