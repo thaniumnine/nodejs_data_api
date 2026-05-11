@@ -16,7 +16,8 @@ export type AggregationData = AggregationRecord[];
 
 export const QueryAggregationRecordsSchema = z.object({
   from: z.string().datetime(),
-  to: z.string().datetime()
+  to: z.string().datetime(),
+  aggType:z.string()
 });
 
 export type QueryAggregationRecords = z.infer<typeof QueryAggregationRecordsSchema>;
@@ -63,30 +64,32 @@ export class AggregationRecordsService {
 
 
     async queryAggregationRecords(deviceType:string, query: QueryAggregationRecords) {
-       console.log("overherehrehrhehrehrehrhe-------------------------------------");
         const deviceTypeData =  await this.aggregationService.getRequiredByName(deviceType)
         if (!deviceTypeData) return;
         const columns = deviceTypeData.columns as AggregationDeviceTypeColumnRecord[]
         const table_name = deviceTypeData.table_name
-        console.log("talbe name",table_name)
         let column_names = columns.map((column)=>column.name).join(', ');
         const result = await this.database.query(
             `SELECT 
             device_id,
-            agg_type,
             event_timestamp,
             ${column_names}
             FROM ${table_name}
             WHERE event_timestamp >= $1
             AND event_timestamp < $2
-            ORDER BY device_id,agg_type,event_timestamp DESC
+            and agg_type = $3
+            ORDER BY device_id,event_timestamp DESC
             `,
-        [query.from, query.to]
+        [query.from, query.to,query.aggType]
     );
-    
         return {
+          records: result.rows.map(({device_id,agg_type,event_timestamp,...payload})=>({
+            payload,
+            device_id,
+            agg_type,
+            event_timestamp
 
-          records: result.rows
-        };
-      }
+          }))
+        }
+      };
 }
