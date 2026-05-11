@@ -22,10 +22,24 @@ The API keeps database tables private and exposes stable topic-based endpoints.
 
 ```bash
 cp .env.example .env
-docker compose up -d postgres
 npm install
+########## FRESH DATABASE SETUP
 npm run db:migrate
-ADMIN_EMAIL=admin@thaniumnine.com ADMIN_PASSWORD='Exp0ls1ve' npm run seed:admin
+
+# linux
+    ADMIN_EMAIL=admin@thaniumnine.com ADMIN_PASSWORD='Exp0ls1ve123435' 
+# windows
+    set ADMIN_EMAIL=admin@thaniumnine.com
+    set ADMIN_PASSWORD='Exp0ls1ve123435' 
+
+npm run seed:admin
+#############################
+
+
+#### RUNTIME
+
+
+
 npm run start:dev
 ```
 
@@ -42,7 +56,7 @@ Login:
 ```bash
 curl -s -X POST http://localhost:3000/api/v1/auth/login \
   -H 'content-type: application/json' \
-  -d '{"email":"admin@thaniumnine.com","password":"Exp0ls1ve"}'
+  -d '{"email":"admin@thaniumnine.com","password":"Exp0ls1ve123435"}'
 ```
 
 Use the returned access token on protected endpoints:

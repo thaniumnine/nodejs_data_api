@@ -8,10 +8,12 @@ const password = process.env.ADMIN_PASSWORD;
 
 if (!databaseUrl) throw new Error('DATABASE_URL is required');
 if (!email) throw new Error('ADMIN_EMAIL is required');
-if (!password || password.length < 12) throw new Error('ADMIN_PASSWORD must be at least 12 characters');
+//if (!password || password.length < 12) throw new Error('ADMIN_PASSWORD must be at least 12 characters');
 
 async function main() {
-  const client = new Client({ connectionString: databaseUrl });
+  const client = new Client({ connectionString: databaseUrl,ssl: {
+    rejectUnauthorized: false,
+  }});
   await client.connect();
 
   try {

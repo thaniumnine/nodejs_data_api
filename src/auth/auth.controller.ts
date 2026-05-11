@@ -47,7 +47,7 @@ export class AuthController {
       password: body.password,
       userAgent: getUserAgent(request),
       ipAddress: getClientIp(request)
-    });
+    }); 
   }
 
   @Post('refresh')

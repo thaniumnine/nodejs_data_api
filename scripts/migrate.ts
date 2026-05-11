@@ -10,7 +10,9 @@ if (!databaseUrl) {
 }
 
 async function main() {
-  const client = new Client({ connectionString: databaseUrl });
+  const client = new Client({ connectionString: databaseUrl,  ssl: {
+    rejectUnauthorized: false,
+  } });
   await client.connect();
 
   try {

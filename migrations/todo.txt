@@ -1,0 +1,12 @@
+go over each of the mts, lt, qse and compare types to firebase, correct in the current sqls inits
+
+next step is to only keep numerical points for agg and create the sql agg inits
+
+for mts attempt to create the following requests,  POST create and GET query
+get querey needs to have device_id, start_time, end_time, agg_type as a parameter 
+insopiration from topic-record.controller.ts
+
+write an additonal route out of the python aggragator code connecting to postgresql to generate events in new format using the new api that you jujst am,de fopr mts
+keep iunn iso time as part of from and two iso8601
+
+pagination

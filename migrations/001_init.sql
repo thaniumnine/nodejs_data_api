@@ -25,6 +25,16 @@ create table if not exists user_sessions (
   replaced_by_session_id uuid references user_sessions(id)
 );
 
+
+create table if not exists aggregation(
+  id uuid primary key default gen_random_uuid(),
+  device_type text not null unique,
+  table_name text not null unique,
+  columns jsonb not null default '[]'::jsonb,
+  created_at timestamptz not null default now()
+
+);
+
 create index if not exists idx_user_sessions_user_id on user_sessions(user_id);
 create index if not exists idx_user_sessions_family on user_sessions(refresh_token_family);
 create index if not exists idx_user_sessions_active on user_sessions(user_id, expires_at) where revoked_at is null;

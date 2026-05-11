@@ -5,9 +5,11 @@ import { HealthController } from './health.controller';
 import { TopicRecordsModule } from './topic-records/topic-records.module';
 import { TopicsModule } from './topics/topics.module';
 import { UsersModule } from './users/users.module';
+import { AggregationRecordsModule } from './aggregation-records/aggregation-records.module';
+import { AggregationModule } from './aggregationController/aggregation.module';
 
 @Module({
-  imports: [DatabaseModule, UsersModule, AuthModule, TopicsModule, TopicRecordsModule],
+  imports: [DatabaseModule, UsersModule, AuthModule, TopicsModule, TopicRecordsModule,AggregationRecordsModule,AggregationModule],
   controllers: [HealthController]
 })
 export class AppModule {}
