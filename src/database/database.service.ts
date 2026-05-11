@@ -10,7 +10,9 @@ export class DatabaseService implements OnModuleDestroy {
   readonly db: Kysely<DB>;
 
   constructor() {
-    this.pool = new Pool({ connectionString: env.DATABASE_URL });
+    this.pool = new Pool({ connectionString: env.DATABASE_URL , ssl: {
+    rejectUnauthorized: false,
+  }});
     this.db = new Kysely<DB>({
       dialect: new PostgresDialect({ pool: this.pool })
     });
@@ -18,7 +20,7 @@ export class DatabaseService implements OnModuleDestroy {
 
   query<T extends Record<string, unknown> = Record<string, unknown>>(
     text: string,
-    values: readonly unknown[] = []
+    values:  unknown[] = []
   ): Promise<QueryResult<T>> {
     return this.pool.query<T>(text, values);
   }
