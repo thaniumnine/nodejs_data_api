@@ -21,6 +21,7 @@ CREATE TABLE device_simmtronics_lt_agg_events (
     full_power_output NUMERIC,
     run_time_accumulator NUMERIC,
 
+    UNIQUE (device_id,agg_type, event_timestamp),
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
