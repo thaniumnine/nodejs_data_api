@@ -51,7 +51,10 @@ export class AggregationRecordsService {
           event_timestamp: new Date(input.event_timestamp),
           ...Object.fromEntries(payload)
         }
-      }))
+        })).onConflict((oc) => oc
+          .columns(['event_timestamp', 'agg_type','device_id'])
+          .doNothing()
+      )
       .returningAll()
       .execute();
 
