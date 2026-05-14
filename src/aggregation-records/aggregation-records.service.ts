@@ -9,7 +9,7 @@ export type AggregationRecord= {
     event_timestamp: string;
     agg_type:string;
     payload: {
-        [columnType:string]:number
+        [columnType:string]:number | null
     }
 }
 export type AggregationData = AggregationRecord[];
@@ -42,7 +42,7 @@ export class AggregationRecordsService {
       .values(inputs.map((input)=>{
 
           const payload = columns.map(column =>(
-            [column.name,input.payload[column.name] ?? 0]
+            [column.name,input.payload[column.name] ?? null ]
           ));
         
         return{
@@ -53,7 +53,12 @@ export class AggregationRecordsService {
         }
         })).onConflict((oc) => oc
           .columns(['event_timestamp', 'agg_type','device_id'])
-          .doNothing()
+          .doUpdateSet((eb) =>
+        Object.fromEntries(
+          columns.map((column) => [
+            column.name,
+            eb.ref(`excluded.${column.name}`)
+          ])))
       )
       .returningAll()
       .execute();
