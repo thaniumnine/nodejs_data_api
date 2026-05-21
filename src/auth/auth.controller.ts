@@ -41,13 +41,15 @@ export class AuthController {
   }
 
   @Post('login')
-  login(@Body(new ZodValidationPipe(LoginSchema)) body: LoginDto, @Req() request: RequestInfo) {
-    return this.authService.login({
+ async login(@Body(new ZodValidationPipe(LoginSchema)) body: LoginDto, @Req() request: RequestInfo) {
+    console.log("try to lgogin")
+    let test = this.authService.login({
       email: body.email,
       password: body.password,
       userAgent: getUserAgent(request),
       ipAddress: getClientIp(request)
     }); 
+    return test;
   }
 
   @Post('refresh')

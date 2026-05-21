@@ -76,7 +76,8 @@ export class AggregationRecordsService {
         if (!deviceTypeData) return;
         const columns = deviceTypeData.columns as AggregationDeviceTypeColumnRecord[]
         const table_name = deviceTypeData.table_name
-        let column_names = columns.map((column)=>column.name).join(', ');
+        const column_names = columns.map((column) => `${column.name}::double precision AS ${column.name}`)
+        .join(', ');
         const result = await this.database.query(
             `SELECT 
             device_id,
@@ -86,7 +87,7 @@ export class AggregationRecordsService {
             WHERE event_timestamp >= $1
             AND event_timestamp < $2
             and agg_type = $3
-            ORDER BY device_id,event_timestamp DESC
+            ORDER BY device_id ASC,event_timestamp ASC
             `,
         [query.from, query.to,query.aggType]
     );

@@ -13,8 +13,8 @@ CREATE TABLE device_simmtronics_lt_agg_events (
    -- max_limit_brightness_percentage_command NUMERIC(5,2)
      --   CHECK (max_limit_brightness_percentage_command BETWEEN 0 AND 100),
 
-    brightness_percentage_command NUMERIC(5,2)
-        CHECK (brightness_percentage_command BETWEEN 0 AND 100),
+    brightness_percentage_command NUMERIC,
+   --     CHECK (brightness_percentage_command BETWEEN 0 AND 100),
 
     -- colour_temperature NUMERIC,
     electrical_power_sensor NUMERIC,
