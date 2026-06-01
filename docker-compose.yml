@@ -25,7 +25,7 @@ services:
     env_file:
       - .env
     ports:
-      - "3000:3000"
+      - "3500:3500"
     command: sh -c "npm run db:migrate && npm run start"
 
 volumes:

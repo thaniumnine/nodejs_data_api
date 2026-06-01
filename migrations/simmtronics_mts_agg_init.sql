@@ -14,6 +14,7 @@ CREATE TABLE device_simmtronics_mts_agg_events (
     this_week_cumulative_occupancy NUMERIC,
    -- this_week_occupancy_spells INTEGER,
 
+     UNIQUE (device_id,agg_type, event_timestamp),
     created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 

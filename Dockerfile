@@ -17,5 +17,5 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY --from=build /app/dist ./dist
 COPY migrations ./migrations
 COPY scripts ./scripts
-EXPOSE 3000
+EXPOSE 3500
 CMD ["node", "dist/main.js"]

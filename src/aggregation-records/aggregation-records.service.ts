@@ -9,14 +9,15 @@ export type AggregationRecord= {
     event_timestamp: string;
     agg_type:string;
     payload: {
-        [columnType:string]:number
+        [columnType:string]:number | null
     }
 }
 export type AggregationData = AggregationRecord[];
 
 export const QueryAggregationRecordsSchema = z.object({
   from: z.string().datetime(),
-  to: z.string().datetime()
+  to: z.string().datetime(),
+  aggType:z.string()
 });
 
 export type QueryAggregationRecords = z.infer<typeof QueryAggregationRecordsSchema>;
@@ -41,7 +42,7 @@ export class AggregationRecordsService {
       .values(inputs.map((input)=>{
 
           const payload = columns.map(column =>(
-            [column.name,input.payload[column.name] ?? 0]
+            [column.name,input.payload[column.name] ?? null ]
           ));
         
         return{
@@ -50,7 +51,15 @@ export class AggregationRecordsService {
           event_timestamp: new Date(input.event_timestamp),
           ...Object.fromEntries(payload)
         }
-      }))
+        })).onConflict((oc) => oc
+          .columns(['event_timestamp', 'agg_type','device_id'])
+          .doUpdateSet((eb) =>
+        Object.fromEntries(
+          columns.map((column) => [
+            column.name,
+            eb.ref(`excluded.${column.name}`)
+          ])))
+      )
       .returningAll()
       .execute();
 
@@ -63,30 +72,33 @@ export class AggregationRecordsService {
 
 
     async queryAggregationRecords(deviceType:string, query: QueryAggregationRecords) {
-       console.log("overherehrehrhehrehrehrhe-------------------------------------");
         const deviceTypeData =  await this.aggregationService.getRequiredByName(deviceType)
         if (!deviceTypeData) return;
         const columns = deviceTypeData.columns as AggregationDeviceTypeColumnRecord[]
         const table_name = deviceTypeData.table_name
-        console.log("talbe name",table_name)
-        let column_names = columns.map((column)=>column.name).join(', ');
+        const column_names = columns.map((column) => `${column.name}::double precision AS ${column.name}`)
+        .join(', ');
         const result = await this.database.query(
             `SELECT 
             device_id,
-            agg_type,
             event_timestamp,
             ${column_names}
             FROM ${table_name}
             WHERE event_timestamp >= $1
             AND event_timestamp < $2
-            ORDER BY device_id,agg_type,event_timestamp DESC
+            and agg_type = $3
+            ORDER BY device_id ASC,event_timestamp ASC
             `,
-        [query.from, query.to]
+        [query.from, query.to,query.aggType]
     );
-    
         return {
+          records: result.rows.map(({device_id,agg_type,event_timestamp,...payload})=>({
+            payload,
+            device_id,
+            agg_type,
+            event_timestamp
 
-          records: result.rows
-        };
-      }
+          }))
+        }
+      };
 }

@@ -16,6 +16,7 @@ CREATE TABLE device_simmtronics_qse_agg_events (
   temperature NUMERIC NULL,
   total_volatile_organic_compounds NUMERIC NULL,
 
+   UNIQUE (device_id,agg_type, event_timestamp),
   created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
