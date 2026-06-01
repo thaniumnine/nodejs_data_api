@@ -1,0 +1,1 @@
+kubectl create secret tls thaniumossecret --cert ./ssl/www.thaniumos.com_ssl_certificate.cer --key ./ssl/www.thaniumos.com_private_key.key

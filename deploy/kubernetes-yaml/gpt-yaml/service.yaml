@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: thaniumos-api-service
+  namespace: default
+  labels:
+    app: thaniumos-api
+spec:
+  type: NodePort
+  selector:
+    app: thaniumos-api
+  ports:
+    - name: http
+      port: 80
+      targetPort: 8080

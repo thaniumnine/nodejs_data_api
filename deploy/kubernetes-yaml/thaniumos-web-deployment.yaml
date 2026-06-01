@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: thaniumos-bim-deployment
+  namespace: default
+  labels:
+    app: thaniumos-bim
+spec:
+  # replicas: 1
+  selector:
+    matchLabels:
+      app: thaniumos-bim
+      tier: web
+  template:
+    metadata:
+      labels:
+        app: thaniumos-bim
+        tier: web
+    spec:
+      containers:
+        - name: thaniumos-bim
+          image: "europe-west1-docker.pkg.dev/dev-thaniumos/dev-thaniumos-repo/thaniumos-bim-dev:v1.0.0"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          resources:
+            requests:
+              cpu: 200m

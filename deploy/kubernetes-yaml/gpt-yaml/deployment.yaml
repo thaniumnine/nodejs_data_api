@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: thaniumos-api
+  labels:
+    app: thaniumos-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: thaniumos-api
+  template:
+    metadata:
+      labels:
+        app: thaniumos-api
+    spec:
+      containers:
+        - name: thaniumos-api
+          image: europe-west1-docker.pkg.dev/dev-thaniumos/dev-thaniumos-repo/thaniumos-api:v1.0.0
+          ports:
+            - containerPort: 3500
+          env:
+            - name: NODE_PATH
+              value: "./src"
+            - name: REACT_APP_MQTT_APP_API_URL
+              value: "http://localhost:8080/api/send-mqtt-message"
+            - name: REACT_APP_ORGANISATION
+              value: "simmtronics"
