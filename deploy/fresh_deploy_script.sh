@@ -2,7 +2,7 @@ docker build -t europe-west1-docker.pkg.dev/dev-thaniumos/dev-thaniumos-repo/tha
 
 gcloud auth configure-docker europe-west1-docker.pkg.dev
 
-docker push europe-west1-docker.pkg.dev/dev-thaniumos/dev-thaniumos-repo/thaniumos-api:v1.0.0 .
+docker push europe-west1-docker.pkg.dev/dev-thaniumos/dev-thaniumos-repo/thaniumos-api:v1.0.0
 
 kubectl create deployment thaniumos-api --image=europe-west1-docker.pkg.dev/dev-thaniumos/dev-thaniumos-repo/thaniumos-api:v1.0.0
 

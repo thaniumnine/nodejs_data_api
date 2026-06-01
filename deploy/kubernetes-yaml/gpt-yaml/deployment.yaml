@@ -22,7 +22,7 @@ spec:
           env:
             - name: NODE_ENV
               value: "production"
-            - name PORT:
+            - name: PORT
               value: 3500
             - name: ACCESS_TOKEN_TTL_SECONDS
               value: 900
