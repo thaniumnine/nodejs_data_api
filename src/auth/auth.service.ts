@@ -6,7 +6,7 @@ import { SessionsService } from '../sessions/sessions.service';
 import { UsersService } from '../users/users.service';
 import { hashPassword, verifyPassword } from './password';
 import { AccessTokenPayload } from './types/access-token-payload';
-
+import { Logger } from '@nestjs/common';
 @Injectable()
 export class AuthService {
   constructor(

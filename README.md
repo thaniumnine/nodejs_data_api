@@ -46,7 +46,7 @@ npm run start:dev
 The API listens at:
 
 ```text
-http://localhost:3000/api/v1
+http://localhost:3500/api/v1
 ```
 
 ## Auth flow
@@ -54,7 +54,7 @@ http://localhost:3000/api/v1
 Login:
 
 ```bash
-curl -s -X POST http://localhost:3000/api/v1/auth/login \
+curl -s -X POST http://localhost:3500/api/v1/auth/login \
   -H 'content-type: application/json' \
   -d '{"email":"admin@thaniumnine.com","password":"Exp0ls1ve123435"}'
 ```
@@ -68,7 +68,7 @@ Authorization: Bearer <access_token>
 Refresh access:
 
 ```bash
-curl -s -X POST http://localhost:3000/api/v1/auth/refresh \
+curl -s -X POST http://localhost:3500/api/v1/auth/refresh \
   -H 'content-type: application/json' \
   -d '{"refresh_token":"<refresh_token>"}'
 ```
@@ -76,7 +76,7 @@ curl -s -X POST http://localhost:3000/api/v1/auth/refresh \
 Logout revokes the current session:
 
 ```bash
-curl -s -X POST http://localhost:3000/api/v1/auth/logout \
+curl -s -X POST http://localhost:3500/api/v1/auth/logout \
   -H 'authorization: Bearer <access_token>'
 ```
 
@@ -107,7 +107,7 @@ payload jsonb
 Example write:
 
 ```bash
-curl -s -X POST http://localhost:3000/api/v1/topics/sensor_readings/events \
+curl -s -X POST http://localhost:3500/api/v1/topics/sensor_readings/events \
   -H 'authorization: Bearer <access_token>' \
   -H 'content-type: application/json' \
   -d '{
@@ -124,7 +124,7 @@ curl -s -X POST http://localhost:3000/api/v1/topics/sensor_readings/events \
 Example query:
 
 ```bash
-curl -s 'http://localhost:3000/api/v1/topics/sensor_readings/events?device_id=demo-device-1&limit=50' \
+curl -s 'http://localhost:3500/api/v1/topics/sensor_readings/events?device_id=demo-device-1&limit=50' \
   -H 'authorization: Bearer <access_token>'
 ```
 
@@ -143,7 +143,7 @@ and maps it to a public topic with the same name.
 Example insert:
 
 ```bash
-curl -s -X POST http://localhost:3000/api/v1/topics/device_status/rows \
+curl -s -X POST http://localhost:3500/api/v1/topics/device_status/rows \
   -H 'authorization: Bearer <access_token>' \
   -H 'content-type: application/json' \
   -d '{
@@ -161,7 +161,7 @@ curl -s -X POST http://localhost:3000/api/v1/topics/device_status/rows \
 Example query through the same topic API shape:
 
 ```bash
-curl -s 'http://localhost:3000/api/v1/topics/device_status/events?device_id=demo-device-1&limit=50' \
+curl -s 'http://localhost:3500/api/v1/topics/device_status/events?device_id=demo-device-1&limit=50' \
   -H 'authorization: Bearer <access_token>'
 ```
 
