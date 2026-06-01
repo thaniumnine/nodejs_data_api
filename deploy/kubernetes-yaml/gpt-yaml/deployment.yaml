@@ -32,11 +32,16 @@ spec:
               value: true
             - name: CORS_ORIGIN
               value: "http://localhost:5173,http://localhost:3000,https://bim.thaniumos.com/,https://thaniumos.com/"
-            - name: MAILGUN_SECRET
+            - name: JWT_ACCESS_SECRET
               valueFrom:
                 secretKeyRef:
                   name: env-secret
-                  key: MAILGUN_SECRET
+                  key: JWT_ACCESS_SECRET
+            - name: DATABASE_URL
+              valueFrom:
+                secretKeyRef:
+                  name: env-secret
+                  key: DATABASE_URL
 
             
             
