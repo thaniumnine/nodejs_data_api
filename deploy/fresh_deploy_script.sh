@@ -30,7 +30,7 @@ kubectl set image deployment/thaniumos-api thaniumos-api=europe-west1-docker.pkg
 
 # DEPLOY BASE64 ENCODED SECRETS
 # ENCODE BASE64
-printf %s "admin123" | base64 -w0
+printf %s "postgres://postgres:R0ck3tSh!p0s@104.155.21.41:5432/thaniumnine" | base64 -w0
 
 # DECODE BASE64
 printf %s "MTExMTIz" | base64 -d
