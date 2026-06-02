@@ -1,0 +1,17 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-to-cloudsql-postgres
+spec:
+  podSelector:
+    matchLabels:
+      app: nodejs-api
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - ipBlock:
+            cidr: CLOUD_SQL_PRIVATE_IP/32
+      ports:
+        - protocol: TCP
+          port: 5432
