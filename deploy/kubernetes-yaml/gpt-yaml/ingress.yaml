@@ -11,7 +11,7 @@
       app: thaniumos-frontend
   spec:
     tls:
-    - secretName: thaniumossecret25
+    - secretName: thaniumossecret25a
     rules:
     - host: thaniumos.com
       http:
