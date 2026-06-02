@@ -1,0 +1,9 @@
+migrations/
+deploy/
+node_modules/
+postman/
+scripts/
+README.md
+.env.example
+Dockerfile
+.gitignore

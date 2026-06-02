@@ -1,1 +1,18 @@
-10.9.160.0
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-egress-to-cloudsql-postgres
+spec:
+  podSelector:
+    matchLabels:
+      app: thaniumos-api
+  policyTypes:
+    - Egress
+  egress:
+    - to:
+        - ipBlock:
+            cidr: 10.9.160.0/32
+      ports:
+        - protocol: TCP
+          port: 5432
+
