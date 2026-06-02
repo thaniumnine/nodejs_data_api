@@ -30,4 +30,4 @@ CMD ["node", "dist/main.js"]
 
 # kubectl get pods
 # kubectl exec -it podIdcopy paste -- bash
-#kubectl logs podIdcopfromgetpods
+#kubectl logs podIdcopfromgetpods 

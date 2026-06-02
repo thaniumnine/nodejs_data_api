@@ -19,6 +19,7 @@ kubectl expose deployment thaniumos-api --name=thaniumos-api-service --type=Load
 kubectl apply -f env-secret.yaml    
 kubectl apply -f egress.yaml
 kubectl apply -f front-end.yaml
+kubectl apply -f back-end.yaml
 kubectl apply -f service.yaml
 kubectl apply -f ingress.yaml
 kubectl apply -f deployment.yaml
