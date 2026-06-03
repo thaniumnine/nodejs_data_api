@@ -1,24 +1,42 @@
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: thaniumos-api-ingress
-  namespace: default
-  annotations:
-    kubernetes.io/ingress.global-static-ip-name: "global-api"
-    kubernetes.io/ingress.allow-http: "true"
-    networking.gke.io/v1beta1.FrontendConfig: "thaniumos-api-config"
-  labels:
-    app: thaniumos-api
-spec:
-  tls:
-  - secretName: thaniumossecret25
-  rules:
-  - host: api.thaniumos.com
-    http:
-      paths:
-      - pathType: ImplementationSpecific
-        backend:
-          service:
-            name: thaniumos-api-service
-            port:
-              number: 80
+  apiVersion: networking.k8s.io/v1
+  kind: Ingress
+  metadata:
+    name: thaniumos-ingress
+    namespace: default
+    annotations:
+      kubernetes.io/ingress.global-static-ip-name: "global-devthaniumos"
+      kubernetes.io/ingress.allow-http: "true"
+      networking.gke.io/v1beta1.FrontendConfig: "thaniumos-frontend-config"
+    labels:
+      app: thaniumos-frontend
+  spec:
+    tls:
+    - secretName: thaniumossecret25a
+    rules:
+    - host: thaniumos.com
+      http:
+        paths:
+        - pathType: ImplementationSpecific
+          backend:
+            service:
+              name: thaniumos-deployment-service
+              port:
+                number: 80
+    - host: www.thaniumos.com
+      http:
+        paths:
+        - pathType: ImplementationSpecific
+          backend:
+            service:
+              name: thaniumos-deployment-service
+              port:
+                number: 80
+    - host: api.thaniumos.com
+      http:
+        paths:
+        - pathType: ImplementationSpecific
+          backend:
+            service:
+              name: thaniumos-api-service
+              port:
+                number: 80

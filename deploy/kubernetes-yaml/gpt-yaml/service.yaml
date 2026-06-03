@@ -3,6 +3,9 @@ kind: Service
 metadata:
   name: thaniumos-api-service
   namespace: default
+  annotations:
+    cloud.google.com/neg: '{"ingress":true}'
+    cloud.google.com/backend-config: '{"default":"thaniumos-api-backend-config"}'
   labels:
     app: thaniumos-api
 spec:
@@ -12,4 +15,4 @@ spec:
   ports:
     - name: http
       port: 80
-      targetPort: 8080
+      targetPort: 3500
