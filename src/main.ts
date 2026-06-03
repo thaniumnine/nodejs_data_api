@@ -3,6 +3,7 @@ import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify
 import helmet from '@fastify/helmet';
 import { AppModule } from './app.module';
 import { env } from './config/env';
+import { RequestMethod } from '@nestjs/common';
 
 function parseCorsOrigins(value: string): string[] | boolean {
   if (value === '*') return true;
@@ -22,7 +23,11 @@ async function bootstrap() {
     credentials: true
   });
 
-  app.setGlobalPrefix('api/v1');
+  app.setGlobalPrefix('api/v1', {
+    exclude: [
+      { path: '/', method: RequestMethod.GET },
+    ],
+  });
 
   await app.listen(env.PORT, '0.0.0.0');
 }
