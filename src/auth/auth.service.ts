@@ -13,7 +13,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly usersService: UsersService,
     private readonly sessionsService: SessionsService
-  ) {}
+  ) { }
 
   async register(input: {
     email: string;
