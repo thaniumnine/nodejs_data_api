@@ -7,7 +7,7 @@ import { TopicsService } from './topics.service';
 @UseGuards(JwtAuthGuard)
 @Controller('topics')
 export class TopicsController {
-  constructor(private readonly topicsService: TopicsService) {}
+  constructor(private readonly topicsService: TopicsService) { }
 
   @Post()
   createTopic(@Body(new ZodValidationPipe(CreateTopicSchema)) body: CreateTopicDto) {

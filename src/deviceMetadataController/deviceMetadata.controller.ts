@@ -9,26 +9,26 @@ import { DeviceMetadataData, DeviceMetadataService, QueryDeviceMetadataRecords }
 @UseGuards(JwtAuthGuard)
 @Controller('device_metadata')
 export class DeviceMetadataController {
-  constructor(   private readonly historyService: DeviceMetadataService) {}
+  constructor(private readonly historyService: DeviceMetadataService) { }
 
-@Get('data')
-queryAggregationData(
- // @Query(new ZodValidationPipe(QueryDeviceHistorySchema)) query: QueryDeviceHistoryRecords
-  @Query() query: QueryDeviceMetadataRecords
-) {
+  @Get('data')
+  queryAggregationData(
+    // @Query(new ZodValidationPipe(QueryDeviceHistorySchema)) query: QueryDeviceHistoryRecords
+    @Query() query: QueryDeviceMetadataRecords
+  ) {
 
-   return this.historyService.queryDeviceMetadata(query);
-}
-
-
-
-@Post('data')
-createAggregationData(
-  @Body() deviceHistoryData: DeviceMetadataData,
-) {
-    return this.historyService.createDeviceMetadataDataEvent(deviceHistoryData)
-    }    
-
-
-
+    return this.historyService.queryDeviceMetadata(query);
   }
+
+
+
+  @Post('data')
+  createAggregationData(
+    @Body() deviceHistoryData: DeviceMetadataData,
+  ) {
+    return this.historyService.createDeviceMetadataDataEvent(deviceHistoryData)
+  }
+
+
+
+}

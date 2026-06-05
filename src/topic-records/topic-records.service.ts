@@ -15,7 +15,7 @@ export class TopicRecordsService {
   constructor(
     private readonly database: DatabaseService,
     private readonly topicsService: TopicsService
-  ) {}
+  ) { }
 
   async createJsonbEvent(topicName: string, input: CreateTopicEventDto, user: AuthenticatedUser) {
     const topic = await this.topicsService.getRequiredByName(topicName);

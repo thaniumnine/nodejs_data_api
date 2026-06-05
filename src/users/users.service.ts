@@ -4,7 +4,7 @@ import { JsonValue, User } from '../database/db.types';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly database: DatabaseService) {}
+  constructor(private readonly database: DatabaseService) { }
 
   async findByEmail(email: string): Promise<User | undefined> {
     return this.database.db
