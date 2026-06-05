@@ -106,6 +106,40 @@ export interface AggregationDeviceTypeTable {
     table_name:string
 }
 
+export type DeviceHistoryTypeTable= {
+    device_id: string;
+    timestamp: TimestampColumn;
+    json_type:string;
+    version:string;
+    points: {
+        [pointtype:string]:any
+    }
+}
+
+export type DeviceMetadataTypeTable = {
+  device_id: string;
+  version: string;
+  timestamp: TimestampColumn;
+  "system.location.site": string;
+  "system.location.section": string;
+  "system.location.room": string;
+  "system.location.floor": string;
+  "system.location.floor_seq": number;
+
+  "system.location.position.x": number;
+  "system.location.position.y": number;
+  "system.location.position.z": number;
+
+  "system.physical_tag.asset.guid": string;
+  "system.physical_tag.asset.site": string;
+  "system.physical_tag.asset.name": string;
+
+  "gateway.gateway_id"?: string;
+
+  pointset: {
+    [pointtype: string]: JsonValue;
+  };
+};
 
 export type DB = {
   users: UsersTable;
@@ -116,6 +150,8 @@ export type DB = {
   devices: DevicesTable;
   audit_events: AuditEventsTable;
   aggregation:AggregationDeviceTypeTable;
+  device_history:DeviceHistoryTypeTable;
+  device_metadata:DeviceMetadataTypeTable;
 } & AggregationTables
 
 interface AggregationTables {
