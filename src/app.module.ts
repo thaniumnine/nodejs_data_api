@@ -9,9 +9,10 @@ import { AggregationRecordsModule } from './aggregation-records/aggregation-reco
 import { AggregationModule } from './aggregationController/aggregation.module';
 import { HomeController } from './home.controller';
 import { HistoryModule } from './historyController/history.module';
+import { DeviceMetadataModule } from './deviceMetadataController/deviceMetadata.module';
 
 @Module({
-  imports: [DatabaseModule, UsersModule, AuthModule, TopicsModule, TopicRecordsModule,AggregationRecordsModule,AggregationModule,HistoryModule],
+  imports: [DatabaseModule, UsersModule, AuthModule, TopicsModule, TopicRecordsModule,AggregationRecordsModule,AggregationModule,HistoryModule,DeviceMetadataModule],
   controllers: [HealthController,HomeController]
 })
 export class AppModule {}

@@ -1,6 +1,8 @@
 DROP TABLE IF EXISTS device_metadata;
 
 CREATE TABLE device_metadata (
+    id BIGSERIAL PRIMARY KEY,
+    device_id TEXT NOT NULL,
     version TEXT,
     timestamp TIMESTAMPTZ,
     "system.location.site" TEXT,
