@@ -8,9 +8,11 @@ import { UsersModule } from './users/users.module';
 import { AggregationRecordsModule } from './aggregation-records/aggregation-records.module';
 import { AggregationModule } from './aggregationController/aggregation.module';
 import { HomeController } from './home.controller';
+import { HistoryModule } from './historyController/history.module';
+import { DeviceMetadataModule } from './deviceMetadataController/deviceMetadata.module';
 
 @Module({
-  imports: [DatabaseModule, UsersModule, AuthModule, TopicsModule, TopicRecordsModule,AggregationRecordsModule,AggregationModule],
+  imports: [DatabaseModule, UsersModule, AuthModule, TopicsModule, TopicRecordsModule,AggregationRecordsModule,AggregationModule,HistoryModule,DeviceMetadataModule],
   controllers: [HealthController,HomeController]
 })
 export class AppModule {}
