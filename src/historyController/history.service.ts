@@ -51,9 +51,7 @@ async createDeviceHistoryDataEvent(inputs: DeviceHistoryData) {
     const result = await this.database.query(
       `SELECT 
       device_id,
-      timestamp,
-      json_type,
-      version,
+
       points
     FROM device_history
     WHERE timestamp >= $1
@@ -62,9 +60,9 @@ async createDeviceHistoryDataEvent(inputs: DeviceHistoryData) {
       [query.from, query.to]
     );
 
-    return result.rows;
+    return { records: result.rows, count: result.rowCount };
 
 
   };
-  
+
 }
