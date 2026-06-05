@@ -106,6 +106,15 @@ export interface AggregationDeviceTypeTable {
     table_name:string
 }
 
+export type DeviceHistoryTypeTable= {
+    device_id: string;
+    timestamp: TimestampColumn;
+    json_type:string;
+    version:string;
+    points: {
+        [pointtype:string]:any
+    }
+}
 
 export type DB = {
   users: UsersTable;
@@ -116,6 +125,7 @@ export type DB = {
   devices: DevicesTable;
   audit_events: AuditEventsTable;
   aggregation:AggregationDeviceTypeTable;
+  device_history:DeviceHistoryTypeTable
 } & AggregationTables
 
 interface AggregationTables {
