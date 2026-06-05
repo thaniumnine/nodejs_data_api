@@ -770,7 +770,7 @@
                 "method": "GET",
                 "header": [],
                 "url": {
-                  "raw": "{{base_url}}/api/v1/history/data?from=2026-03-25T16:16:31.000Z&to=2026-03-26T00:00:00.000Z",
+                  "raw": "{{base_url}}/api/v1/history/data?from=2026-03-25T00:00:00.000Z&to=2026-03-26T00:00:00.000Z&_t=123",
                   "host": [
                     "{{base_url}}"
                   ],
@@ -783,11 +783,15 @@
                   "query": [
                     {
                       "key": "from",
-                      "value": "2026-03-25T16:16:31.000Z"
+                      "value": "2026-03-25T00:00:00.000Z"
                     },
                     {
                       "key": "to",
                       "value": "2026-03-26T00:00:00.000Z"
+                    },
+                    {
+                      "key": "_t",
+                      "value": "123"
                     }
                   ]
                 }
@@ -858,11 +862,11 @@
                 },
                 {
                   "key": "content-length",
-                  "value": "891"
+                  "value": "753"
                 },
                 {
                   "key": "Date",
-                  "value": "Fri, 05 Jun 2026 15:14:55 GMT"
+                  "value": "Fri, 05 Jun 2026 15:28:06 GMT"
                 },
                 {
                   "key": "Connection",
@@ -874,7 +878,7 @@
                 }
               ],
               "cookie": [],
-              "body": "[\n    {\n        \"device_id\": \"acu-999999\",\n        \"timestamp\": \"2026-03-25T16:16:31.000Z\",\n        \"json_type\": \"pointset\",\n        \"version\": \"1.4.2\",\n        \"points\": {\n            \"humidity\": {\n                \"present_value\": 32\n            },\n            \"pressure\": {\n                \"present_value\": 1009\n            },\n            \"co2_level\": {\n                \"present_value\": 551\n            },\n            \"temperature\": {\n                \"present_value\": 21.8\n            },\n            \"air_quality_index\": {\n                \"present_value\": \"Excellent\"\n            },\n            \"illuminance_sensor\": {\n                \"present_value\": 10\n            },\n            \"minute_sound_level\": {\n                \"present_value\": 48\n            },\n            \"total_volatile_organic_compounds\": {\n                \"present_value\": 31\n            }\n        }\n    },\n    {\n        \"device_id\": \"QSE-999999\",\n        \"timestamp\": \"2026-03-25T16:16:31.000Z\",\n        \"json_type\": \"pointset\",\n        \"version\": \"1.4.2\",\n        \"points\": {\n            \"humidity\": {\n                \"present_value\": 32\n            },\n            \"pressure\": {\n                \"present_value\": 1009\n            },\n            \"co2_level\": {\n                \"present_value\": 551\n            },\n            \"temperature\": {\n                \"present_value\": 21.8\n            },\n            \"air_quality_index\": {\n                \"present_value\": \"Excellent\"\n            },\n            \"illuminance_sensor\": {\n                \"present_value\": 10\n            },\n            \"minute_sound_level\": {\n                \"present_value\": 48\n            },\n            \"total_volatile_organic_compounds\": {\n                \"present_value\": 31\n            }\n        }\n    }\n]"
+              "body": "{\n    \"records\": [\n        {\n            \"device_id\": \"acu-999999\",\n            \"points\": {\n                \"humidity\": {\n                    \"present_value\": 32\n                },\n                \"pressure\": {\n                    \"present_value\": 1009\n                },\n                \"co2_level\": {\n                    \"present_value\": 551\n                },\n                \"temperature\": {\n                    \"present_value\": 21.8\n                },\n                \"air_quality_index\": {\n                    \"present_value\": \"Excellent\"\n                },\n                \"illuminance_sensor\": {\n                    \"present_value\": 10\n                },\n                \"minute_sound_level\": {\n                    \"present_value\": 48\n                },\n                \"total_volatile_organic_compounds\": {\n                    \"present_value\": 31\n                }\n            }\n        },\n        {\n            \"device_id\": \"QSE-999999\",\n            \"points\": {\n                \"humidity\": {\n                    \"present_value\": 32\n                },\n                \"pressure\": {\n                    \"present_value\": 1009\n                },\n                \"co2_level\": {\n                    \"present_value\": 551\n                },\n                \"temperature\": {\n                    \"present_value\": 21.8\n                },\n                \"air_quality_index\": {\n                    \"present_value\": \"Excellent\"\n                },\n                \"illuminance_sensor\": {\n                    \"present_value\": 10\n                },\n                \"minute_sound_level\": {\n                    \"present_value\": 48\n                },\n                \"total_volatile_organic_compounds\": {\n                    \"present_value\": 31\n                }\n            }\n        }\n    ],\n    \"count\": 2\n}"
             }
           ]
         },
@@ -893,14 +897,14 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/api/v1/history/data",
+              "raw": "{{base_url}}/api/v1/device_metadata/data",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "api",
                 "v1",
-                "history",
+                "device_metadata",
                 "data"
               ]
             }
@@ -1144,6 +1148,70 @@
                   "key": "limit",
                   "value": "50"
                 }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Query Device Metadata",
+      "item": [
+        {
+          "name": "fetch_device_metadata_data",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/device_metadata/data?from=2026-03-20T00:00:00.000Z&to=2026-03-21T00:00:00.000Z",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "device_metadata",
+                "data"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "2026-03-20T00:00:00.000Z"
+                },
+                {
+                  "key": "to",
+                  "value": "2026-03-21T00:00:00.000Z"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post_device_metadata_data",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "[{\r\n    \"version\": \"1.4.2\",\r\n    \"timestamp\": \"2026-03-20T00:54:38+00:00\",\r\n    \"system\": {\r\n        \"location\": {\r\n            \"site\": \"GB-LON-9212\",\r\n            \"section\": \"TENANT-ZONE-1\",\r\n            \"room\": \"Plant-Room\",\r\n            \"floor\": \"FIRST-FLOOR\",\r\n            \"floor_seq\": 1,\r\n            \"position\": {\r\n                \"x\": 2010658.0,\r\n                \"y\": -283739.5,\r\n                \"z\": 3.5\r\n            }\r\n        },\r\n        \"physical_tag\": {\r\n            \"asset\": {\r\n                \"guid\": \"guid://c5A_Of5Kcn2bUJSkAlfUS5\",\r\n                \"site\": \"GB-LON-9212\",\r\n                \"name\": \"QSE-00005\"\r\n            }\r\n        }\r\n    },\r\n    \"pointset\": {\r\n        \"points\": {\r\n            \"co2_level\": {\r\n                \"unit\": \"ppm\",\r\n                \"tags\": [\r\n                    \"point\",\r\n                    \"sensor\",\r\n                    \"air\",\r\n                    \"co2\",\r\n                    \"concentration\"\r\n                ]\r\n            },\r\n            \"total_volatile_organic_compounds\": {\r\n                \"unit\": \"ppb\",\r\n                \"tags\": [\r\n                    \"point\",\r\n                    \"sensor\",\r\n                    \"air\",\r\n                    \"tvoc\",\r\n                    \"concentration\"\r\n                ]\r\n            },\r\n            \"air_quality_index\": {\r\n                \"tags\": [\r\n                    \"point\",\r\n                    \"sensor\",\r\n                    \"air\",\r\n                    \"airQuality\"\r\n                ]\r\n            },\r\n            \"temperature\": {\r\n                \"unit\": \"°C\",\r\n                \"tags\": [\r\n                    \"point\",\r\n                    \"sensor\",\r\n                    \"air\",\r\n                    \"temp\"\r\n                ]\r\n            },\r\n            \"pressure\": {\r\n                \"unit\": \"mbar\",\r\n                \"tags\": [\r\n                    \"point\",\r\n                    \"sensor\",\r\n                    \"barometric\",\r\n                    \"pressure\"\r\n                ]\r\n            },\r\n            \"humidity\": {\r\n                \"unit\": \"%RH\",\r\n                \"tags\": [\r\n                    \"point\",\r\n                    \"sensor\",\r\n                    \"air\",\r\n                    \"humidity\"\r\n                ]\r\n            },\r\n            \"minute_sound_level\": {\r\n                \"unit\": \"db\",\r\n                \"tags\": [\r\n                    \"point\",\r\n                    \"sensor\",\r\n                    \"soundLevel\"\r\n                ]\r\n            },\r\n            \"illuminance_sensor\": {\r\n                \"unit\": \"lx\",\r\n                \"tags\": [\r\n                    \"point\",\r\n                    \"sensor\",\r\n                    \"light\",\r\n                    \"illuminance\"\r\n                ]\r\n            }\r\n        }\r\n    }\r\n}]",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/device_metadata/data",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "device_metadata",
+                "data"
               ]
             }
           },
