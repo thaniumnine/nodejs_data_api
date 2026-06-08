@@ -218,3 +218,22 @@ Before exposing this publicly:
 - Add topic/device-level permissions.
 - Add request-size limits for JSON payloads.
 - Add observability, audit logs, backups, and alerting.
+
+
+## testing docs
+
+https://www.freecodecamp.org/news/nestjs-unit-testing-e2e-testing-guide/
+
+https://mariusniemet20.medium.com/writing-unit-tests-for-your-nestjs-rest-api-baf4361132d3
+
+https://circleci.com/blog/getting-started-with-nestjs-and-automatic-testing/
+
+https://docs.nestjs.com/fundamentals/testing
+
+https://medium.com/@jackallcock97/unit-testing-with-nestjs-and-jest-a-comprehensive-tutorial-464910f6c6ba
+
+https://blog.ablo.ai/jest-to-vitest-in-nestjs
+
+https://blog.stackademic.com/testing-your-api-services-with-nestjs-mocking-vs-real-database-bbfe689ed745
+
+https://zenn.dev/maronn/articles/nestjs-vitest-migrate?locale=en
