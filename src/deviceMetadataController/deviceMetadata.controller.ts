@@ -12,7 +12,7 @@ export class DeviceMetadataController {
   constructor(   private readonly historyService: DeviceMetadataService) {}
 
 @Get('data')
-queryAggregationData(
+queryHistoryMetadata(
  // @Query(new ZodValidationPipe(QueryDeviceHistorySchema)) query: QueryDeviceHistoryRecords
   @Query() query: QueryDeviceMetadataRecords
 ) {
@@ -23,7 +23,7 @@ queryAggregationData(
 
 
 @Post('data')
-createAggregationData(
+createHistoryMetadata(
   @Body() deviceHistoryData: DeviceMetadataData,
 ) {
     return this.historyService.createDeviceMetadataDataEvent(deviceHistoryData)

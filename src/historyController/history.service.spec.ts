@@ -131,8 +131,7 @@ describe('HistoryService', () => {
     }]
 
     const result = await service.createDeviceHistoryDataEvent(historyDataMock);
-    console.log(result);
-     expect(result).toEqual({event:mockCreateQueryResult});
+    expect(result).toEqual({event:mockCreateQueryResult});
 
   });
 
