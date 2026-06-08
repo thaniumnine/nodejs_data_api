@@ -1,6 +1,6 @@
 import { ZodValidationPipe } from 'src/common/pipes/zod-validation.pipe.js';
 import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { number, string } from 'zod';
 import { DeviceHistoryData, HistoryService, QueryDeviceHistoryRecords, QueryDeviceHistorySchema} from './history.service.js'
 
