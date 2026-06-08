@@ -1,0 +1,72 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import { HistoryService } from './history.service';
+import { HistoryController } from './history.controller';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+
+describe('History Controller', () => {
+    let controller: HistoryController;
+    let mockHistoryService = {
+        queryDeviceHistory: jest.fn(),
+        createDeviceHistoryDataEvent: jest.fn()
+    }
+
+    beforeEach(async () => {
+        jest.clearAllMocks();
+        const module: TestingModule = await Test.createTestingModule({
+            providers: [HistoryController,
+                {
+                    provide: HistoryService,
+                    useValue: mockHistoryService
+
+                }
+            ]
+        }).overrideGuard(JwtAuthGuard)
+            .useValue({
+                canActivate: jest.fn(() => true),
+            }).compile();
+
+        controller = module.get<HistoryController>(HistoryController);
+    });
+
+    it('should be defined', () => {
+        expect(controller).toBeDefined();
+    });
+
+    test('queryHistoryData', async () => {
+        mockHistoryService.queryDeviceHistory.mockResolvedValue({ records: [], count: 0 });
+        let mockQueryData = {
+            from: '2026-06-08T00:00:00.000Z',
+            to: '2026-06-09T00:00:00.000Z'
+        }
+        const result = await controller.queryHistoryData(mockQueryData);
+
+        expect(mockHistoryService.queryDeviceHistory).toHaveBeenCalledWith(mockQueryData);
+        expect(result).toEqual({ records: [], count: 0 })
+
+    })
+
+    test('createHistoryData', async () => {
+
+        let mockPostData = [{
+            "version": "1.4.2",
+            "timestamp": "2026-03-25T16:16:31+00:00",
+            "device_id": "QSE-999999",
+            "points": {
+                "co2_level": {
+                    "present_value": 551
+                },
+                "total_volatile_organic_compounds": {
+                    "present_value": 31
+                }
+            }
+        }]
+        mockHistoryService.createDeviceHistoryDataEvent.mockResolvedValue({ event: { mockPostData } });
+
+        const result = await controller.createHistoryData(mockPostData);
+
+        expect(mockHistoryService.createDeviceHistoryDataEvent).toHaveBeenCalledWith(mockPostData);
+        expect(result).toEqual({ event: { mockPostData } })
+
+    });
+});
+

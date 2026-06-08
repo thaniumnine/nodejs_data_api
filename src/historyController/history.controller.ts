@@ -1,14 +1,9 @@
 import { ZodValidationPipe } from 'src/common/pipes/zod-validation.pipe.js';
 import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtAuthGuard } from  '../auth/jwt-auth.guard';
 import { number, string } from 'zod';
-import { DeviceHistoryData, HistoryService, QueryDeviceHistoryRecords, QueryDeviceHistorySchema} from './history.service.js'
+import { DeviceHistoryData, HistoryService, QueryDeviceHistoryRecords, QueryDeviceHistorySchema} from './history.service'
 
-// the api will return for history
-// {
-// number_of_records:2
-// records:[{poinset,json},{poinset.json}]
-// }
 
 @UseGuards(JwtAuthGuard)
 @Controller('history')
@@ -16,7 +11,7 @@ export class HistoryController {
   constructor(   private readonly historyService: HistoryService) {}
 
 @Get('data')
-queryAggregationData(
+queryHistoryData(
  // @Query(new ZodValidationPipe(QueryDeviceHistorySchema)) query: QueryDeviceHistoryRecords
   @Query() query: QueryDeviceHistoryRecords
 ) {
@@ -27,7 +22,7 @@ queryAggregationData(
 
 
 @Post('data')
-createAggregationData(
+createHistoryData(
   @Body() deviceHistoryData: DeviceHistoryData,
 ) {
     return this.historyService.createDeviceHistoryDataEvent(deviceHistoryData)
