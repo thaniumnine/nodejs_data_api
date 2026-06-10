@@ -1,7 +1,8 @@
 import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
-import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { number, string } from 'zod';
-import { AggregationService, AggregationDeviceTypeRecord} from './aggregation.service.js'
+
+import { AggregationService, AggregationDeviceTypeRecord} from './aggregation.service'
 import { ZodValidationPipe } from 'src/common/pipes/zod-validation.pipe.js';
 
 
