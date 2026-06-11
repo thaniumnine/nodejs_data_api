@@ -47,7 +47,7 @@ describe('History Controller', () => {
 
     test('createHistoryData', async () => {
 
-        let mockPostData = [{
+        let mockPostData ={items: [{
             "version": "1.4.2",
             "timestamp": "2026-03-25T16:16:31+00:00",
             "device_id": "QSE-999999",
@@ -60,6 +60,7 @@ describe('History Controller', () => {
                 }
             }
         }]
+    }
         mockHistoryService.createDeviceHistoryDataEvent.mockResolvedValue({ event: { mockPostData } });
 
         const result = await controller.createHistoryData(mockPostData);

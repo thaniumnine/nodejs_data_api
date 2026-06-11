@@ -65,7 +65,7 @@ describe('History Controller', () => {
     test('createAggregationData', async () => {
 
 
-        const CreateMockCreateQueryResult = [{
+        const CreateMockCreateQueryResult = {items: [{
             "device_id": "MTS-99997",
             "event_timestamp": "2026-04-24T12:34:00Z",
             "agg_type": "max",
@@ -76,6 +76,7 @@ describe('History Controller', () => {
                 "this_week_cumulative_occupancy": 211
             }
         }]
+    }
         let deviceType = "mts";
 
         mockAggregationService.createAggregationDataEvent.mockResolvedValue(CreateMockCreateQueryResult);

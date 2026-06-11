@@ -34,7 +34,10 @@ export type DeviceMetadataRecord = {
  
     }
 }
-export type DeviceMetadataData = DeviceMetadataRecord[];
+export type DeviceMetadataData = {
+  items:
+  DeviceMetadataRecord[];
+}
 
 export const QueryDeviceMetadataSchema = z.object({
   from: z.string().datetime(),
@@ -53,7 +56,7 @@ async createDeviceMetadataDataEvent(inputs: DeviceMetadataData) {
 
     const event = await this.database.db
       .insertInto("device_metadata")
-      .values(inputs.map((input)=>{
+      .values(inputs.items.map((input)=>{
         return{
           device_id: input.system.physical_tag.asset.name, // should it repeat
           version: input.version,

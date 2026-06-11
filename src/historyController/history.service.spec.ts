@@ -116,7 +116,7 @@ describe('HistoryService', () => {
   test('createDeviceHistoryDataEvent', async () => {
 
 
-    const historyDataMock = [{
+    const historyDataMock = {items:[{
       "version": "1.4.2",
       "timestamp": "2026-03-25T16:16:31+00:00",
       "device_id": "QSE-999999",
@@ -129,6 +129,7 @@ describe('HistoryService', () => {
         }
       }
     }]
+  }
 
     const result = await service.createDeviceHistoryDataEvent(historyDataMock);
     expect(result).toEqual({event:mockCreateQueryResult});
