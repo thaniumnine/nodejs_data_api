@@ -51,7 +51,7 @@ async createDeviceHistoryDataEvent(inputs: DeviceHistoryData) {
   }
   async queryDeviceHistory(query: QueryDeviceHistoryRecords) {
     const result = await this.database.query(
-      `SELECT *
+      `SELECT device_id, points
     FROM device_history
     WHERE timestamp >= $1
       AND timestamp < $2
