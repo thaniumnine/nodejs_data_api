@@ -1,6 +1,6 @@
 import {  Injectable } from "@nestjs/common";
-import { AggregationDeviceTypeColumnRecord, AggregationService } from "src/aggregationController/aggregation.service";
-import { DatabaseService } from "src/database/database.service";
+import { AggregationDeviceTypeColumnRecord, AggregationService } from "../aggregationController/aggregation.service";
+import { DatabaseService } from "../database/database.service";
 import z from "zod";
 
 
