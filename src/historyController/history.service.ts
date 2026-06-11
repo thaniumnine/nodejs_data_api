@@ -12,7 +12,9 @@ export type DeviceHistoryRecord= {
         [pointtype:string]:JsonValue
     }
 }
-export type DeviceHistoryData = DeviceHistoryRecord[];
+export type DeviceHistoryData = {
+  items:DeviceHistoryRecord[]
+}
 
 export const QueryDeviceHistorySchema = z.object({
   from: z.string().datetime(),
@@ -31,7 +33,7 @@ async createDeviceHistoryDataEvent(inputs: DeviceHistoryData) {
 
     const event = await this.database.db
       .insertInto("device_history")
-      .values(inputs.map((input)=>{
+      .values(inputs.items.map((input)=>{
         return{
           device_id: input.device_id,
           timestamp: new Date(input.timestamp),

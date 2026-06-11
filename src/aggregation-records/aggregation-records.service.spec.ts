@@ -8,7 +8,7 @@ describe('AggregationRecordsService', () => {
     const normalizeSql = (sql: string) => (
         sql.replace(/\s+/g, ' ').trim()
     )
-    const mockCreateQueryResult = [{
+    const mockCreateQueryResult = {items : [{
         "device_id": "MTS-99997",
         "event_timestamp": "2026-04-24T12:34:00Z",
         "agg_type": "max",
@@ -19,6 +19,7 @@ describe('AggregationRecordsService', () => {
             "this_week_cumulative_occupancy": 211
         }
     }]
+}
 
     let service: AggregationRecordsService;
     const mockDatabaseService = {

@@ -200,7 +200,7 @@ describe('HistoryService', () => {
     test('createDeviceHistoryDataEvent', async () => {
 
 
-        const DevicehistoryMetdataMock = [{
+        const DevicehistoryMetdataMock = {items:[{
             "version": "1.4.2",
             "timestamp": "2026-03-20T00:54:38+00:00",
             "system": {
@@ -247,7 +247,7 @@ describe('HistoryService', () => {
                 }
             }
         }]
-
+    }
 
         const result = await service.createDeviceMetadataDataEvent(DevicehistoryMetdataMock);
         console.log(result);

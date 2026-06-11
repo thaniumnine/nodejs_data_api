@@ -48,7 +48,7 @@ describe('History Controller', () => {
     
     test('createHistoryMetadata', async () => {
 
-        let mockPostData = [{
+        let mockPostData ={items:[{
             "version": "1.4.2",
             "timestamp": "2026-03-20T00:54:38+00:00",
             "system": {
@@ -95,6 +95,7 @@ describe('History Controller', () => {
                 }
             }
         }]
+    }
         mockHistoryService.createDeviceMetadataDataEvent.mockResolvedValue({ event: { mockPostData } });
 
         const result = await controller.createHistoryMetadata(mockPostData);
