@@ -14,7 +14,8 @@ describe('History Controller', () => {
     beforeEach(async () => {
         jest.clearAllMocks();
         const module: TestingModule = await Test.createTestingModule({
-            providers: [AggregationController,
+            controllers: [AggregationController],
+            providers:[
                 {
                     provide: AggregationService,
                     useValue: mockAggregationService
