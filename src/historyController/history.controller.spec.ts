@@ -13,12 +13,12 @@ describe('History Controller', () => {
     beforeEach(async () => {
         jest.clearAllMocks();
         const module: TestingModule = await Test.createTestingModule({
-            providers: [HistoryController,
+            controllers: [HistoryController],
+            providers: [
                 {
                     provide: HistoryService,
-                    useValue: mockHistoryService
-
-                }
+                    useValue: mockHistoryService,
+                },
             ]
         }).overrideGuard(JwtAuthGuard)
             .useValue({
