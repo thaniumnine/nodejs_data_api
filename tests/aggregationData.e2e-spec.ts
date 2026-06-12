@@ -10,7 +10,7 @@ describe('aggregation E2E', () => {
   let app: NestFastifyApplication;
   
 
-  const aggregationData = [
+  const aggregationMtsData = [
     {
       "device_id": "MTS-9999999",
       "event_timestamp": "1920-04-24T12:34:00.000Z",
@@ -22,6 +22,33 @@ describe('aggregation E2E', () => {
         "this_week_cumulative_occupancy": 211
       }
     }]
+
+  const aggregationQseData = [{
+    "device_id": "QSE-9999999",
+    "event_timestamp": "1920-04-24T12:34:00.000Z",
+    "agg_type": "max",
+    "payload": {
+      "co2_level": 300,
+      "humidity": 400,
+      "illuminance_sensor": 101,
+      "minute_sound_level": 301,
+      "pressure": 101,
+      "temperature": 391,
+      "total_volatile_organic_compounds": 101
+    }
+  }]
+
+  const aggregationLtData = [{
+    "device_id": "LT-9999999",
+    "event_timestamp": "1920-04-24T12:34:00.000Z",
+    "agg_type": "max",
+    "payload": {
+      "brightness_percentage_command": 88,
+      "electrical_power_sensor": 202,
+      "full_power_output": 303,
+      "run_time_accumulator": 100
+    }
+  }]
 
 
   
@@ -53,7 +80,7 @@ describe('aggregation E2E', () => {
     const result = await app.inject({
       method: 'POST',
       url: '/aggregation/mts/data',
-      payload:     {"items":aggregationData},
+      payload:     {"items":aggregationMtsData},
     
     });
     expect(result.statusCode).toEqual(201);
@@ -68,7 +95,7 @@ describe('aggregation E2E', () => {
 
     expect(result.statusCode).toEqual(200);
     const body = JSON.parse(result.payload);
-    const { agg_type, ...ExpectedaggregationData } = aggregationData[0]
+    const { agg_type, ...ExpectedaggregationData } = aggregationMtsData[0]
     expect(body?.records[0]).toEqual(ExpectedaggregationData)
 
   });
@@ -86,6 +113,95 @@ describe('aggregation E2E', () => {
     });
     expect(result.statusCode).toEqual(204);
   })
+
+
+
+   it('POST /aggregation/lt/data', async () => {
+    const result = await app.inject({
+      method: 'POST',
+      url: '/aggregation/lt/data',
+      payload:     {"items":aggregationLtData},
+    
+    });
+    expect(result.statusCode).toEqual(201);
+  });
+
+
+  it('GET /aggregation/lt/data', async () => {
+    const result = await app.inject({
+      method: 'GET',
+      url: '/aggregation/lt/data?from=1920-04-24T00:00:00.000Z&to=1920-04-25T00:00:00.000Z&aggType=max',
+    });
+
+    expect(result.statusCode).toEqual(200);
+    const body = JSON.parse(result.payload);
+    const { agg_type, ...ExpectedaggregationData } = aggregationLtData[0]
+    expect(body?.records[0]).toEqual(ExpectedaggregationData)
+
+  });
+
+  
+
+  it('DELETE /aggregation/lt/data', async () => {
+    const result = await app.inject({
+      method: 'DELETE',
+      url: '/aggregation/lt/data',
+      payload: {
+        "ids": ["LT-9999999"]
+      }
+
+    });
+    expect(result.statusCode).toEqual(204);
+  })
+
+
+
+     it('POST /aggregation/qse/data', async () => {
+    const result = await app.inject({
+      method: 'POST',
+      url: '/aggregation/qse/data',
+      payload:     {"items":aggregationQseData},
+    
+    });
+    expect(result.statusCode).toEqual(201);
+  });
+
+
+  it('GET /aggregation/qse/data', async () => {
+    const result = await app.inject({
+      method: 'GET',
+      url: '/aggregation/qse/data?from=1920-04-24T00:00:00.000Z&to=1920-04-25T00:00:00.000Z&aggType=max',
+    });
+
+    expect(result.statusCode).toEqual(200);
+    const body = JSON.parse(result.payload);
+    const { agg_type, ...ExpectedaggregationData } = aggregationQseData[0]
+    expect(body?.records[0]).toEqual(ExpectedaggregationData)
+
+  });
+
+  
+
+  it('DELETE /aggregation/qse/data', async () => {
+    const result = await app.inject({
+      method: 'DELETE',
+      url: '/aggregation/qse/data',
+      payload: {
+        "ids": ["QSE-9999999"]
+      }
+
+    });
+    expect(result.statusCode).toEqual(204);
+  })
+
+
+
+
+
+
+
+
+
 });
 
 
