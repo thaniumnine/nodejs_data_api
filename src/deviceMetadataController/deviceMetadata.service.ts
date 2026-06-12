@@ -89,16 +89,44 @@ async createDeviceMetadataDataEvent(inputs: DeviceMetadataData) {
   }
   async queryDeviceMetadata(query: QueryDeviceMetadataRecords) {
     const result = await this.database.query(
-      `SELECT * FROM device_metadata
+      `    SELECT
+      device_id,
+      version,
+      timestamp,
+      "system.location.site",
+      "system.location.section",
+      "system.location.room",
+      "system.location.floor",
+      "system.location.floor_seq",
+      "system.location.position.x",
+      "system.location.position.y",
+      "system.location.position.z",
+      "system.physical_tag.asset.guid",
+      "system.physical_tag.asset.site",
+      "system.physical_tag.asset.name",
+      "gateway.gateway_id",
+      pointset
+    FROM device_metadata
     WHERE timestamp >= $1
       AND timestamp < $2
     ORDER BY device_id ASC, timestamp ASC`,
       [query.from, query.to]
     );
 
+
     return { records: result.rows, count: result.rowCount };
 
 
   };
+
+  async deleteDeviceHistoryMetadataEvent(ids: string[]) {
+    const result = await this.database.query(
+      `
+    DELETE FROM device_metadata
+    WHERE device_id = ANY($1)
+    `,
+      [ids],
+    );
+  }
 
 }

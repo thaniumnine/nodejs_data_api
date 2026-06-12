@@ -47,6 +47,10 @@ describe('HistoryService', () => {
             }
         ]
     }
+      
+  const normalizeSql = (sql: string) => (
+        sql.replace(/\s+/g, ' ').trim()
+    )
 
     let service: DeviceMetadataService;
 
@@ -143,12 +147,35 @@ describe('HistoryService', () => {
             to: '2026-06-09T00:00:00.000Z'
         });
 
-        const queryCommand = `SELECT * FROM device_metadata
-    WHERE timestamp >= $1
-      AND timestamp < $2
-    ORDER BY device_id ASC, timestamp ASC`;
+        const queryCommand = ` SELECT
+          device_id,
+          version,
+          timestamp,
+          \"system.location.site\",
+          \"system.location.section\",
+          \"system.location.room\",
+          \"system.location.floor\",
+          \"system.location.floor_seq\",
+          \"system.location.position.x\",
+          \"system.location.position.y\",
+          \"system.location.position.z\",
+          \"system.physical_tag.asset.guid\",
+          \"system.physical_tag.asset.site\",
+          \"system.physical_tag.asset.name\",
+          \"gateway.gateway_id\",
+          pointset
+        FROM device_metadata
+        WHERE timestamp >= $1
+          AND timestamp < $2
+        ORDER BY device_id ASC, timestamp ASC`;
 
-        expect(mockDatabaseService.query).toHaveBeenCalledWith(queryCommand, ['2026-06-08T00:00:00.000Z', '2026-06-09T00:00:00.000Z'])
+        
+
+     
+        const [querySql, querySqlParams] = mockDatabaseService.query.mock.calls[0]
+        expect(normalizeSql(querySql)).toEqual(normalizeSql(queryCommand))
+        expect(querySqlParams).toEqual(['2026-06-08T00:00:00.000Z', '2026-06-09T00:00:00.000Z'])
+
         expect(result).toEqual({
             "records": [
                 {
@@ -255,6 +282,24 @@ describe('HistoryService', () => {
 
     });
 
+
+    test('deleteDeviceHistoryDataEvent', async () => {
+        const idsToDelete = ['QSE-9999'];
+
+        mockDatabaseService.query.mockResolvedValue({
+            rowCount: 1,
+            rows: [],
+        });
+
+        const result = await service.deleteDeviceHistoryMetadataEvent(idsToDelete);
+
+        expect(mockDatabaseService.query).toHaveBeenCalledWith(
+            expect.stringContaining('DELETE FROM device_metadata'),
+            [idsToDelete],
+        );
+
+        expect(result).toBeUndefined();
+    });
 
 
 })

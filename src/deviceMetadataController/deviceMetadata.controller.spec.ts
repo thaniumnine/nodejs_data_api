@@ -7,7 +7,8 @@ describe('History Controller', () => {
     let controller: DeviceMetadataController;
     let mockHistoryService = {
         queryDeviceMetadata: jest.fn(),
-        createDeviceMetadataDataEvent: jest.fn()
+        createDeviceMetadataDataEvent: jest.fn(),
+        deleteDeviceHistoryMetadataEvent:jest.fn()
     }
 
     beforeEach(async () => {
@@ -104,6 +105,14 @@ describe('History Controller', () => {
         expect(result).toEqual({ event: { mockPostData } })
 
     });
+
+        test('deleteDeviceHistoryDataEvent', async () => {
+        const idsToDelete = ['QSE-9999'];
+        const result = await controller.deleteHistoryData(idsToDelete);
+        expect(mockHistoryService.deleteDeviceHistoryMetadataEvent).toHaveBeenCalledWith(idsToDelete);
+        expect(result).toBeUndefined();
+
+    })
 
     
 });

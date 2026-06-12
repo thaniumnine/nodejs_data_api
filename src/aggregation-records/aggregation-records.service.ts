@@ -94,13 +94,30 @@ export class AggregationRecordsService {
         [query.from, query.to,query.aggType]
     );
         return {
-          records: result.rows.map(({device_id,agg_type,event_timestamp,...payload})=>({
+          records: result.rows.map(({device_id,event_timestamp,...payload})=>({
             payload,
             device_id,
-            agg_type,
             event_timestamp
 
           }))
         }
       };
+
+
+      
+  async deleteAggregationDataEvent(deviceType:string,ids: string[]) {
+    const deviceTypeData =  await this.aggregationService.getRequiredByName(deviceType)
+    if (!deviceTypeData) return;
+    const table_name = deviceTypeData.table_name
+    const result = await this.database.query(
+      `
+    DELETE FROM ${table_name}
+    WHERE device_id = ANY($1)
+    `,
+      [ids],
+    );
+  }
+
+
+  
 }

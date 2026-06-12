@@ -6,11 +6,11 @@ import { AppModule } from '../src/app.module';
 
 describe('History E2E', () => {
   let app: NestFastifyApplication;
-
+  
 
   const historyData =  [{
       "version": "1.4.2",
-      "timestamp": "1923-03-25T16:16:31+00:00",
+      "timestamp": "1923-03-25T16:16:31.000Z",
       "device_id": "QSE-999996",
       "points": {
         "co2_level": {
@@ -87,4 +87,18 @@ describe('History E2E', () => {
     expect(body.records[0]).toEqual(expectdHistoryData)
     expect(body.count).toBe(1);
   });
+
+
+
+  it('DELETE /history/data/:id', async () => {
+    const result = await app.inject({
+      method: 'DELETE',
+      url: '/history/data',
+      payload: {
+        "ids": ["QSE-999996"]
+      }
+
+    });
+    expect(result.statusCode).toEqual(204);
+  })
 });
