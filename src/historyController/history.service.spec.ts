@@ -22,6 +22,10 @@ describe('HistoryService', () => {
       }
     ]
   
+  const normalizeSql = (sql: string) => (
+        sql.replace(/\s+/g, ' ').trim()
+    )
+
   let service: HistoryService;
   const mockDatabaseService = {
     query: jest.fn(),
@@ -86,14 +90,17 @@ describe('HistoryService', () => {
       to: '2026-06-09T00:00:00.000Z'
     });
 
-    const queryCommand = `SELECT *
-    FROM device_history
-    WHERE timestamp >= $1
-      AND timestamp < $2
-    ORDER BY device_id ASC, timestamp ASC`;
+    const queryCommand = `SELECT device_id, points, timestamp
+        FROM device_history
+        WHERE timestamp >= $1
+          AND timestamp < $2
+        ORDER BY device_id ASC, timestamp ASC`;
+
+        const [querySql, querySqlParams] = mockDatabaseService.query.mock.calls[0]
+        expect(normalizeSql(querySql)).toEqual(normalizeSql(queryCommand))
+        expect(querySqlParams).toEqual(['2026-06-08T00:00:00.000Z', '2026-06-09T00:00:00.000Z'])
 
 
-    expect(mockDatabaseService.query).toHaveBeenCalledWith(queryCommand, ['2026-06-08T00:00:00.000Z', '2026-06-09T00:00:00.000Z'])
     expect(result).toEqual({
       "records": [
         {

@@ -10,7 +10,7 @@ describe('History E2E', () => {
 
   const historyData =  [{
       "version": "1.4.2",
-      "timestamp": "1922-03-25T16:16:31+00:00",
+      "timestamp": "1923-03-25T16:16:31+00:00",
       "device_id": "QSE-999996",
       "points": {
         "co2_level": {
@@ -78,12 +78,12 @@ describe('History E2E', () => {
   it('GET /history/data', async () => {
     const result = await app.inject({
       method: 'GET',
-      url: '/history/data?from=1922-03-25T00:00:00.000Z&to=1922-03-26T00:00:00.000Z',
+      url: '/history/data?from=1923-03-25T00:00:00.000Z&to=1923-03-26T00:00:00.000Z',
     });
 
     expect(result.statusCode).toEqual(200);
     const body = JSON.parse(result.payload);
-    const { version, timestamp, ...expectdHistoryData } = historyData[0];
+    const { version, ...expectdHistoryData } = historyData[0];
     expect(body.records[0]).toEqual(expectdHistoryData)
     expect(body.count).toBe(1);
   });
