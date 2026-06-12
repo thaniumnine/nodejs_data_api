@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { number, string } from 'zod';
 import {AggregationData, AggregationRecordsService, QueryAggregationRecords, QueryAggregationRecordsSchema} from './aggregation-records.service'
@@ -27,7 +27,18 @@ createAggregationData(
   @Body() aggregationData: AggregationData,
 ) {
     return this.aggregationService.createAggregationDataEvent(deviceType,aggregationData)
-    }    
+    }  
+    
+    
+  @Delete("data")
+  @HttpCode(204)
+  deleteAggregationData(
+   @Param('device_type') deviceType: string,
+    @Body('ids') ids: string[]) {
+    return this.aggregationService.deleteAggregationDataEvent(deviceType,ids);
+  }
+
+
 }
 
 

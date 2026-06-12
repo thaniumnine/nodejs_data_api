@@ -37,25 +37,46 @@ export class AggregationService {
   }
 
 
-   async list(){
-      return this.database.db
-        .selectFrom('aggregation')
-        .selectAll()
-        .orderBy('device_type', 'asc')
-        .execute();
+async list() {
+  return this.database.db
+    .selectFrom('aggregation')
+    .select([
+      'device_type',
+      'columns',
+      'table_name',
+    ])
+    .orderBy('device_type', 'asc')
+    .execute();
+}
+
+
+  async getByName(device_type: string) {
+    return this.database.db.selectFrom('aggregation').select([
+      'device_type',
+      'columns',
+      'table_name',
+    ]).where('device_type', '=', device_type).executeTakeFirst();
+  }
+
+  async getRequiredByName(name: string) {
+    const deviceTypeData = await this.getByName(name);
+    if (!deviceTypeData) {
+      throw new NotFoundException(`device name not found: ${name}`);
     }
-  
+    return deviceTypeData;
+  }
 
 
-      async getByName(device_type: string){
-        return this.database.db.selectFrom('aggregation').selectAll().where('device_type', '=', device_type).executeTakeFirst();
-      }
-    
-      async getRequiredByName(name: string) {
-        const deviceTypeData = await this.getByName(name);
-        if (!deviceTypeData ) {
-          throw new NotFoundException(`device name not found: ${name}`);
-        }
-        return deviceTypeData;
-      }
+      
+
+  async deleteAggregationMetadataEvent(ids: string[]) {
+    const result = await this.database.query(
+      `
+    DELETE FROM aggregation
+    WHERE device_type = ANY($1)
+    `,
+      [ids],
+    );
+  }
+
 }

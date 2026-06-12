@@ -8,7 +8,8 @@ describe('History Controller', () => {
     let mockAggregationService = {
         createDeviceType: jest.fn(),
         list:jest.fn(),
-        getRequiredByName:jest.fn()
+        getRequiredByName:jest.fn(),
+        deleteAggregationMetadataEvent:jest.fn()
     }
 
     beforeEach(async () => {
@@ -113,6 +114,18 @@ describe('History Controller', () => {
         expect(result).toEqual(getAllDeviceTypesQueryResult)
 
     })
+
+
+    
+    test('deleteDeviceHistoryDataEvent', async () => {
+        const idsToDelete = ['QSE-9999'];
+        const result = await controller.deleteAggregationData(idsToDelete);
+        expect(mockAggregationService.deleteAggregationMetadataEvent).toHaveBeenCalledWith(idsToDelete);
+        expect(result).toBeUndefined();
+
+    })
+
+    
 
 });
 

@@ -145,5 +145,22 @@ describe('HistoryService', () => {
 
 
 
+  test('deleteDeviceHistoryDataEvent', async () => {
+    const idsToDelete = ['QSE-9999'];
+
+    mockDatabaseService.query.mockResolvedValue({
+      rowCount: 1,
+      rows: [],
+    });
+
+    const result = await service.deleteDeviceHistoryDataEvent(idsToDelete);
+
+    expect(mockDatabaseService.query).toHaveBeenCalledWith(
+      expect.stringContaining('DELETE FROM device_history'),
+      [idsToDelete],
+    );
+
+    expect(result).toBeUndefined();
+  });
 })
 
