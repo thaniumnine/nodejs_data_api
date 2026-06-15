@@ -134,8 +134,23 @@ describe('HistoryService', () => {
       }
     }]
   }
+      const result = await service.createDeviceHistoryDataEvent(historyDataMock);
+      expect(mockDatabaseService.db.insertInto).toHaveBeenCalledWith("device_history")
+      let input = historyDataMock.items[0]
+      expect(
+        (mockDatabaseService.db.insertInto as jest.Mock).mock.results[0].value.values,
+      ).toHaveBeenCalledWith([
+      {
+          device_id: input.device_id,
+          timestamp: new Date(input.timestamp),
+          json_type:"pointset",
+          version:input.version,
+          points:input.points
+        }
+      ])
 
-    const result = await service.createDeviceHistoryDataEvent(historyDataMock);
+
+
     expect(result).toBeUndefined();
 
   });
