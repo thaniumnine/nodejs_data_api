@@ -22,16 +22,17 @@ describe('HistoryService', () => {
       }
     ]
   
+  const normalizeSql = (sql: string) => (
+        sql.replace(/\s+/g, ' ').trim()
+    )
+
   let service: HistoryService;
   const mockDatabaseService = {
     query: jest.fn(),
     db: {
       insertInto: jest.fn().mockReturnValue({
         values: jest.fn().mockReturnValue({
-          returningAll: jest.fn().mockReturnValue({
             execute: jest.fn().mockResolvedValue(mockCreateQueryResult)
-          })
-
         })
       }
 
@@ -86,14 +87,17 @@ describe('HistoryService', () => {
       to: '2026-06-09T00:00:00.000Z'
     });
 
-    const queryCommand = `SELECT *
-    FROM device_history
-    WHERE timestamp >= $1
-      AND timestamp < $2
-    ORDER BY device_id ASC, timestamp ASC`;
+    const queryCommand = `SELECT device_id, points, timestamp
+        FROM device_history
+        WHERE timestamp >= $1
+          AND timestamp < $2
+        ORDER BY device_id ASC, timestamp ASC`;
+
+        const [querySql, querySqlParams] = mockDatabaseService.query.mock.calls[0]
+        expect(normalizeSql(querySql)).toEqual(normalizeSql(queryCommand))
+        expect(querySqlParams).toEqual(['2026-06-08T00:00:00.000Z', '2026-06-09T00:00:00.000Z'])
 
 
-    expect(mockDatabaseService.query).toHaveBeenCalledWith(queryCommand, ['2026-06-08T00:00:00.000Z', '2026-06-09T00:00:00.000Z'])
     expect(result).toEqual({
       "records": [
         {
@@ -130,13 +134,45 @@ describe('HistoryService', () => {
       }
     }]
   }
+      const result = await service.createDeviceHistoryDataEvent(historyDataMock);
+      expect(mockDatabaseService.db.insertInto).toHaveBeenCalledWith("device_history")
+      let input = historyDataMock.items[0]
+      expect(
+        (mockDatabaseService.db.insertInto as jest.Mock).mock.results[0].value.values,
+      ).toHaveBeenCalledWith([
+      {
+          device_id: input.device_id,
+          timestamp: new Date(input.timestamp),
+          json_type:"pointset",
+          version:input.version,
+          points:input.points
+        }
+      ])
 
-    const result = await service.createDeviceHistoryDataEvent(historyDataMock);
-    expect(result).toEqual({event:mockCreateQueryResult});
+
+
+    expect(result).toBeUndefined();
 
   });
 
 
 
+  test('deleteDeviceHistoryDataEvent', async () => {
+    const idsToDelete = ['QSE-9999'];
+
+    mockDatabaseService.query.mockResolvedValue({
+      rowCount: 1,
+      rows: [],
+    });
+
+    const result = await service.deleteDeviceHistoryDataEvent(idsToDelete);
+
+    expect(mockDatabaseService.query).toHaveBeenCalledWith(
+      expect.stringContaining('DELETE FROM device_history'),
+      [idsToDelete],
+    );
+
+    expect(result).toBeUndefined();
+  });
 })
 

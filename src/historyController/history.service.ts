@@ -1,7 +1,7 @@
 import {  Injectable, NotFoundException } from "@nestjs/common";
 import { DatabaseService } from "../database/database.service";
 import { JsonValue } from "../database/db.types";
-import z from "zod";
+import z, { string } from "zod";
 
 export type DeviceHistoryRecord = {
   device_id: string;
@@ -15,6 +15,7 @@ export type DeviceHistoryRecord = {
 export type DeviceHistoryData = {
   items:DeviceHistoryRecord[]
 }
+
 
 export const QueryDeviceHistorySchema = z.object({
   from: z.string().datetime(),
@@ -41,17 +42,13 @@ export class HistoryService {
           version: input.version,
           points: input.points
         }
-      }))
-      .returningAll()
+        }))
       .execute();
 
-    return {
-      event
-    };
   }
   async queryDeviceHistory(query: QueryDeviceHistoryRecords) {
     const result = await this.database.query(
-      `SELECT *
+      `SELECT device_id, points, timestamp
     FROM device_history
     WHERE timestamp >= $1
       AND timestamp < $2
@@ -63,5 +60,19 @@ export class HistoryService {
 
 
   };
+
+
+async deleteDeviceHistoryDataEvent(ids: string[]) {
+  const result = await this.database.query(
+    `
+    DELETE FROM device_history
+    WHERE device_id = ANY($1)
+    `,
+    [ids],
+  );
+
+
+
+}
 
 }

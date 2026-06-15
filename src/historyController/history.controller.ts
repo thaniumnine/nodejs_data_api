@@ -1,8 +1,8 @@
 import { ZodValidationPipe } from 'src/common/pipes/zod-validation.pipe.js';
-import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from  '../auth/jwt-auth.guard';
 import { number, string } from 'zod';
-import { DeviceHistoryData, HistoryService, QueryDeviceHistoryRecords, QueryDeviceHistorySchema} from './history.service'
+import {  DeviceHistoryData, HistoryService, QueryDeviceHistoryRecords, QueryDeviceHistorySchema} from './history.service'
 
 
 @UseGuards(JwtAuthGuard)
@@ -30,4 +30,11 @@ createHistoryData(
 
 
 
+@Delete('data')
+@HttpCode(204)
+deleteHistoryData(@Body('ids') ids: string[]) {
+  
+  return this.historyService.deleteDeviceHistoryDataEvent(ids);
 }
+
+  }
