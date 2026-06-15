@@ -43,12 +43,8 @@ async createDeviceHistoryDataEvent(inputs: DeviceHistoryData) {
           points:input.points
         }
         }))
-      .returningAll()
       .execute();
 
-    return {
-      event
-    };
   }
   async queryDeviceHistory(query: QueryDeviceHistoryRecords) {
     const result = await this.database.query(
