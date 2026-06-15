@@ -16,7 +16,7 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitOverride": true,
     "moduleResolution": "node",
-    "types": ["node"]
+    "types": ["node","jest"]
   },
   "include": ["src/**/*.ts", "scripts/**/*.ts"],
   "exclude": ["node_modules", "dist"]

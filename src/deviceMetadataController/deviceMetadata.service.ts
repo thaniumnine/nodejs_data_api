@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { DatabaseService } from "src/database/database.service";
-import { JsonValue } from "src/database/db.types";
+import {  Injectable, NotFoundException } from "@nestjs/common";
+import { DatabaseService } from "../database/database.service";
+import { JsonValue } from "../database/db.types";
 import z from "zod";
 
 export type DeviceMetadataRecord = {
@@ -34,7 +34,10 @@ export type DeviceMetadataRecord = {
 
   }
 }
-export type DeviceMetadataData = DeviceMetadataRecord[];
+export type DeviceMetadataData = {
+  items:
+  DeviceMetadataRecord[];
+}
 
 export const QueryDeviceMetadataSchema = z.object({
   from: z.string().datetime(),
@@ -53,8 +56,8 @@ export class DeviceMetadataService {
 
     const event = await this.database.db
       .insertInto("device_metadata")
-      .values(inputs.map((input) => {
-        return {
+      .values(inputs.items.map((input)=>{
+        return{
           device_id: input.system.physical_tag.asset.name, // should it repeat
           version: input.version,
           timestamp: new Date(input.timestamp),
@@ -86,9 +89,7 @@ export class DeviceMetadataService {
   }
   async queryDeviceMetadata(query: QueryDeviceMetadataRecords) {
     const result = await this.database.query(
-      `SELECT *
-
-    FROM device_metadata
+      `SELECT * FROM device_metadata
     WHERE timestamp >= $1
       AND timestamp < $2
     ORDER BY device_id ASC, timestamp ASC`,
