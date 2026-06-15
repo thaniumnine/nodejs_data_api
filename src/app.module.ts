@@ -12,7 +12,7 @@ import { HistoryModule } from './historyController/history.module';
 import { DeviceMetadataModule } from './deviceMetadataController/deviceMetadata.module';
 
 @Module({
-  imports: [DatabaseModule, UsersModule, AuthModule, TopicsModule, TopicRecordsModule,AggregationRecordsModule,AggregationModule,HistoryModule,DeviceMetadataModule],
-  controllers: [HealthController,HomeController]
+  imports: [DatabaseModule, UsersModule, AuthModule, TopicsModule, TopicRecordsModule, AggregationRecordsModule, AggregationModule, HistoryModule, DeviceMetadataModule],
+  controllers: [HealthController, HomeController]
 })
-export class AppModule {}
+export class AppModule { }
