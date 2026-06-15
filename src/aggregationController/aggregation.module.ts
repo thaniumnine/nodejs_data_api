@@ -4,11 +4,10 @@ import { TopicsModule } from '../topics/topics.module';
 import { AggregationController } from './aggregation.controller';
 import { AggregationService } from './aggregation.service';
 
-
 @Module({
   imports: [AuthModule],
   controllers: [AggregationController],
   providers: [AggregationService],
-  exports:[AggregationService]
+  exports: [AggregationService]
 })
-export class AggregationModule {}
+export class AggregationModule { }

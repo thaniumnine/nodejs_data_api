@@ -8,6 +8,6 @@ import { HistoryService } from './history.service';
   imports: [AuthModule],
   controllers: [HistoryController],
   providers: [HistoryService],
-  exports:[HistoryService]
+  exports: [HistoryService]
 })
-export class HistoryModule {}
+export class HistoryModule { }

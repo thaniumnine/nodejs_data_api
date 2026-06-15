@@ -16,7 +16,7 @@ import { TopicRecordsService } from './topic-records.service';
 @UseGuards(JwtAuthGuard)
 @Controller('topics/:topic')
 export class TopicRecordsController {
-  constructor(private readonly topicRecordsService: TopicRecordsService) {}
+  constructor(private readonly topicRecordsService: TopicRecordsService) { }
 
   @Post('events')
   createTopicEvent(

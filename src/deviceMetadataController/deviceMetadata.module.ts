@@ -8,6 +8,6 @@ import { DeviceMetadataService } from './deviceMetadata.service';
   imports: [AuthModule],
   controllers: [DeviceMetadataController],
   providers: [DeviceMetadataService],
-  exports:[DeviceMetadataService]
+  exports: [DeviceMetadataService]
 })
-export class DeviceMetadataModule {}
+export class DeviceMetadataModule { }

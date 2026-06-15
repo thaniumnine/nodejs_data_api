@@ -9,7 +9,7 @@ import { DeviceMetadataData, DeviceMetadataService, QueryDeviceMetadataRecords }
 @UseGuards(JwtAuthGuard)
 @Controller('device_metadata')
 export class DeviceMetadataController {
-  constructor(   private readonly historyService: DeviceMetadataService) {}
+  constructor(private readonly historyService: DeviceMetadataService) { }
 
 @Get('data')
 queryHistoryMetadata(
@@ -17,8 +17,8 @@ queryHistoryMetadata(
   @Query() query: QueryDeviceMetadataRecords
 ) {
 
-   return this.historyService.queryDeviceMetadata(query);
-}
+    return this.historyService.queryDeviceMetadata(query);
+  }
 
 
 
@@ -27,8 +27,8 @@ createHistoryMetadata(
   @Body() deviceHistoryData: DeviceMetadataData,
 ) {
     return this.historyService.createDeviceMetadataDataEvent(deviceHistoryData)
-    }    
-
-
-
   }
+
+
+
+}

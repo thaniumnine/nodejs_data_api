@@ -7,27 +7,25 @@ import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
 @UseGuards(JwtAuthGuard)
 @Controller('aggregation/:device_type')
 export class AggregationRecordsController {
-  constructor(   private readonly aggregationService: AggregationRecordsService) {}
+  constructor(private readonly aggregationService: AggregationRecordsService) { }
 
-@Get('data')
-queryAggregationData(
-  @Param('device_type') deviceType: string,
-  @Query(new ZodValidationPipe(QueryAggregationRecordsSchema)) query: QueryAggregationRecords
- // @Query("from") from:string , @Query("to") to:string
-) {
+  @Get('data')
+  queryAggregationData(
+    @Param('device_type') deviceType: string,
+    @Query(new ZodValidationPipe(QueryAggregationRecordsSchema)) query: QueryAggregationRecords
+    // @Query("from") from:string , @Query("to") to:string
+  ) {
 
-   return this.aggregationService.queryAggregationRecords(deviceType,query);
-}
+    return this.aggregationService.queryAggregationRecords(deviceType, query);
+  }
 
-
-
-@Post('data')
-createAggregationData(
-  @Param('device_type') deviceType: string,
-  @Body() aggregationData: AggregationData,
-) {
-    return this.aggregationService.createAggregationDataEvent(deviceType,aggregationData)
-    }    
+  @Post('data')
+  createAggregationData(
+    @Param('device_type') deviceType: string,
+    @Body() aggregationData: AggregationData,
+  ) {
+    return this.aggregationService.createAggregationDataEvent(deviceType, aggregationData)
+  }
 }
 
 

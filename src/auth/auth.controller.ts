@@ -29,7 +29,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly sessionsService: SessionsService
-  ) {}
+  ) { }
 
   @Post('register')
   register(@Body(new ZodValidationPipe(RegisterSchema)) body: RegisterDto) {
@@ -41,14 +41,14 @@ export class AuthController {
   }
 
   @Post('login')
- async login(@Body(new ZodValidationPipe(LoginSchema)) body: LoginDto, @Req() request: RequestInfo) {
+  async login(@Body(new ZodValidationPipe(LoginSchema)) body: LoginDto, @Req() request: RequestInfo) {
     console.log("try to lgogin")
     let test = this.authService.login({
       email: body.email,
       password: body.password,
       userAgent: getUserAgent(request),
       ipAddress: getClientIp(request)
-    }); 
+    });
     return test;
   }
 
