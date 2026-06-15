@@ -32,10 +32,7 @@ describe('HistoryService', () => {
     db: {
       insertInto: jest.fn().mockReturnValue({
         values: jest.fn().mockReturnValue({
-          returningAll: jest.fn().mockReturnValue({
             execute: jest.fn().mockResolvedValue(mockCreateQueryResult)
-          })
-
         })
       }
 
@@ -139,7 +136,7 @@ describe('HistoryService', () => {
   }
 
     const result = await service.createDeviceHistoryDataEvent(historyDataMock);
-    expect(result).toEqual({event:mockCreateQueryResult});
+    expect(result).toBeUndefined();
 
   });
 

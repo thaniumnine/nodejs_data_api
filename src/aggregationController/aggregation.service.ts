@@ -29,11 +29,8 @@ export class AggregationService {
       columns: JSON.stringify(input.columns),
     
   })
-      .returningAll()
       .executeTakeFirstOrThrow();
-    return {
-      event
-    };
+ 
   }
 
 

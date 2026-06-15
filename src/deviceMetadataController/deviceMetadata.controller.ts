@@ -22,19 +22,20 @@ queryHistoryMetadata(
 
 
 
-@Post('data')
-createHistoryMetadata(
-  @Body() deviceHistoryData: DeviceMetadataData,
+  @Post('data')
+  @HttpCode(201)
+  createHistoryMetadata(
+    @Body() deviceHistoryData: DeviceMetadataData,
 ) {
     return this.historyService.createDeviceMetadataDataEvent(deviceHistoryData)
-    }    
+  }
 
 
   @Delete('data')
   @HttpCode(204)
   deleteHistoryData(@Body('ids') ids: string[]) {
-
     return this.historyService.deleteDeviceHistoryMetadataEvent(ids);
+
   }
 
 }

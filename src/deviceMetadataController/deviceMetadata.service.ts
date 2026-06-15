@@ -80,12 +80,9 @@ async createDeviceMetadataDataEvent(inputs: DeviceMetadataData) {
 
         }
         }))
-      .returningAll()
       .execute();
 
-    return {
-      event
-    };
+  
   }
   async queryDeviceMetadata(query: QueryDeviceMetadataRecords) {
     const result = await this.database.query(

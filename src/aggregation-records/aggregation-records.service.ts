@@ -62,12 +62,7 @@ export class AggregationRecordsService {
             eb.ref(`excluded.${column.name}`)
           ])))
       )
-      .returningAll()
       .execute();
-
-    return {
-      event
-    };
   }
 
 

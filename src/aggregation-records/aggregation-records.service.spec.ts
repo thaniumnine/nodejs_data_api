@@ -43,9 +43,7 @@ describe('AggregationRecordsService', () => {
             insertInto: jest.fn().mockReturnValue({
                 values: jest.fn().mockReturnValue({
                     onConflict: jest.fn().mockReturnValue({
-                        returningAll: jest.fn().mockReturnValue({
                             execute: jest.fn().mockResolvedValue(mockCreateQueryResult)
-                        })
                     })
 
 
@@ -171,7 +169,7 @@ describe('AggregationRecordsService', () => {
                 room_temperature_setpoint: null,
             }
         ])
-        expect(result).toEqual({ event: mockCreateQueryResult });
+        expect(result).toBeUndefined();
 
     });
 

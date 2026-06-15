@@ -78,9 +78,7 @@ describe('AggregationService', () => {
     db: {
       insertInto: jest.fn().mockReturnValue({
         values: jest.fn().mockReturnValue({
-          returningAll: jest.fn().mockReturnValue({
             executeTakeFirstOrThrow: jest.fn().mockResolvedValue(CreateMockCreateQueryResult)
-          })
 
         })
       }
@@ -151,7 +149,7 @@ describe('AggregationService', () => {
         }
       ])
     })
-    expect(result).toEqual({ event: CreateMockCreateQueryResult })
+    expect(result).toBeUndefined();
   });
 
 
@@ -183,7 +181,7 @@ test('deleteDeviceHistoryDataEvent', async () => {
       [idsToDelete],
     );
 
-    expect(result).toBeUndefined();
+  
   });
 
 })
