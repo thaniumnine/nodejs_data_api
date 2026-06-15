@@ -275,7 +275,38 @@ describe('HistoryService', () => {
     }
 
         const result = await service.createDeviceMetadataDataEvent(DevicehistoryMetdataMock);
-        console.log(result);
+        
+        expect(mockDatabaseService.db.insertInto).toHaveBeenCalledWith("device_metadata")
+        let input = DevicehistoryMetdataMock.items[0]
+        expect(
+            (mockDatabaseService.db.insertInto as jest.Mock).mock.results[0].value.values,
+        ).toHaveBeenCalledWith([
+            {
+
+                device_id:  "QSE-00005", // should it repeat
+                version: input.version,
+                timestamp: new Date(input.timestamp),
+                "system.location.site": input.system.location.site,
+                "system.location.section": input.system.location.section,
+                "system.location.room": input.system.location.room,
+                "system.location.floor": input.system.location.floor,
+                "system.location.floor_seq": parseInt(input.system.location.floor_seq, 10),
+
+                "system.location.position.x": parseInt(input.system.location.position.x, 10),
+                "system.location.position.y": parseInt(input.system.location.position.y, 10),
+                "system.location.position.z": parseInt(input.system.location.position.z, 10),
+
+                "system.physical_tag.asset.guid": input.system.physical_tag.asset.guid,
+                "system.physical_tag.asset.site": input.system.physical_tag.asset.site,
+                "system.physical_tag.asset.name": input.system.physical_tag.asset.name,
+
+                // "gateway.gateway_id": input.gateway.gateway_id,
+                pointset: input.pointset
+
+
+            }
+        ])
+
         expect(result).toBeUndefined();
 
     });
