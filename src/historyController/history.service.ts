@@ -3,14 +3,14 @@ import { DatabaseService } from "../database/database.service";
 import { JsonValue } from "../database/db.types";
 import z, { string } from "zod";
 
-export type DeviceHistoryRecord= {
-    device_id: string;
-    timestamp: string;
+export type DeviceHistoryRecord = {
+  device_id: string;
+  timestamp: string;
   //  json_type:string;
-    version:string;
-    points: {
-        [pointtype:string]:JsonValue
-    }
+  version: string;
+  points: {
+    [pointtype: string]: JsonValue
+  }
 }
 export type DeviceHistoryData = {
   items:DeviceHistoryRecord[]
@@ -29,8 +29,8 @@ export type QueryDeviceHistoryRecords = z.infer<typeof QueryDeviceHistorySchema>
 export class HistoryService {
   constructor(
     private readonly database: DatabaseService,
-  ) {}
-async createDeviceHistoryDataEvent(inputs: DeviceHistoryData) {
+  ) { }
+  async createDeviceHistoryDataEvent(inputs: DeviceHistoryData) {
 
     const event = await this.database.db
       .insertInto("device_history")
@@ -38,9 +38,9 @@ async createDeviceHistoryDataEvent(inputs: DeviceHistoryData) {
         return{
           device_id: input.device_id,
           timestamp: new Date(input.timestamp),
-          json_type:"pointset",
-          version:input.version,
-          points:input.points
+          json_type: "pointset",
+          version: input.version,
+          points: input.points
         }
         }))
       .execute();

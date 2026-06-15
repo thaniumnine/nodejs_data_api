@@ -7,7 +7,7 @@ import { createOpaqueToken, hashToken } from './token.util';
 
 @Injectable()
 export class SessionsService {
-  constructor(private readonly database: DatabaseService) {}
+  constructor(private readonly database: DatabaseService) { }
 
   async createSession(input: {
     userId: string;

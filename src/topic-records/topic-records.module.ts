@@ -9,4 +9,4 @@ import { TopicRecordsService } from './topic-records.service';
   controllers: [TopicRecordsController],
   providers: [TopicRecordsService]
 })
-export class TopicRecordsModule {}
+export class TopicRecordsModule { }

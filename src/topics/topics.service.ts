@@ -5,7 +5,7 @@ import { CreateTopicDto, UpdateTopicDto } from './dto/topic.dto';
 
 @Injectable()
 export class TopicsService {
-  constructor(private readonly database: DatabaseService) {}
+  constructor(private readonly database: DatabaseService) { }
 
   async create(input: CreateTopicDto): Promise<Topic> {
     try {

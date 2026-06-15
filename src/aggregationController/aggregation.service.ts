@@ -3,8 +3,8 @@ import { DatabaseService } from "../database/database.service";
 import { JsonValue } from "../database/db.types";
 import z from "zod";
 export type AggregationDeviceTypeColumnRecord = {
-  name:string
-  type:string
+  name: string
+  type: string
 
 }
 
@@ -19,9 +19,9 @@ export type AggregationDeviceTypeRecord= {
 export class AggregationService {
   constructor(
     private readonly database: DatabaseService,
-  ) {}
+  ) { }
 
-  async createDeviceType( input: AggregationDeviceTypeRecord) {
+  async createDeviceType(input: AggregationDeviceTypeRecord) {
     const event = await this.database.db
       .insertInto("aggregation")
       .values( {device_type: input.device_type,
@@ -33,6 +33,13 @@ export class AggregationService {
  
   }
 
+  async list() {
+    return this.database.db
+      .selectFrom('aggregation')
+      .selectAll()
+      .orderBy('device_type', 'asc')
+      .execute();
+  }
 
 async list() {
   return this.database.db

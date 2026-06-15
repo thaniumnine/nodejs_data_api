@@ -7,8 +7,8 @@ import { AggregationModule } from '../aggregationController/aggregation.module';
 
 
 @Module({
-  imports: [AuthModule,AggregationModule],
+  imports: [AuthModule, AggregationModule],
   controllers: [AggregationRecordsController],
   providers: [AggregationRecordsService]
 })
-export class AggregationRecordsModule {}
+export class AggregationRecordsModule { }
