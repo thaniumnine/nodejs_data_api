@@ -21,6 +21,21 @@ describe('AggregationRecordsService', () => {
     }]
 }
 
+  const mockDeviceMetadata = {
+            "device_type": "acu",
+            "table_name": "device_simmtronics_acu_agg_events",
+            "columns": [
+                {
+                    "name": "room_temperature",
+                    "type": "numeric"
+                },
+                {
+                    "name": "room_temperature_setpoint",
+                    "type": "numeric"
+                }
+            ]
+        }
+
     let service: AggregationRecordsService;
     const mockDatabaseService = {
         query: jest.fn(),
@@ -28,9 +43,7 @@ describe('AggregationRecordsService', () => {
             insertInto: jest.fn().mockReturnValue({
                 values: jest.fn().mockReturnValue({
                     onConflict: jest.fn().mockReturnValue({
-                        returningAll: jest.fn().mockReturnValue({
                             execute: jest.fn().mockResolvedValue(mockCreateQueryResult)
-                        })
                     })
 
 
@@ -89,22 +102,7 @@ describe('AggregationRecordsService', () => {
 
         mockDatabaseService.query.mockResolvedValue(mockQueryResult)
 
-        const mockDeviceMetadata = {
-            "id": "54a1b2f2-0e74-45cb-a164-c24dc302b5e5",
-            "device_type": "acu",
-            "table_name": "device_simmtronics_acu_agg_events",
-            "columns": [
-                {
-                    "name": "room_temperature",
-                    "type": "numeric"
-                },
-                {
-                    "name": "room_temperature_setpoint",
-                    "type": "numeric"
-                }
-            ],
-            "created_at": "2026-06-03T15:06:39.847Z"
-        }
+      
         mockAggregationService.getRequiredByName.mockResolvedValue(mockDeviceMetadata)
 
         let deviceType = "acu"
@@ -148,6 +146,9 @@ describe('AggregationRecordsService', () => {
         })
 
 
+    
+
+
 
     })
 
@@ -155,24 +156,7 @@ describe('AggregationRecordsService', () => {
 
     test('createAggregationDataEvent', async () => {
         const deviceType = "acu"
-        const getAllDeviceTypesQueryResult =
-        {
-            "id": "54a1b2f2-0e74-45cb-a164-c24dc302b5e5",
-            "device_type": "acu",
-            "table_name": "device_simmtronics_acu_agg_events",
-            "columns": [
-                {
-                    "name": "room_temperature",
-                    "type": "numeric"
-                },
-                {
-                    "name": "room_temperature_setpoint",
-                    "type": "numeric"
-                }
-            ],
-            "created_at": "2026-06-03T15:06:39.847Z"
-        }
-        mockAggregationService.getRequiredByName.mockResolvedValue(getAllDeviceTypesQueryResult);
+        mockAggregationService.getRequiredByName.mockResolvedValue(mockDeviceMetadata);
         const result = await service.createAggregationDataEvent(deviceType, mockCreateQueryResult);
         expect(mockDatabaseService.db.insertInto).toHaveBeenCalledWith("device_simmtronics_acu_agg_events")
         const insertIntoResults = (mockDatabaseService.db.insertInto as jest.Mock).mock.results[0].value
@@ -185,9 +169,29 @@ describe('AggregationRecordsService', () => {
                 room_temperature_setpoint: null,
             }
         ])
-        expect(result).toEqual({ event: mockCreateQueryResult });
+        expect(result).toBeUndefined();
 
     });
+
+
+
+    test('deleteDeviceHistoryDataEvent', async () => {
+            const idsToDelete = ['ACU'];
+
+            mockDatabaseService.query.mockResolvedValue({
+                rowCount: 1,
+                rows: [],
+            });
+
+            const result = await service.deleteAggregationDataEvent("acu", idsToDelete);
+
+            expect(mockDatabaseService.query).toHaveBeenCalledWith(
+                expect.stringContaining('DELETE FROM device_simmtronics_acu_agg_events'),
+                [idsToDelete],
+            );
+
+            expect(result).toBeUndefined();
+        });
 
 })
 

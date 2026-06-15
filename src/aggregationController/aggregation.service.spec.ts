@@ -78,16 +78,14 @@ describe('AggregationService', () => {
     db: {
       insertInto: jest.fn().mockReturnValue({
         values: jest.fn().mockReturnValue({
-          returningAll: jest.fn().mockReturnValue({
             executeTakeFirstOrThrow: jest.fn().mockResolvedValue(CreateMockCreateQueryResult)
-          })
 
         })
       }
 
       ),
       selectFrom: jest.fn().mockReturnValue({
-        selectAll: jest.fn().mockReturnValue({
+        select: jest.fn().mockReturnValue({
           orderBy: jest.fn().mockReturnValue({
             execute: jest.fn().mockResolvedValue(ListMockcQueryResult)
           }),
@@ -126,8 +124,8 @@ describe('AggregationService', () => {
     const result = await service.list();
     expect(mockDatabaseService.db.selectFrom).toHaveBeenCalledWith("aggregation")
     const selectFromResults = (mockDatabaseService.db.selectFrom as jest.Mock).mock.results[0].value
-    const selectAllResults = selectFromResults.selectAll.mock.results[0].value
-    expect(selectAllResults.orderBy).toHaveBeenCalledWith('device_type', 'asc'  )
+    const selectResults = selectFromResults.select.mock.results[0].value
+    expect(selectResults.orderBy).toHaveBeenCalledWith('device_type', 'asc'  )
     expect(result).toEqual(ListMockcQueryResult)
 
   })
@@ -151,7 +149,7 @@ describe('AggregationService', () => {
         }
       ])
     })
-    expect(result).toEqual({ event: CreateMockCreateQueryResult })
+    expect(result).toBeUndefined();
   });
 
 
@@ -160,14 +158,31 @@ describe('AggregationService', () => {
     const result = await service.getRequiredByName(deviceName);
     expect(mockDatabaseService.db.selectFrom).toHaveBeenCalledWith("aggregation")
     const selectFromResults = (mockDatabaseService.db.selectFrom as jest.Mock).mock.results[0].value
-    const selectAllResults = selectFromResults.selectAll.mock.results[0].value
-    expect(selectAllResults.where).toHaveBeenCalledWith('device_type', '=', deviceName)
+    const selectResults = selectFromResults.select.mock.results[0].value
+    expect(selectResults.where).toHaveBeenCalledWith('device_type', '=', deviceName)
     expect(result).toEqual(getdByNameMockQueryResult)
 
 
   });
 
 
+test('deleteDeviceHistoryDataEvent', async () => {
+    const idsToDelete = ['ACU'];
+
+    mockDatabaseService.query.mockResolvedValue({
+      rowCount: 1,
+      rows: [],
+    });
+
+    const result = await service.deleteAggregationMetadataEvent(idsToDelete);
+
+    expect(mockDatabaseService.query).toHaveBeenCalledWith(
+      expect.stringContaining('DELETE FROM aggregation'),
+      [idsToDelete],
+    );
+
+  
+  });
 
 })
 

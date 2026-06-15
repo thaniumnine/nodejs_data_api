@@ -24,17 +24,13 @@ export class AggregationService {
   async createDeviceType(input: AggregationDeviceTypeRecord) {
     const event = await this.database.db
       .insertInto("aggregation")
-      .values({
-        device_type: input.device_type,
-        table_name: input.table_name,
-        columns: JSON.stringify(input.columns),
-
-      })
-      .returningAll()
+      .values( {device_type: input.device_type,
+        table_name:input.table_name,
+      columns: JSON.stringify(input.columns),
+    
+  })
       .executeTakeFirstOrThrow();
-    return {
-      event
-    };
+ 
   }
 
   async list() {
@@ -45,8 +41,25 @@ export class AggregationService {
       .execute();
   }
 
+async list() {
+  return this.database.db
+    .selectFrom('aggregation')
+    .select([
+      'device_type',
+      'columns',
+      'table_name',
+    ])
+    .orderBy('device_type', 'asc')
+    .execute();
+}
+
+
   async getByName(device_type: string) {
-    return this.database.db.selectFrom('aggregation').selectAll().where('device_type', '=', device_type).executeTakeFirst();
+    return this.database.db.selectFrom('aggregation').select([
+      'device_type',
+      'columns',
+      'table_name',
+    ]).where('device_type', '=', device_type).executeTakeFirst();
   }
 
   async getRequiredByName(name: string) {
@@ -56,4 +69,18 @@ export class AggregationService {
     }
     return deviceTypeData;
   }
+
+
+      
+
+  async deleteAggregationMetadataEvent(ids: string[]) {
+    const result = await this.database.query(
+      `
+    DELETE FROM aggregation
+    WHERE device_type = ANY($1)
+    `,
+      [ids],
+    );
+  }
+
 }

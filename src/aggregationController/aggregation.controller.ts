@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { number, string } from 'zod';
 
@@ -28,4 +28,15 @@ export class AggregationController {
     return this.aggregationService.list()
   }
 
-}
+
+  @Delete()
+  @HttpCode(204)
+  deleteAggregationData(@Body('ids') ids: string[]) {
+    return this.aggregationService.deleteAggregationMetadataEvent(ids);
+  }
+
+
+
+
+
+  }
