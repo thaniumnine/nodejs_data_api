@@ -4,35 +4,35 @@ import { JsonValue } from "../database/db.types";
 import z from "zod";
 
 export type DeviceMetadataRecord = {
-    "version": string;
-    "timestamp": string;
-    "system": {
-        "location": {
-            "site": string
-            "section": string
-            "room": string
-            "floor": string
-            "floor_seq": string,
-            "position": {
-                "x": string,
-                "y": string,
-                "z": string
-            }
-        },
-        "physical_tag": {
-            "asset": {
-                "guid": string,
-                "site": string,
-                "name": string
-            }
-        }
+  "version": string;
+  "timestamp": string;
+  "system": {
+    "location": {
+      "site": string
+      "section": string
+      "room": string
+      "floor": string
+      "floor_seq": string,
+      "position": {
+        "x": string,
+        "y": string,
+        "z": string
+      }
     },
-   "pointset": {
-        "points": {
-             [pointtype: string]: JsonValue;
-        };
- 
+    "physical_tag": {
+      "asset": {
+        "guid": string,
+        "site": string,
+        "name": string
+      }
     }
+  },
+  "pointset": {
+    "points": {
+      [pointtype: string]: JsonValue;
+    };
+
+  }
 }
 export type DeviceMetadataData = {
   items:
@@ -50,9 +50,9 @@ export type QueryDeviceMetadataRecords = z.infer<typeof QueryDeviceMetadataSchem
 export class DeviceMetadataService {
   constructor(
     private readonly database: DatabaseService,
-  ) {}
+  ) { }
 
-async createDeviceMetadataDataEvent(inputs: DeviceMetadataData) {
+  async createDeviceMetadataDataEvent(inputs: DeviceMetadataData) {
 
     const event = await this.database.db
       .insertInto("device_metadata")
@@ -67,7 +67,7 @@ async createDeviceMetadataDataEvent(inputs: DeviceMetadataData) {
           "system.location.floor": input.system.location.floor,
           "system.location.floor_seq": parseInt(input.system.location.floor_seq, 10),
 
-          "system.location.position.x":  parseInt(input.system.location.position.x, 10),
+          "system.location.position.x": parseInt(input.system.location.position.x, 10),
           "system.location.position.y": parseInt(input.system.location.position.y, 10),
           "system.location.position.z": parseInt(input.system.location.position.z, 10),
 
@@ -75,7 +75,7 @@ async createDeviceMetadataDataEvent(inputs: DeviceMetadataData) {
           "system.physical_tag.asset.site": input.system.physical_tag.asset.site,
           "system.physical_tag.asset.name": input.system.physical_tag.asset.name,
 
-         // "gateway.gateway_id": input.gateway.gateway_id,
+          // "gateway.gateway_id": input.gateway.gateway_id,
           pointset: input.pointset
 
         }

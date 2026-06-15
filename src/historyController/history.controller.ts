@@ -8,7 +8,7 @@ import {  DeviceHistoryData, HistoryService, QueryDeviceHistoryRecords, QueryDev
 @UseGuards(JwtAuthGuard)
 @Controller('history')
 export class HistoryController {
-  constructor(   private readonly historyService: HistoryService) {}
+  constructor(private readonly historyService: HistoryService) { }
 
 @Get('data')
 queryHistoryData(
@@ -16,8 +16,8 @@ queryHistoryData(
   @Query() query: QueryDeviceHistoryRecords
 ) {
 
-   return this.historyService.queryDeviceHistory(query);
-}
+    return this.historyService.queryDeviceHistory(query);
+  }
 
 
 
@@ -26,7 +26,7 @@ createHistoryData(
   @Body() deviceHistoryData: DeviceHistoryData,
 ) {
     return this.historyService.createDeviceHistoryDataEvent(deviceHistoryData)
-    }    
+  }
 
 
 

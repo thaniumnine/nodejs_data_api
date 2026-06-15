@@ -9,4 +9,4 @@ import { TopicsService } from './topics.service';
   providers: [TopicsService],
   exports: [TopicsService]
 })
-export class TopicsModule {}
+export class TopicsModule { }
