@@ -1,6 +1,6 @@
-import { Injectable } from "@nestjs/common";
-import { AggregationDeviceTypeColumnRecord, AggregationService } from "src/aggregationController/aggregation.service";
-import { DatabaseService } from "src/database/database.service";
+import {  Injectable } from "@nestjs/common";
+import { AggregationDeviceTypeColumnRecord, AggregationService } from "../aggregationController/aggregation.service";
+import { DatabaseService } from "../database/database.service";
 import z from "zod";
 
 export type AggregationRecord = {
@@ -11,7 +11,9 @@ export type AggregationRecord = {
     [columnType: string]: number | null
   }
 }
-export type AggregationData = AggregationRecord[];
+export type AggregationData = {
+        items:  AggregationRecord[];
+}
 
 export const QueryAggregationRecordsSchema = z.object({
   from: z.string().datetime(),
@@ -38,11 +40,7 @@ export class AggregationRecordsService {
 
     const event = await this.database.db
       .insertInto(table_name)
-      .values(inputs.map((input) => {
-
-        const payload = columns.map(column => (
-          [column.name, input.payload[column.name] ?? null]
-        ));
+      .values(inputs.items.map((input)=>{
 
         return {
           device_id: input.device_id,

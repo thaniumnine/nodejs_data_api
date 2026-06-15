@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { DatabaseService } from "src/database/database.service";
-import { JsonValue } from "src/database/db.types";
+import {  Injectable, NotFoundException } from "@nestjs/common";
+import { DatabaseService } from "../database/database.service";
+import { JsonValue } from "../database/db.types";
 import z from "zod";
 export type AggregationDeviceTypeColumnRecord = {
   name: string
@@ -8,10 +8,10 @@ export type AggregationDeviceTypeColumnRecord = {
 
 }
 
-export type AggregationDeviceTypeRecord = {
-  device_type: string
-  table_name: string
-  columns: AggregationDeviceTypeColumnRecord
+export type AggregationDeviceTypeRecord= {
+    device_type:string
+    table_name:string
+    columns:AggregationDeviceTypeColumnRecord[]
 
 }
 

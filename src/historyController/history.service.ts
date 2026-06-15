@@ -1,6 +1,6 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
-import { DatabaseService } from "src/database/database.service";
-import { JsonValue } from "src/database/db.types";
+import {  Injectable, NotFoundException } from "@nestjs/common";
+import { DatabaseService } from "../database/database.service";
+import { JsonValue } from "../database/db.types";
 import z from "zod";
 
 export type DeviceHistoryRecord = {
@@ -12,7 +12,9 @@ export type DeviceHistoryRecord = {
     [pointtype: string]: JsonValue
   }
 }
-export type DeviceHistoryData = DeviceHistoryRecord[];
+export type DeviceHistoryData = {
+  items:DeviceHistoryRecord[]
+}
 
 export const QueryDeviceHistorySchema = z.object({
   from: z.string().datetime(),
@@ -31,8 +33,8 @@ export class HistoryService {
 
     const event = await this.database.db
       .insertInto("device_history")
-      .values(inputs.map((input) => {
-        return {
+      .values(inputs.items.map((input)=>{
+        return{
           device_id: input.device_id,
           timestamp: new Date(input.timestamp),
           json_type: "pointset",
@@ -49,10 +51,7 @@ export class HistoryService {
   }
   async queryDeviceHistory(query: QueryDeviceHistoryRecords) {
     const result = await this.database.query(
-      `SELECT 
-      device_id,
-
-      points
+      `SELECT *
     FROM device_history
     WHERE timestamp >= $1
       AND timestamp < $2
