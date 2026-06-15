@@ -6,105 +6,113 @@ import { AppModule } from '../src/app.module';
 
 describe('History E2E', () => {
   let app: NestFastifyApplication;
-  
-const expectdHistoryData = {records:[
-        {
-            "device_id": "QSE-00005",
-            "version": "1.4.2",
-            "timestamp": "1920-03-20T00:54:38.000Z",
-            "system.location.site": "GB-LON-9212",
-            "system.location.section": "TENANT-ZONE-1",
-            "system.location.room": "Plant-Room",
-            "system.location.floor": "FIRST-FLOOR",
-            "system.location.floor_seq": 1,
-            "system.location.position.x": 2010658,
-            "system.location.position.y": -283739,
-            "system.location.position.z": 3,
-            "system.physical_tag.asset.guid": "guid://c5A_Of5Kcn2bUJSkAlfUS5",
-            "system.physical_tag.asset.site": "GB-LON-9212",
-            "system.physical_tag.asset.name": "QSE-00005",
-            "gateway.gateway_id": null,
-            "pointset": {
-                "points": {
-                    "humidity": {
-                        "tags": [
-                            "point",
-                            "sensor",
-                            "air",
-                            "humidity"
-                        ],
-                        "unit": "%RH"
-                    },
-                    "pressure": {
-                        "tags": [
-                            "point",
-                            "sensor",
-                            "barometric",
-                            "pressure"
-                        ],
-                        "unit": "mbar"
-                    },
-                    "co2_level": {
-                        "tags": [
-                            "point",
-                            "sensor",
-                            "air",
-                            "co2",
-                            "concentration"
-                        ],
-                        "unit": "ppm"
-                    },
-                    "temperature": {
-                        "tags": [
-                            "point",
-                            "sensor",
-                            "air",
-                            "temp"
-                        ],
-                        "unit": "°C"
-                    },
-                    "air_quality_index": {
-                        "tags": [
-                            "point",
-                            "sensor",
-                            "air",
-                            "airQuality"
-                        ]
-                    },
-                    "illuminance_sensor": {
-                        "tags": [
-                            "point",
-                            "sensor",
-                            "light",
-                            "illuminance"
-                        ],
-                        "unit": "lx"
-                    },
-                    "minute_sound_level": {
-                        "tags": [
-                            "point",
-                            "sensor",
-                            "soundLevel"
-                        ],
-                        "unit": "db"
-                    },
-                    "total_volatile_organic_compounds": {
-                        "tags": [
-                            "point",
-                            "sensor",
-                            "air",
-                            "tvoc",
-                            "concentration"
-                        ],
-                        "unit": "ppb"
-                    }
-                }
-            }
-        
-      }]
-    }
 
-  const historyMetadata =  [{
+    const expectedHistoryData = {
+        records: [
+            {
+                version: "1.4.2",
+                timestamp: "1920-03-20T00:54:38.000Z",
+                system: {
+                    location: {
+                        site: "GB-LON-9212",
+                        section: "TENANT-ZONE-1",
+                        room: "Plant-Room",
+                        floor: "FIRST-FLOOR",
+                        floor_seq: "1",
+                        position: {
+                            x: "2010658",
+                            y: "-283739",
+                            z: "3",
+                        },
+                    },
+                    physical_tag: {
+                        asset: {
+                            guid: "guid://c5A_Of5Kcn2bUJSkAlfUS5",
+                            site: "GB-LON-9212",
+                            name: "QSE-00005",
+                        },
+                    },
+                },
+                pointset: {
+                    points: {
+                        humidity: {
+                            tags: [
+                                "point",
+                                "sensor",
+                                "air",
+                                "humidity",
+                            ],
+                            unit: "%RH",
+                        },
+                        pressure: {
+                            tags: [
+                                "point",
+                                "sensor",
+                                "barometric",
+                                "pressure",
+                            ],
+                            unit: "mbar",
+                        },
+                        co2_level: {
+                            tags: [
+                                "point",
+                                "sensor",
+                                "air",
+                                "co2",
+                                "concentration",
+                            ],
+                            unit: "ppm",
+                        },
+                        temperature: {
+                            tags: [
+                                "point",
+                                "sensor",
+                                "air",
+                                "temp",
+                            ],
+                            unit: "°C",
+                        },
+                        air_quality_index: {
+                            tags: [
+                                "point",
+                                "sensor",
+                                "air",
+                                "airQuality",
+                            ],
+                        },
+                        illuminance_sensor: {
+                            tags: [
+                                "point",
+                                "sensor",
+                                "light",
+                                "illuminance",
+                            ],
+                            unit: "lx",
+                        },
+                        minute_sound_level: {
+                            tags: [
+                                "point",
+                                "sensor",
+                                "soundLevel",
+                            ],
+                            unit: "db",
+                        },
+                        total_volatile_organic_compounds: {
+                            tags: [
+                                "point",
+                                "sensor",
+                                "air",
+                                "tvoc",
+                                "concentration",
+                            ],
+                            unit: "ppb",
+                        },
+                    },
+                },
+            },
+        ],
+    };
+    const historyMetadata =  [{
     "version": "1.4.2",
     "timestamp": "1920-03-20T00:54:38+00:00",
     "system": {
@@ -251,7 +259,7 @@ const expectdHistoryData = {records:[
     const body = JSON.parse(result.payload);
 
   
-    expect(body.records).toEqual(expectdHistoryData.records)
+    expect(body.records).toEqual(expectedHistoryData.records)
     expect(body.count).toBe(1);
   });
 

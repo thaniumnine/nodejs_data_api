@@ -110,8 +110,35 @@ async createDeviceMetadataDataEvent(inputs: DeviceMetadataData) {
       [query.from, query.to]
     );
 
-
-    return { records: result.rows, count: result.rowCount };
+    let finalData = result.rows.map(row => (
+      {
+        version: row.version,
+        timestamp: row.timestamp,
+        system: {
+          location: {
+            site: row["system.location.site"],
+            section: row["system.location.section"],
+            room: row["system.location.room"],
+            floor: row["system.location.floor"],
+            floor_seq: String(row["system.location.floor_seq"]),
+            position: {
+              x: String(row["system.location.position.x"]),
+              y: String(row["system.location.position.y"]),
+              z: String(row["system.location.position.z"]),
+            },
+          },
+          physical_tag: {
+            asset: {
+              guid: row["system.physical_tag.asset.guid"],
+              site: row["system.physical_tag.asset.site"],
+              name: row["system.physical_tag.asset.name"],
+            },
+          },
+        },
+        pointset: row.pointset,
+      }
+    ));
+    return { records: finalData, count: result.rowCount };
 
 
   };

@@ -167,58 +167,58 @@ describe('HistoryService', () => {
           AND timestamp < $2
         ORDER BY device_id ASC, timestamp ASC`;
 
-        
 
-     
+
+
         const [querySql, querySqlParams] = mockDatabaseService.query.mock.calls[0]
         expect(normalizeSql(querySql)).toEqual(normalizeSql(queryCommand))
         expect(querySqlParams).toEqual(['2026-06-08T00:00:00.000Z', '2026-06-09T00:00:00.000Z'])
 
-        expect(result).toEqual({
-            "records": [
-                {
-                    "id": "1",
-                    "device_id": "QSE-00005",
-                    "version": "1.4.2",
-                    "timestamp": "2026-03-20T00:54:38.000Z",
-                    "system.location.site": "GB-LON-9212",
-                    "system.location.section": "TENANT-ZONE-1",
-                    "system.location.room": "Plant-Room",
-                    "system.location.floor": "FIRST-FLOOR",
-                    "system.location.floor_seq": 1,
-                    "system.location.position.x": 2010658,
-                    "system.location.position.y": -283739,
-                    "system.location.position.z": 3,
-                    "system.physical_tag.asset.guid": "guid://c5A_Of5Kcn2bUJSkAlfUS5",
-                    "system.physical_tag.asset.site": "GB-LON-9212",
-                    "system.physical_tag.asset.name": "QSE-00005",
-                    "gateway.gateway_id": null,
-                    "pointset": {
-                        "points": {
-                            "humidity": {
-                                "tags": [
-                                    "point",
-                                    "sensor",
-                                    "air",
-                                    "humidity"
-                                ],
-                                "unit": "%RH"
+        expect(result).toEqual(
+            {
+                "records": [
+                    {
+                        "version": "1.4.2",
+                        "timestamp": "2026-03-20T00:54:38.000Z",
+                        "system": {
+                            "location": {
+                                "site": "GB-LON-9212",
+                                "section": "TENANT-ZONE-1",
+                                "room": "Plant-Room",
+                                "floor": "FIRST-FLOOR",
+                                "floor_seq": "1",
+                                "position": {
+                                    "x": "2010658",
+                                    "y": "-283739",
+                                    "z": "3"
+                                }
                             },
-                            "pressure": {
-                                "tags": [
-                                    "point",
-                                    "sensor",
-                                    "barometric",
-                                    "pressure"
-                                ],
-                                "unit": "mbar"
+                            "physical_tag": {
+                                "asset": {
+                                    "guid": "guid://c5A_Of5Kcn2bUJSkAlfUS5",
+                                    "site": "GB-LON-9212",
+                                    "name": "QSE-00005"
+                                }
+                            }
+                        },
+                        "pointset": {
+                            "points": {
+                                "humidity": {
+                                    "tags": ["point", "sensor", "air", "humidity"],
+                                    "unit": "%RH"
+                                },
+                                "pressure": {
+                                    "tags": ["point", "sensor", "barometric", "pressure"],
+                                    "unit": "mbar"
+                                }
                             }
                         }
                     }
-                }
-            ],
-            "count": 1
-        })
+                ],
+                "count": 1
+            }
+
+        )
 
     })
 
