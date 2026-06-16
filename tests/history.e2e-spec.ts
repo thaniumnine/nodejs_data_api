@@ -11,7 +11,6 @@ describe('History E2E', () => {
   const historyData =  [{
       "version": "1.4.2",
       "timestamp": "1923-03-25T16:16:31.000Z",
-      "device_id": "QSE-999996",
       "points": {
         "co2_level": {
           "present_value": 551
@@ -65,10 +64,10 @@ describe('History E2E', () => {
       await app.close();
     }
   });
-  it('POST /history/data', async () => {
+  it('POST /history/', async () => {
     const result = await app.inject({
       method: 'POST',
-      url: '/history/data',
+      url: `/history/GB-LON-9212/level-01/QSE-999996`,
       payload:     {"items":historyData}
     });
     expect(result.statusCode).toEqual(201);
@@ -78,7 +77,7 @@ describe('History E2E', () => {
   it('GET /history/data', async () => {
     const result = await app.inject({
       method: 'GET',
-      url: '/history/data?from=1923-03-25T00:00:00.000Z&to=1923-03-26T00:00:00.000Z',
+      url: '/history/GB-LON-9212/level-01/QSE-999996?from=1923-03-25T00:00:00.000Z&to=1923-03-26T00:00:00.000Z',
     });
 
     expect(result.statusCode).toEqual(200);
@@ -93,7 +92,7 @@ describe('History E2E', () => {
   it('DELETE /history/data/:id', async () => {
     const result = await app.inject({
       method: 'DELETE',
-      url: '/history/data',
+      url: '/history?from=1920-03-25T16:16:31.000Z&to=1923-03-26T00:00:00.000Z',
       payload: {
         "ids": ["QSE-999996"]
       }

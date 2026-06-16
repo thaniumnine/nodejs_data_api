@@ -42,6 +42,11 @@ export class AggregationRecordsService {
       .insertInto(table_name)
       .values(inputs.items.map((input)=>{
 
+          const payload = columns.map(column =>(
+            [column.name,input.payload[column.name] ?? null ]
+          ));
+        
+
         return {
           device_id: input.device_id,
           agg_type: input.agg_type,
