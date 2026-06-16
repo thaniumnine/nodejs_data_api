@@ -91,9 +91,11 @@ export interface AuditEventsTable {
 }
 
 type BaseAggregationTable = {
-  device_id: string;
-  event_timestamp: TimestampColumn;
-  agg_type: string;
+    id: Generated<number>;
+    device_id: string;
+    event_timestamp: TimestampColumn;
+    agg_type:string;
+     created_at: Generated<Date>;
 }
 type ColumnAggregationMetrics = {
   [columnName: string]: number
@@ -101,19 +103,30 @@ type ColumnAggregationMetrics = {
 export type AggregationTable = BaseAggregationTable & ColumnAggregationMetrics
 
 export interface AggregationDeviceTypeTable {
-  device_type: string
-  columns: JsonValue
-  table_name: string
+    id: Generated<number>;
+    device_type:string
+    columns:JsonValue
+    table_name:string
+     created_at: Generated<Date>;
 }
 
-export type DeviceHistoryTypeTable = {
+
+export type DeviceIdentifierTypeTable = {
+    id: Generated<number>;
+  building: string;
+  level: string;
   device_id: string;
+   created_at: Generated<Date>;
+}
+export type DeviceHistoryTypeTable = {
+  id: Generated<number>;
   timestamp: TimestampColumn;
   json_type: string;
   version: string;
   points: {
     [pointtype: string]: any
   }
+   created_at: Generated<Date>;
 }
 
 export type DeviceMetadataTypeTable = {
@@ -149,9 +162,10 @@ export type DB = {
   topic_permissions: TopicPermissionsTable;
   devices: DevicesTable;
   audit_events: AuditEventsTable;
-  aggregation: AggregationDeviceTypeTable;
-  device_history: DeviceHistoryTypeTable;
-  device_metadata: DeviceMetadataTypeTable;
+  aggregation:AggregationDeviceTypeTable;
+  device_history:DeviceHistoryTypeTable;
+  device_metadata:DeviceMetadataTypeTable;
+  device_identifier:DeviceIdentifierTypeTable;
 } & AggregationTables
 
 interface AggregationTables {

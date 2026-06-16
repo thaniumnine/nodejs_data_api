@@ -3,9 +3,8 @@ import { DatabaseService } from "../database/database.service";
 import { JsonValue } from "../database/db.types";
 import z, { string } from "zod";
 
-export type DeviceHistoryRecord = {
-  device_id: string;
-  timestamp: string;
+export type DeviceHistoryRecord= {
+    timestamp: string;
   //  json_type:string;
   version: string;
   points: {
@@ -15,6 +14,10 @@ export type DeviceHistoryRecord = {
 export type DeviceHistoryData = {
   items:DeviceHistoryRecord[]
 }
+
+type deviceIdentifierType = {
+    id: number;
+} | undefined
 
 
 export const QueryDeviceHistorySchema = z.object({
@@ -30,30 +33,38 @@ export class HistoryService {
   constructor(
     private readonly database: DatabaseService,
   ) { }
-  async createDeviceHistoryDataEvent(inputs: DeviceHistoryData) {
-
-    const event = await this.database.db
+  async createDeviceHistoryDataEvent(inputs: DeviceHistoryData,building: string, level: string, deviceId: string) {
+    let deviceIdentifier = await this.createDeviceIdentifier(building, level, deviceId);
+    if (!deviceIdentifier) {
+      deviceIdentifier = await this.findDeviceIdentifier(building, level, deviceId)
+      if (!deviceIdentifier) return;
+    }
+    await this.database.db
       .insertInto("device_history")
-      .values(inputs.items.map((input)=>{
-        return{
-          device_id: input.device_id,
+      .values(
+        inputs.items.map((input) => ({
+          device_ref_id: deviceIdentifier.id,
           timestamp: new Date(input.timestamp),
           json_type: "pointset",
           version: input.version,
-          points: input.points
-        }
+          points: input.points,
         }))
+      )
       .execute();
 
   }
-  async queryDeviceHistory(query: QueryDeviceHistoryRecords) {
+  async queryDeviceHistory(query: QueryDeviceHistoryRecords,building:string,level:string,deviceId:string) {
     const result = await this.database.query(
-      `SELECT device_id, points, timestamp
-    FROM device_history
-    WHERE timestamp >= $1
-      AND timestamp < $2
+      `SELECT dh.points, dh.timestamp
+    FROM device_history dh JOIN device_identifier di 
+      ON dh.device_ref_id = di.id
+    WHERE dh.timestamp >= $1
+      AND dh.timestamp < $2
+      AND di.building = $3
+      AND di.level = $4
+      AND di.device_id = $5
     ORDER BY device_id ASC, timestamp ASC`,
-      [query.from, query.to]
+      [query.from, query.to,building,level,deviceId]
     );
 
     return { records: result.rows, count: result.rowCount };
@@ -61,14 +72,49 @@ export class HistoryService {
 
   };
 
+// /http://kysely-org.github.io/kysely-apidoc/classes/OnConflictBuilder.html
+  async createDeviceIdentifier(building: string, level: string, deviceId: string) {
+    return await this.database.db
+      .insertInto("device_identifier")
+      .values({
+        building,
+        level,
+        device_id: deviceId,
+      })
+      .onConflict((oc) =>
+        oc.columns(["building", "level", "device_id"]).doNothing()
+      )
+      .returning("id")
+      .executeTakeFirst();
 
-async deleteDeviceHistoryDataEvent(ids: string[]) {
+  }
+
+  async findDeviceIdentifier(building:string,level:string,deviceId:string):Promise<deviceIdentifierType>{ 
+   let result =   await this.database.db
+    .selectFrom("device_identifier")
+    .select("id")
+    .where("building", "=", building)
+    .where("level", "=", level)
+    .where("device_id", "=", deviceId)
+    .executeTakeFirstOrThrow();
+
+    return result
+  }
+
+  
+
+
+async deleteDeviceHistoryDataEvent(ids: string[],query:QueryDeviceHistoryRecords) {
   const result = await this.database.query(
     `
-    DELETE FROM device_history
-    WHERE device_id = ANY($1)
+    DELETE FROM device_history dh
+    USING device_identifier di
+    WHERE dh.device_ref_id = di.id
+      AND di.device_id = ANY($1)
+      AND dh.timestamp >= $2
+      AND dh.timestamp < $3
     `,
-    [ids],
+    [ids,query.from,query.to],
   );
 
 
