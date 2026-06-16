@@ -31,7 +31,7 @@
       @Param('device_id') deviceId: string,
       @Body() deviceHistoryData: DeviceHistoryData,
     ) {
-      return this.historyService.createDeviceHistoryDataEvent(building,level,deviceId,deviceHistoryData);
+      return this.historyService.createDeviceHistoryDataEvent(deviceHistoryData,building,level,deviceId);
   }
 
 
