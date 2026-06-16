@@ -24,3 +24,5 @@ CREATE TABLE device_metadata (
 CREATE INDEX idx_device_metadata_location ON device_metadata ("system.location.site", "system.location.floor");
 CREATE INDEX idx_device_metadata_timestamp ON device_metadata ("timestamp");
 
+
+
