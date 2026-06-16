@@ -33,13 +33,6 @@ export class AggregationService {
  
   }
 
-  async list() {
-    return this.database.db
-      .selectFrom('aggregation')
-      .selectAll()
-      .orderBy('device_type', 'asc')
-      .execute();
-  }
 
 async list() {
   return this.database.db
