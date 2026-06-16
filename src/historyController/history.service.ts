@@ -104,15 +104,17 @@ export class HistoryService {
   
 
 
-async deleteDeviceHistoryDataEvent(ids: string[]) {
+async deleteDeviceHistoryDataEvent(ids: string[],query:QueryDeviceHistoryRecords) {
   const result = await this.database.query(
     `
     DELETE FROM device_history dh
     USING device_identifier di
     WHERE dh.device_ref_id = di.id
       AND di.device_id = ANY($1)
+      AND dh.timestamp >= $2
+      AND dh.timestamp < $3
     `,
-    [ids],
+    [ids,query.from,query.to],
   );
 
 

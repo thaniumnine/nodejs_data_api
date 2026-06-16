@@ -185,17 +185,21 @@ describe('HistoryService', () => {
 
   test('deleteDeviceHistoryDataEvent', async () => {
     const idsToDelete = ['QSE-9999'];
-
+    let mockQueryData = {
+      from: '2026-06-08T00:00:00.000Z',
+      to: '2026-06-09T00:00:00.000Z',
+    }
     mockDatabaseService.query.mockResolvedValue({
       rowCount: 1,
       rows: [],
     });
+    
 
-    const result = await service.deleteDeviceHistoryDataEvent(idsToDelete);
+    const result = await service.deleteDeviceHistoryDataEvent(idsToDelete,mockQueryData);
 
     expect(mockDatabaseService.query).toHaveBeenCalledWith(
       expect.stringContaining('DELETE FROM device_history dh'),
-      [idsToDelete],
+      [idsToDelete,mockQueryData.from,mockQueryData.to],
     );
 
     expect(result).toBeUndefined();

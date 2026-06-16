@@ -92,7 +92,7 @@ describe('History E2E', () => {
   it('DELETE /history/data/:id', async () => {
     const result = await app.inject({
       method: 'DELETE',
-      url: '/history/data',
+      url: '/history?from=1920-03-25T16:16:31.000Z&to=1923-03-26T00:00:00.000Z',
       payload: {
         "ids": ["QSE-999996"]
       }
