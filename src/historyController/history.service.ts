@@ -33,7 +33,7 @@ export class HistoryService {
   constructor(
     private readonly database: DatabaseService,
   ) { }
-  async createDeviceHistoryDataEvent(building: string, level: string, deviceId: string, inputs: DeviceHistoryData) {
+  async createDeviceHistoryDataEvent(inputs: DeviceHistoryData,building: string, level: string, deviceId: string) {
     let deviceIdentifier = await this.createDeviceIdentifier(building, level, deviceId);
     if (!deviceIdentifier) {
       deviceIdentifier = await this.findDeviceIdentifier(building, level, deviceId)
@@ -55,7 +55,7 @@ export class HistoryService {
   }
   async queryDeviceHistory(query: QueryDeviceHistoryRecords,building:string,level:string,deviceId:string) {
     const result = await this.database.query(
-      `SELECT device_id, points, timestamp
+      `SELECT dh.points, dh.timestamp
     FROM device_history dh JOIN device_identifier di 
       ON dh.device_ref_id = di.id
     WHERE dh.timestamp >= $1
@@ -107,8 +107,10 @@ export class HistoryService {
 async deleteDeviceHistoryDataEvent(ids: string[]) {
   const result = await this.database.query(
     `
-    DELETE FROM device_history
-    WHERE device_id = ANY($1)
+    DELETE FROM device_history dh
+    USING device_identifier di
+    WHERE dh.device_ref_id = di.id
+      AND di.device_id = ANY($1)
     `,
     [ids],
   );

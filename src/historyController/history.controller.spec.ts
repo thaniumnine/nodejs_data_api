@@ -37,11 +37,16 @@ describe('History Controller', () => {
         mockHistoryService.queryDeviceHistory.mockResolvedValue({ records: [], count: 0 });
         let mockQueryData = {
             from: '2026-06-08T00:00:00.000Z',
-            to: '2026-06-09T00:00:00.000Z'
+            to: '2026-06-09T00:00:00.000Z',
         }
-        const result = await controller.queryHistoryData(mockQueryData);
+        const result = await controller.queryHistoryData( "GB-LON-9212", "level-01", "acu-999999",mockQueryData);
 
-        expect(mockHistoryService.queryDeviceHistory).toHaveBeenCalledWith(mockQueryData);
+        expect(mockHistoryService.queryDeviceHistory).toHaveBeenCalledWith(
+            mockQueryData,
+            'GB-LON-9212',
+            'level-01',
+            'acu-999999',
+        );
         expect(result).toEqual({ records: [], count: 0 })
 
     })
@@ -51,7 +56,6 @@ describe('History Controller', () => {
         let mockPostData ={items: [{
             "version": "1.4.2",
             "timestamp": "2026-03-25T16:16:31+00:00",
-            "device_id": "QSE-999999",
             "points": {
                 "co2_level": {
                     "present_value": 551
@@ -64,9 +68,14 @@ describe('History Controller', () => {
     }
         mockHistoryService.createDeviceHistoryDataEvent.mockResolvedValue({ event: { mockPostData } });
 
-        const result = await controller.createHistoryData(mockPostData);
+        const result = await controller.createHistoryData("GB-LON-9212", "level-01", "acu-999999",mockPostData,);
 
-        expect(mockHistoryService.createDeviceHistoryDataEvent).toHaveBeenCalledWith(mockPostData);
+        expect(mockHistoryService.createDeviceHistoryDataEvent).toHaveBeenCalledWith(
+            mockPostData,
+            'GB-LON-9212',
+            'level-01',
+            'acu-999999',
+        );
         expect(result).toEqual({ event: { mockPostData } })
 
     });
