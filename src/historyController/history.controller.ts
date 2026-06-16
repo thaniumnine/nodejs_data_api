@@ -37,11 +37,13 @@
 
 
 
-@Delete('data')
-@HttpCode(204)
-deleteHistoryData(@Body('ids') ids: string[]) {
-  
-  return this.historyService.deleteDeviceHistoryDataEvent(ids);
-}
+    @Delete()
+    @HttpCode(204)
+    deleteHistoryData(
+      @Body('ids') ids: string[],
+      @Query() query: QueryDeviceHistoryRecords) {
+
+      return this.historyService.deleteDeviceHistoryDataEvent(ids, query);
+    }
 
   }

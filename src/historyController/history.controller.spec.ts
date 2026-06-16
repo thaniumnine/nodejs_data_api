@@ -83,8 +83,12 @@ describe('History Controller', () => {
 
     test('deleteDeviceHistoryDataEvent', async () => {
         const idsToDelete = ['QSE-9999'];
-        const result = await controller.deleteHistoryData(idsToDelete);
-        expect(mockHistoryService.deleteDeviceHistoryDataEvent).toHaveBeenCalledWith(idsToDelete);
+           let mockQueryData = {
+            from: '2026-06-08T00:00:00.000Z',
+            to: '2026-06-09T00:00:00.000Z',
+        }
+        const result = await controller.deleteHistoryData(idsToDelete,mockQueryData);
+        expect(mockHistoryService.deleteDeviceHistoryDataEvent).toHaveBeenCalledWith(idsToDelete,mockQueryData);
         expect(result).toBeUndefined();
 
     })
