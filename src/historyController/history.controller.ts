@@ -10,18 +10,48 @@
   export class HistoryController {
     constructor(   private readonly historyService: HistoryService) {}
 
+
+
+  @Get('device_ids')
+  getDeviceNames(
+  ) {
+    return this.historyService.getDeviceNames();
+  }
+
+  
+
+
+
+    @Get('prefix/:building/:level/:device_id')
+    queryHistoryDataPrefix(
+      @Param('building') building: string,
+      @Param('level') level: string,
+      @Param('device_id') deviceId: string,
+
+      //@Query(new ZodValidationPipe(QueryDeviceHistorySchema)) query: QueryDeviceHistoryRecords
+      @Query() query: QueryDeviceHistoryRecords
+    ) {
+
+      return this.historyService.queryDeviceHistoryWithPrefix(query, building, level, deviceId);
+    }
+
   @Get(':building/:level/:device_id')
   queryHistoryData(
         @Param('building') building: string,
       @Param('level') level: string,
       @Param('device_id') deviceId: string,
     
-  // @Query(new ZodValidationPipe(QueryDeviceHistorySchema)) query: QueryDeviceHistoryRecords
-    @Query() query: QueryDeviceHistoryRecords
+  //@Query(new ZodValidationPipe(QueryDeviceHistorySchema)) query: QueryDeviceHistoryRecords
+     @Query() query: QueryDeviceHistoryRecords
   ) {
 
     return this.historyService.queryDeviceHistory(query,building,level,deviceId);
   }
+
+  
+
+  
+
 
 
     @Post(':building/:level/:device_id')

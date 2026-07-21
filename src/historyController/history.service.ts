@@ -1,4 +1,4 @@
-import {  Injectable, NotFoundException } from "@nestjs/common";
+import {  Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { DatabaseService } from "../database/database.service";
 import { JsonValue } from "../database/db.types";
 import z, { string } from "zod";
@@ -30,8 +30,10 @@ export type QueryDeviceHistoryRecords = z.infer<typeof QueryDeviceHistorySchema>
 
 @Injectable()
 export class HistoryService {
+  private readonly logger = new Logger(HistoryService.name);
   constructor(
     private readonly database: DatabaseService,
+
   ) { }
   async createDeviceHistoryDataEvent(inputs: DeviceHistoryData,building: string, level: string, deviceId: string) {
     let deviceIdentifier = await this.createDeviceIdentifier(building, level, deviceId);
@@ -53,7 +55,35 @@ export class HistoryService {
       .execute();
 
   }
-  async queryDeviceHistory(query: QueryDeviceHistoryRecords,building:string,level:string,deviceId:string) {
+
+
+async getDeviceNames(){
+  const result = await this.database.query(
+     `  SELECT DISTINCT device_id
+        FROM device_identifier
+    `);
+    return result.rows
+
+}
+
+async queryDeviceHistoryWithPrefix(query: QueryDeviceHistoryRecords,building:string,level:string,prefix:string){
+  const result = await this.database.query(
+    `SELECT dh.points, dh.timestamp, dh.version
+    FROM device_history dh JOIN device_identifier di
+    ON dh.device_ref_id = di.id
+      WHERE dh.timestamp >= $1
+      AND dh.timestamp < $2
+      AND di.building = $3
+      AND di.level = $4
+      AND di.device_id LIKE $5
+    `,[query.from, query.to,building,level,`${prefix}%`]
+  )
+    return { records: result.rows, count: result.rowCount };
+
+}
+
+
+async queryDeviceHistory(query: QueryDeviceHistoryRecords,building:string,level:string,deviceId:string) {
     const result = await this.database.query(
       `SELECT dh.points, dh.timestamp
     FROM device_history dh JOIN device_identifier di 
@@ -66,7 +96,7 @@ export class HistoryService {
     ORDER BY device_id ASC, timestamp ASC`,
       [query.from, query.to,building,level,deviceId]
     );
-
+   
     return { records: result.rows, count: result.rowCount };
 
 
