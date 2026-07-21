@@ -68,7 +68,7 @@ async getDeviceNames(){
 
 async queryDeviceHistoryWithPrefix(query: QueryDeviceHistoryRecords,building:string,level:string,prefix:string){
   const result = await this.database.query(
-    `SELECT dh.points, dh.timestamp, dh.version
+    `SELECT di.device_id, dh.points, dh.timestamp, dh.version
     FROM device_history dh JOIN device_identifier di
     ON dh.device_ref_id = di.id
       WHERE dh.timestamp >= $1
@@ -76,6 +76,7 @@ async queryDeviceHistoryWithPrefix(query: QueryDeviceHistoryRecords,building:str
       AND di.building = $3
       AND di.level = $4
       AND di.device_id LIKE $5
+      ORDER BY device_id ASC, timestamp ASC
     `,[query.from, query.to,building,level,`${prefix}%`]
   )
     return { records: result.rows, count: result.rowCount };
