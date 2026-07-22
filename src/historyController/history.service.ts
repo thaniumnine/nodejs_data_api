@@ -148,7 +148,7 @@ async queryDeviceHistory(query: QueryDeviceHistoryRecords,building:string,level:
   
 
 
-async deleteDeviceHistoryDataEvent(ids: string[],query:QueryDeviceHistoryRecords) {
+async deleteDeviceHistoryDataEvent(building:string,level:string,ids: string[],query:QueryDeviceHistoryRecords) {
   const result = await this.database.query(
     `
     DELETE FROM device_history dh
@@ -157,8 +157,11 @@ async deleteDeviceHistoryDataEvent(ids: string[],query:QueryDeviceHistoryRecords
       AND di.device_id = ANY($1)
       AND dh.timestamp >= $2
       AND dh.timestamp < $3
+      AND di.building = $4 
+      AND di.level = $5
+      
     `,
-    [ids,query.from,query.to],
+    [ids,query.from,query.to,building,level],
   );
 
 
