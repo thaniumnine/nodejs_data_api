@@ -3,6 +3,12 @@ import { HistoryService } from './history.service';
 import { DatabaseService } from '../database/database.service';
 describe('HistoryService', () => {
 
+  const BUILDING = 'GB-LON-9212'
+  const LEVEL= 'Level-01'
+  const ACU_DEVICE = 'acu-999999'
+  const FROM=  '2026-06-08T00:00:00.000Z'
+  const TO ='2026-06-09T00:00:00.000Z'
+
   const mockCreateQueryResult = 
    [{
         "id": "3",
@@ -21,10 +27,6 @@ describe('HistoryService', () => {
         "created_at": "2026-06-08T12:18:16.847Z"
       }
     ]
-  
-  const normalizeSql = (sql: string) => (
-        sql.replace(/\s+/g, ' ').trim()
-    )
 
   let service: HistoryService;
   const mockDatabaseService = {
@@ -32,10 +34,10 @@ describe('HistoryService', () => {
     db: {
       insertInto: jest.fn().mockReturnValue({
         values: jest.fn().mockReturnValue({
-          execute: jest.fn().mockResolvedValue(mockCreateQueryResult),
+          execute: jest.fn().mockResolvedValueOnce(mockCreateQueryResult),
           onConflict: jest.fn().mockReturnValue({
             returning: jest.fn().mockReturnValue({
-              executeTakeFirst: jest.fn().mockResolvedValue({ id: 1 })
+              executeTakeFirst: jest.fn().mockResolvedValueOnce({ id: 1 })
             })
           })
         })
@@ -45,7 +47,7 @@ describe('HistoryService', () => {
           where: jest.fn().mockReturnValue({
             where: jest.fn().mockReturnValue({
               where: jest.fn().mockReturnValue({
-                executeTakeFirstOrThrow: jest.fn().mockResolvedValue({ id: 1 })
+                executeTakeFirstOrThrow: jest.fn().mockResolvedValueOnce({ id: 1 })
 
               })
             })
@@ -58,6 +60,15 @@ describe('HistoryService', () => {
     }
 
   }
+
+  const expectSqlQuery = (sql: string, params: unknown[]) => {
+    expect(mockDatabaseService.query).toHaveBeenCalledTimes(1);
+    const [actualSql, actualParams] =
+      mockDatabaseService.query.mock.calls[0];
+
+    expect(normalizeSql(actualSql)).toBe(normalizeSql(sql));
+    expect(actualParams).toEqual(params);
+  };
 
 
   beforeEach(async () => {
@@ -81,64 +92,24 @@ describe('HistoryService', () => {
 
   test('queryDeviceHistory', async () => {
 
-    const mockQueryResult = {
-      "rows": [
-        {
-          "points": {
-            "humidity": {
-              "present_value": 32
-            },
-            "pressure": {
-              "present_value": 1009
-            }
-          }
-        }
-      ],
-      "rowCount": 1
-    }
-    mockDatabaseService.query.mockResolvedValue(mockQueryResult)
+    const mockQueryResult = queryResult(RESULT['queryDeviceHistory'])
+
+    mockDatabaseService.query.mockResolvedValueOnce(mockQueryResult)
 
     const result = await service.queryDeviceHistory({
-      from: '2026-06-08T00:00:00.000Z',
-      to: '2026-06-09T00:00:00.000Z',
+      from: FROM,
+      to: TO,
     },
-    "GB-LON-9212",
-    "level-01",
-    "acu-999999"
-  );
+      BUILDING, LEVEL, ACU_DEVICE
+    );
 
-    const queryCommand =      `SELECT dh.points, dh.timestamp
-    FROM device_history dh JOIN device_identifier di 
-      ON dh.device_ref_id = di.id
-    WHERE dh.timestamp >= $1
-      AND dh.timestamp < $2
-      AND di.building = $3
-      AND di.level = $4
-      AND di.device_id = $5
-    ORDER BY device_id ASC, timestamp ASC`;
+    const queryCommand = SQL['queryDeviceHistory']
+    expectSqlQuery(
+      queryCommand,
+      [FROM, TO, BUILDING, LEVEL, ACU_DEVICE]
+    )
 
-        const [querySql, querySqlParams] = mockDatabaseService.query.mock.calls[0]
-        expect(normalizeSql(querySql)).toEqual(normalizeSql(queryCommand))
-        expect(querySqlParams).toEqual(['2026-06-08T00:00:00.000Z', '2026-06-09T00:00:00.000Z', "GB-LON-9212",
-    "level-01",
-    "acu-999999"])
-
-
-    expect(result).toEqual({
-      "records": [
-        {
-          "points": {
-            "humidity": {
-              "present_value": 32
-            },
-            "pressure": {
-              "present_value": 1009
-            }
-          }
-        }
-      ],
-      "count": 1
-    })
+    expect(result).toEqual(serviceResult(RESULT['queryDeviceHistory']))
 
   })
 
@@ -146,111 +117,142 @@ describe('HistoryService', () => {
 
 
 
-    test('queryDeviceHistoryPrefix', async () => {
+  test('queryDeviceHistoryPrefix', async () => {
 
-    const mockQueryResult = {
-      "rows": [
-        {
-          "points": {
-            "humidity": {
-              "present_value": 32
-            },
-            "pressure": {
-              "present_value": 1009
-            }
-          }
-        }
-      ],
-      "rowCount": 1
-    }
-    mockDatabaseService.query.mockResolvedValue(mockQueryResult)
+    const mockQueryResult = queryResult(RESULT['queryDeviceHistoryPrefix'])
+
+    mockDatabaseService.query.mockResolvedValueOnce(mockQueryResult)
 
     const result = await service.queryDeviceHistoryWithPrefix({
-      from: '2026-06-08T00:00:00.000Z',
-      to: '2026-06-09T00:00:00.000Z',
-      devicePrefix:    "acu-999999"
+      from: FROM,
+      to: TO,
+      devicePrefix: ACU_DEVICE
     },
-    "GB-LON-9212",
-    "level-01",
-  );
+      BUILDING,
+      LEVEL,
+    );
 
-    const queryCommand =        `SELECT di.device_id, dh.points, dh.timestamp, dh.version
-    FROM device_history dh JOIN device_identifier di
-    ON dh.device_ref_id = di.id
-      WHERE dh.timestamp >= $1
-      AND dh.timestamp < $2
-      AND di.building = $3
-      AND di.level = $4
-      AND di.device_id LIKE $5
-      ORDER BY device_id ASC, timestamp ASC`;
+    const queryCommand = SQL['queryDeviceHistoryPrefix']
+    expectSqlQuery(
+      queryCommand,
+      [FROM, TO, BUILDING, LEVEL, `${ACU_DEVICE}%`]
+    )
 
-        const [querySql, querySqlParams] = mockDatabaseService.query.mock.calls[0]
-        expect(normalizeSql(querySql)).toEqual(normalizeSql(queryCommand))
-        expect(querySqlParams).toEqual(['2026-06-08T00:00:00.000Z', '2026-06-09T00:00:00.000Z', "GB-LON-9212",
-    "level-01",
-    "acu-999999%"])
-
-
-    expect(result).toEqual({
-      "records": [
-        {
-          "points": {
-            "humidity": {
-              "present_value": 32
-            },
-            "pressure": {
-              "present_value": 1009
-            }
-          }
-        }
-      ],
-      "count": 1
-    })
+    expect(result).toEqual(serviceResult(RESULT['queryDeviceHistoryPrefix']))
 
   })
 
 
 
-    test('getDeviceNames', async () => {
+  test('getDeviceNames', async () => {
 
-    const mockQueryResult = {
-      "rows":       [{ device_id: "MTS-001" },
-      { device_id: "MTS-002" }],
-      "rowCount": 2
-    }
-    mockDatabaseService.query.mockResolvedValue(mockQueryResult)
+    const mockQueryResult = queryResult([
+      { device_id: "MTS-001" },
+      { device_id: "MTS-002" }
+    ]
+    )
+    mockDatabaseService.query.mockResolvedValueOnce(mockQueryResult)
 
     const result = await service.getDeviceNames(
-    "GB-LON-9212",
-    "level-01",
-    "MTS-"
-  );
+      BUILDING,
+      LEVEL,
+      "MTS-"
+    );
+    const queryCommand = SQL['getDeviceNames']
 
-    const queryCommand =  `  SELECT DISTINCT device_id
-        FROM device_identifier
-        where building = $1
-        and level = $2
-        and device_id LIKE $3
-    `;
+    expectSqlQuery(queryCommand, [BUILDING, LEVEL, "MTS-%"])
 
-        const [querySql, querySqlParams] = mockDatabaseService.query.mock.calls[0]
-        expect(normalizeSql(querySql)).toEqual(normalizeSql(queryCommand))
-        expect(querySqlParams).toEqual(["GB-LON-9212","level-01","MTS-%"])
-
-
-    expect(result).toEqual({
-      "records": ["MTS-001",
-               "MTS-002"],
-      "count": 2
-    })
-
+    expect(result).toEqual(serviceResult(
+      ["MTS-001",
+        "MTS-002"]))
   })
 
 
   test('createDeviceHistoryDataEvent', async () => {
 
+    const historyDataMock = RESULT['createDeviceHistoryDataEvent']
+    const result = await service.createDeviceHistoryDataEvent(historyDataMock, BUILDING, LEVEL, ACU_DEVICE);
+    expect(mockDatabaseService.db.insertInto).toHaveBeenCalledWith("device_history")
+    const input = historyDataMock.items[0]
+    expect(
+      (mockDatabaseService.db.insertInto as jest.Mock).mock.results[0].value.values,
+    ).toHaveBeenCalledWith([
+      {
+        device_ref_id: 1,
+        timestamp: new Date(input.timestamp),
+        json_type: "pointset",
+        version: input.version,
+        points: input.points
+      }
+    ])
+    expect(result).toBeUndefined();
 
-    const historyDataMock = {
+  });
+
+
+
+  test('deleteDeviceHistoryDataEvent', async () => {
+    const idsToDelete = ['QSE-9999'];
+    const mockQueryData = {
+      from: FROM,
+      to: TO,
+    }
+    mockDatabaseService.query.mockResolvedValueOnce(queryResult([]));
+
+    const result = await service.deleteDeviceHistoryDataEvent(BUILDING, LEVEL, idsToDelete, mockQueryData);
+
+    const queryCommand = SQL['deleteDeviceHistoryDataEvent']
+    expectSqlQuery(queryCommand, [idsToDelete, mockQueryData.from, mockQueryData.to, BUILDING, LEVEL])
+
+    expect(result).toBeUndefined();
+  });
+})
+
+
+function queryResult<T>(rows:T[]){
+    return {
+      rows,
+      rowCount:rows.length,
+    }
+}
+
+function serviceResult<T>(records: T[]) {
+  return {
+    records,
+    count: records.length,
+  };
+}
+
+
+const normalizeSql = (sql: string) => (
+      sql.replace(/\s+/g, ' ').trim()
+  )
+
+
+const RESULT = {
+  queryDeviceHistory: [{
+    "points": {
+      "humidity": {
+        "present_value": 32
+      },
+      "pressure": {
+        "present_value": 1009
+      }
+    }
+  }
+  ],
+  queryDeviceHistoryPrefix: [{
+    "points": {
+      "humidity": {
+        "present_value": 32
+      },
+      "pressure": {
+        "present_value": 1009
+      }
+    }
+  }
+  ],
+  createDeviceHistoryDataEvent:{
       "items": [{
         "version": "1.4.2",
         "timestamp": "2026-03-25T16:16:31+00:00",
@@ -265,51 +267,49 @@ describe('HistoryService', () => {
       }
       ]
     }
-      const result = await service.createDeviceHistoryDataEvent(historyDataMock,  "GB-LON-9212","level-01","acu-999999");
-      expect(mockDatabaseService.db.insertInto).toHaveBeenCalledWith("device_history")
-      let input = historyDataMock.items[0]
-      expect(
-        (mockDatabaseService.db.insertInto as jest.Mock).mock.results[0].value.values,
-      ).toHaveBeenCalledWith([
-      {
-          device_ref_id: 1,
-          timestamp: new Date(input.timestamp),
-          json_type:"pointset",
-          version:input.version,
-          points:input.points
-        }
-      ])
+
+}
+
+const SQL = {
+queryDeviceHistoryPrefix:`SELECT di.device_id, dh.points, dh.timestamp, dh.version
+    FROM device_history dh JOIN device_identifier di
+    ON dh.device_ref_id = di.id
+      WHERE dh.timestamp >= $1
+      AND dh.timestamp < $2
+      AND di.building = $3
+      AND di.level = $4
+      AND di.device_id LIKE $5
+      ORDER BY device_id ASC, timestamp ASC`,
+
+queryDeviceHistory:`SELECT dh.points, dh.timestamp
+    FROM device_history dh JOIN device_identifier di 
+      ON dh.device_ref_id = di.id
+    WHERE dh.timestamp >= $1
+      AND dh.timestamp < $2
+      AND di.building = $3
+      AND di.level = $4
+      AND di.device_id = $5
+    ORDER BY device_id ASC, timestamp ASC`,
+
+  getDeviceNames:`  SELECT DISTINCT device_id
+        FROM device_identifier
+        where building = $1
+        and level = $2
+        and device_id LIKE $3`,
 
 
-
-    expect(result).toBeUndefined();
-
-  });
-
-
-
-  test('deleteDeviceHistoryDataEvent', async () => {
-    const idsToDelete = ['QSE-9999'];
-    let building = "Waterside-test"
-    let level = "Level-01"
-    let mockQueryData = {
-      from: '2026-06-08T00:00:00.000Z',
-      to: '2026-06-09T00:00:00.000Z',
-    }
-    mockDatabaseService.query.mockResolvedValue({
-      rowCount: 1,
-      rows: [],
-    });
+    deleteDeviceHistoryDataEvent:    `
+    DELETE FROM device_history dh
+    USING device_identifier di
+    WHERE dh.device_ref_id = di.id
+      AND di.device_id = ANY($1)
+      AND dh.timestamp >= $2
+      AND dh.timestamp < $3
+      AND di.building = $4 
+      AND di.level = $5
+      
+    `
     
 
-    const result = await service.deleteDeviceHistoryDataEvent(building,level,idsToDelete,mockQueryData);
-
-    expect(mockDatabaseService.query).toHaveBeenCalledWith(
-      expect.stringContaining('DELETE FROM device_history dh'),
-      [idsToDelete,mockQueryData.from,mockQueryData.to,building,level,],
-    );
-
-    expect(result).toBeUndefined();
-  });
-})
+}
 
