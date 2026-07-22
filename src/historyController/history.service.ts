@@ -28,6 +28,15 @@ export const QueryDeviceHistorySchema = z.object({
 export type QueryDeviceHistoryRecords = z.infer<typeof QueryDeviceHistorySchema>;
 
 
+export const QueryDeviceHistoryPrefixSchema = z.object({
+  from: z.string().datetime(),
+  to: z.string().datetime(),
+  devicePrefix:z.string()
+});
+
+export type QueryDeviceHistoryPrefixRecords = z.infer<typeof QueryDeviceHistoryPrefixSchema>;
+
+
 @Injectable()
 export class HistoryService {
   private readonly logger = new Logger(HistoryService.name);
@@ -70,7 +79,7 @@ async getDeviceNames(building:string,level:string, prefix = ""){
 
 }
 
-async queryDeviceHistoryWithPrefix(query: QueryDeviceHistoryRecords,building:string,level:string,prefix:string){
+async queryDeviceHistoryWithPrefix(query: QueryDeviceHistoryPrefixRecords,building:string,level:string){
   const result = await this.database.query(
     `SELECT di.device_id, dh.points, dh.timestamp, dh.version
     FROM device_history dh JOIN device_identifier di
@@ -81,7 +90,7 @@ async queryDeviceHistoryWithPrefix(query: QueryDeviceHistoryRecords,building:str
       AND di.level = $4
       AND di.device_id LIKE $5
       ORDER BY device_id ASC, timestamp ASC
-    `,[query.from, query.to,building,level,`${prefix}%`]
+    `,[query.from, query.to,building,level,`${query.devicePrefix}%`]
   )
     return { records: result.rows, count: result.rowCount };
 

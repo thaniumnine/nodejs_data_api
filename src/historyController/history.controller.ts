@@ -2,43 +2,37 @@
   import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query, UseGuards } from '@nestjs/common';
   import { JwtAuthGuard } from  '../auth/jwt-auth.guard';
   import { number, string } from 'zod';
-  import {  DeviceHistoryData, HistoryService, QueryDeviceHistoryRecords, QueryDeviceHistorySchema} from './history.service'
+  import {  DeviceHistoryData, HistoryService, QueryDeviceHistoryPrefixRecords, QueryDeviceHistoryRecords, QueryDeviceHistorySchema} from './history.service'
 
 
   @UseGuards(JwtAuthGuard)
-  @Controller('history')
+  @Controller()
   export class HistoryController {
     constructor(   private readonly historyService: HistoryService) {}
 
 
-
-  @Get('device_ids/:building/:level/')
+  @Get('buildings/:building/levels/:level/devices/')
   getDeviceNames(
       @Param('building') building: string,
       @Param('level') level: string,
-      @Query('prefix') prefix?: string,
+      @Query('devicePrefix') prefix?: string,
   ) {
     return this.historyService.getDeviceNames(building,level,prefix);
   }
 
-  
 
-
-
-    @Get('prefix/:building/:level/:device_id')
+    @Get('buildings/:building/levels/:level/devices/history')
     queryHistoryDataPrefix(
       @Param('building') building: string,
       @Param('level') level: string,
-      @Param('device_id') deviceId: string,
-
       //@Query(new ZodValidationPipe(QueryDeviceHistorySchema)) query: QueryDeviceHistoryRecords
-      @Query() query: QueryDeviceHistoryRecords
+      @Query() query: QueryDeviceHistoryPrefixRecords
     ) {
 
-      return this.historyService.queryDeviceHistoryWithPrefix(query, building, level, deviceId);
+      return this.historyService.queryDeviceHistoryWithPrefix(query, building, level);
     }
 
-  @Get(':building/:level/:device_id')
+  @Get('buildings/:building/levels/:level/devices/:device_id/history')
   queryHistoryData(
         @Param('building') building: string,
       @Param('level') level: string,
@@ -51,13 +45,7 @@
     return this.historyService.queryDeviceHistory(query,building,level,deviceId);
   }
 
-  
-
-  
-
-
-
-    @Post(':building/:level/:device_id')
+    @Post('buildings/:building/levels/:level/devices/:device_id/history')
     async createHistoryData(
       @Param('building') building: string,
       @Param('level') level: string,
@@ -70,9 +58,9 @@
 
 
 
-    @Delete()
+    @Delete("history")
     @HttpCode(204)
-    deleteHistoryData(
+    deleteHistoryData(  
       @Body('ids') ids: string[],
       @Query() query: QueryDeviceHistoryRecords) {
 
