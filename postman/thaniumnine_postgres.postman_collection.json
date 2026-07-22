@@ -503,7 +503,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "    {\"items\":[{\"device_id\": \"LT-99998\",\r\n        \"event_timestamp\": \"1922-04-24T12:34:00Z\",\r\n        \"agg_type\":\"mean\",\r\n        \"payload\": {\r\n            \"brightness_percentage_command\" : 88,\r\n            \"electrical_power_sensor\"  :202,\r\n            \"full_power_output\" :303,\r\n            \"run_time_accumulator\"  :100\r\n        }\r\n    }]\r\n}",
+              "raw": "    {\"items\":[{\"device_id\": \"LT-000166\",\r\n        \"event_timestamp\": \"2026-06-18 23:00:00Z\",\r\n        \"agg_type\":\"max\",\r\n        \"payload\": {\r\n            \"brightness_percentage_command\" : 88,\r\n            \"electrical_power_sensor\"  :202,\r\n            \"full_power_output\" :303,\r\n            \"run_time_accumulator\"  :100\r\n        }\r\n    }]\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -971,153 +971,6 @@
       "name": "Query History",
       "item": [
         {
-          "name": "fetch_history_data",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/api/v1/history/data?from=2026-03-25T16:16:31.000Z&to=2026-03-26T00:00:00.000Z",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "history",
-                "data"
-              ],
-              "query": [
-                {
-                  "key": "from",
-                  "value": "2026-03-25T16:16:31.000Z"
-                },
-                {
-                  "key": "to",
-                  "value": "2026-03-26T00:00:00.000Z"
-                }
-              ]
-            }
-          },
-          "response": [
-            {
-              "name": "fetch_history_data",
-              "originalRequest": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{base_url}}/api/v1/history/data?from=2026-03-25T00:00:00.000Z&to=2026-03-26T00:00:00.000Z&_t=123",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "history",
-                    "data"
-                  ],
-                  "query": [
-                    {
-                      "key": "from",
-                      "value": "2026-03-25T00:00:00.000Z"
-                    },
-                    {
-                      "key": "to",
-                      "value": "2026-03-26T00:00:00.000Z"
-                    },
-                    {
-                      "key": "_t",
-                      "value": "123"
-                    }
-                  ]
-                }
-              },
-              "status": "OK",
-              "code": 200,
-              "_postman_previewlanguage": null,
-              "header": [
-                {
-                  "key": "Content-Security-Policy",
-                  "value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
-                },
-                {
-                  "key": "Cross-Origin-Opener-Policy",
-                  "value": "same-origin"
-                },
-                {
-                  "key": "Cross-Origin-Resource-Policy",
-                  "value": "same-origin"
-                },
-                {
-                  "key": "Origin-Agent-Cluster",
-                  "value": "?1"
-                },
-                {
-                  "key": "Referrer-Policy",
-                  "value": "no-referrer"
-                },
-                {
-                  "key": "Strict-Transport-Security",
-                  "value": "max-age=31536000; includeSubDomains"
-                },
-                {
-                  "key": "X-Content-Type-Options",
-                  "value": "nosniff"
-                },
-                {
-                  "key": "X-DNS-Prefetch-Control",
-                  "value": "off"
-                },
-                {
-                  "key": "X-Download-Options",
-                  "value": "noopen"
-                },
-                {
-                  "key": "X-Frame-Options",
-                  "value": "SAMEORIGIN"
-                },
-                {
-                  "key": "X-Permitted-Cross-Domain-Policies",
-                  "value": "none"
-                },
-                {
-                  "key": "X-XSS-Protection",
-                  "value": "0"
-                },
-                {
-                  "key": "vary",
-                  "value": "Origin"
-                },
-                {
-                  "key": "access-control-allow-credentials",
-                  "value": "true"
-                },
-                {
-                  "key": "content-type",
-                  "value": "application/json; charset=utf-8"
-                },
-                {
-                  "key": "content-length",
-                  "value": "753"
-                },
-                {
-                  "key": "Date",
-                  "value": "Fri, 05 Jun 2026 15:28:06 GMT"
-                },
-                {
-                  "key": "Connection",
-                  "value": "keep-alive"
-                },
-                {
-                  "key": "Keep-Alive",
-                  "value": "timeout=72"
-                }
-              ],
-              "cookie": [],
-              "body": "{\n    \"records\": [\n        {\n            \"device_id\": \"acu-999999\",\n            \"points\": {\n                \"humidity\": {\n                    \"present_value\": 32\n                },\n                \"pressure\": {\n                    \"present_value\": 1009\n                },\n                \"co2_level\": {\n                    \"present_value\": 551\n                },\n                \"temperature\": {\n                    \"present_value\": 21.8\n                },\n                \"air_quality_index\": {\n                    \"present_value\": \"Excellent\"\n                },\n                \"illuminance_sensor\": {\n                    \"present_value\": 10\n                },\n                \"minute_sound_level\": {\n                    \"present_value\": 48\n                },\n                \"total_volatile_organic_compounds\": {\n                    \"present_value\": 31\n                }\n            }\n        },\n        {\n            \"device_id\": \"QSE-999999\",\n            \"points\": {\n                \"humidity\": {\n                    \"present_value\": 32\n                },\n                \"pressure\": {\n                    \"present_value\": 1009\n                },\n                \"co2_level\": {\n                    \"present_value\": 551\n                },\n                \"temperature\": {\n                    \"present_value\": 21.8\n                },\n                \"air_quality_index\": {\n                    \"present_value\": \"Excellent\"\n                },\n                \"illuminance_sensor\": {\n                    \"present_value\": 10\n                },\n                \"minute_sound_level\": {\n                    \"present_value\": 48\n                },\n                \"total_volatile_organic_compounds\": {\n                    \"present_value\": 31\n                }\n            }\n        }\n    ],\n    \"count\": 2\n}"
-            }
-          ]
-        },
-        {
           "name": "delete_history_data",
           "request": {
             "method": "DELETE",
@@ -1153,271 +1006,7 @@
               ]
             }
           },
-          "response": [
-            {
-              "name": "fetch_history_data",
-              "originalRequest": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{base_url}}/api/v1/history/data?from=2026-03-25T00:00:00.000Z&to=2026-03-26T00:00:00.000Z&_t=123",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "history",
-                    "data"
-                  ],
-                  "query": [
-                    {
-                      "key": "from",
-                      "value": "2026-03-25T00:00:00.000Z"
-                    },
-                    {
-                      "key": "to",
-                      "value": "2026-03-26T00:00:00.000Z"
-                    },
-                    {
-                      "key": "_t",
-                      "value": "123"
-                    }
-                  ]
-                }
-              },
-              "status": "OK",
-              "code": 200,
-              "_postman_previewlanguage": null,
-              "header": [
-                {
-                  "key": "Content-Security-Policy",
-                  "value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
-                },
-                {
-                  "key": "Cross-Origin-Opener-Policy",
-                  "value": "same-origin"
-                },
-                {
-                  "key": "Cross-Origin-Resource-Policy",
-                  "value": "same-origin"
-                },
-                {
-                  "key": "Origin-Agent-Cluster",
-                  "value": "?1"
-                },
-                {
-                  "key": "Referrer-Policy",
-                  "value": "no-referrer"
-                },
-                {
-                  "key": "Strict-Transport-Security",
-                  "value": "max-age=31536000; includeSubDomains"
-                },
-                {
-                  "key": "X-Content-Type-Options",
-                  "value": "nosniff"
-                },
-                {
-                  "key": "X-DNS-Prefetch-Control",
-                  "value": "off"
-                },
-                {
-                  "key": "X-Download-Options",
-                  "value": "noopen"
-                },
-                {
-                  "key": "X-Frame-Options",
-                  "value": "SAMEORIGIN"
-                },
-                {
-                  "key": "X-Permitted-Cross-Domain-Policies",
-                  "value": "none"
-                },
-                {
-                  "key": "X-XSS-Protection",
-                  "value": "0"
-                },
-                {
-                  "key": "vary",
-                  "value": "Origin"
-                },
-                {
-                  "key": "access-control-allow-credentials",
-                  "value": "true"
-                },
-                {
-                  "key": "content-type",
-                  "value": "application/json; charset=utf-8"
-                },
-                {
-                  "key": "content-length",
-                  "value": "753"
-                },
-                {
-                  "key": "Date",
-                  "value": "Fri, 05 Jun 2026 15:28:06 GMT"
-                },
-                {
-                  "key": "Connection",
-                  "value": "keep-alive"
-                },
-                {
-                  "key": "Keep-Alive",
-                  "value": "timeout=72"
-                }
-              ],
-              "cookie": [],
-              "body": "{\n    \"records\": [\n        {\n            \"device_id\": \"acu-999999\",\n            \"points\": {\n                \"humidity\": {\n                    \"present_value\": 32\n                },\n                \"pressure\": {\n                    \"present_value\": 1009\n                },\n                \"co2_level\": {\n                    \"present_value\": 551\n                },\n                \"temperature\": {\n                    \"present_value\": 21.8\n                },\n                \"air_quality_index\": {\n                    \"present_value\": \"Excellent\"\n                },\n                \"illuminance_sensor\": {\n                    \"present_value\": 10\n                },\n                \"minute_sound_level\": {\n                    \"present_value\": 48\n                },\n                \"total_volatile_organic_compounds\": {\n                    \"present_value\": 31\n                }\n            }\n        },\n        {\n            \"device_id\": \"QSE-999999\",\n            \"points\": {\n                \"humidity\": {\n                    \"present_value\": 32\n                },\n                \"pressure\": {\n                    \"present_value\": 1009\n                },\n                \"co2_level\": {\n                    \"present_value\": 551\n                },\n                \"temperature\": {\n                    \"present_value\": 21.8\n                },\n                \"air_quality_index\": {\n                    \"present_value\": \"Excellent\"\n                },\n                \"illuminance_sensor\": {\n                    \"present_value\": 10\n                },\n                \"minute_sound_level\": {\n                    \"present_value\": 48\n                },\n                \"total_volatile_organic_compounds\": {\n                    \"present_value\": 31\n                }\n            }\n        }\n    ],\n    \"count\": 2\n}"
-            }
-          ]
-        },
-        {
-          "name": "delete",
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{base_url}}/api/v1/history/data?from=2026-03-25T16:16:31.000Z&to=2026-03-26T00:00:00.000Z",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "api",
-                "v1",
-                "history",
-                "data"
-              ],
-              "query": [
-                {
-                  "key": "from",
-                  "value": "2026-03-25T16:16:31.000Z"
-                },
-                {
-                  "key": "to",
-                  "value": "2026-03-26T00:00:00.000Z"
-                }
-              ]
-            }
-          },
-          "response": [
-            {
-              "name": "fetch_history_data",
-              "originalRequest": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{base_url}}/api/v1/history/data?from=2026-03-25T00:00:00.000Z&to=2026-03-26T00:00:00.000Z&_t=123",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "history",
-                    "data"
-                  ],
-                  "query": [
-                    {
-                      "key": "from",
-                      "value": "2026-03-25T00:00:00.000Z"
-                    },
-                    {
-                      "key": "to",
-                      "value": "2026-03-26T00:00:00.000Z"
-                    },
-                    {
-                      "key": "_t",
-                      "value": "123"
-                    }
-                  ]
-                }
-              },
-              "status": "OK",
-              "code": 200,
-              "_postman_previewlanguage": null,
-              "header": [
-                {
-                  "key": "Content-Security-Policy",
-                  "value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
-                },
-                {
-                  "key": "Cross-Origin-Opener-Policy",
-                  "value": "same-origin"
-                },
-                {
-                  "key": "Cross-Origin-Resource-Policy",
-                  "value": "same-origin"
-                },
-                {
-                  "key": "Origin-Agent-Cluster",
-                  "value": "?1"
-                },
-                {
-                  "key": "Referrer-Policy",
-                  "value": "no-referrer"
-                },
-                {
-                  "key": "Strict-Transport-Security",
-                  "value": "max-age=31536000; includeSubDomains"
-                },
-                {
-                  "key": "X-Content-Type-Options",
-                  "value": "nosniff"
-                },
-                {
-                  "key": "X-DNS-Prefetch-Control",
-                  "value": "off"
-                },
-                {
-                  "key": "X-Download-Options",
-                  "value": "noopen"
-                },
-                {
-                  "key": "X-Frame-Options",
-                  "value": "SAMEORIGIN"
-                },
-                {
-                  "key": "X-Permitted-Cross-Domain-Policies",
-                  "value": "none"
-                },
-                {
-                  "key": "X-XSS-Protection",
-                  "value": "0"
-                },
-                {
-                  "key": "vary",
-                  "value": "Origin"
-                },
-                {
-                  "key": "access-control-allow-credentials",
-                  "value": "true"
-                },
-                {
-                  "key": "content-type",
-                  "value": "application/json; charset=utf-8"
-                },
-                {
-                  "key": "content-length",
-                  "value": "753"
-                },
-                {
-                  "key": "Date",
-                  "value": "Fri, 05 Jun 2026 15:28:06 GMT"
-                },
-                {
-                  "key": "Connection",
-                  "value": "keep-alive"
-                },
-                {
-                  "key": "Keep-Alive",
-                  "value": "timeout=72"
-                }
-              ],
-              "cookie": [],
-              "body": "{\n    \"records\": [\n        {\n            \"device_id\": \"acu-999999\",\n            \"points\": {\n                \"humidity\": {\n                    \"present_value\": 32\n                },\n                \"pressure\": {\n                    \"present_value\": 1009\n                },\n                \"co2_level\": {\n                    \"present_value\": 551\n                },\n                \"temperature\": {\n                    \"present_value\": 21.8\n                },\n                \"air_quality_index\": {\n                    \"present_value\": \"Excellent\"\n                },\n                \"illuminance_sensor\": {\n                    \"present_value\": 10\n                },\n                \"minute_sound_level\": {\n                    \"present_value\": 48\n                },\n                \"total_volatile_organic_compounds\": {\n                    \"present_value\": 31\n                }\n            }\n        },\n        {\n            \"device_id\": \"QSE-999999\",\n            \"points\": {\n                \"humidity\": {\n                    \"present_value\": 32\n                },\n                \"pressure\": {\n                    \"present_value\": 1009\n                },\n                \"co2_level\": {\n                    \"present_value\": 551\n                },\n                \"temperature\": {\n                    \"present_value\": 21.8\n                },\n                \"air_quality_index\": {\n                    \"present_value\": \"Excellent\"\n                },\n                \"illuminance_sensor\": {\n                    \"present_value\": 10\n                },\n                \"minute_sound_level\": {\n                    \"present_value\": 48\n                },\n                \"total_volatile_organic_compounds\": {\n                    \"present_value\": 31\n                }\n            }\n        }\n    ],\n    \"count\": 2\n}"
-            }
-          ]
+          "response": []
         },
         {
           "name": "new_post_history_data",
@@ -1426,7 +1015,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\"items\":[{\r\n      \"version\": \"1.4.2\",\r\n      \"timestamp\": \"2026-03-25T16:16:31+00:00\",\r\n      \"points\": {\r\n        \"co2_level\": {\r\n          \"present_value\": 551\r\n        },\r\n        \"total_volatile_organic_compounds\": {\r\n          \"present_value\": 31\r\n        }\r\n      }\r\n    }\r\n]\r\n}",
+              "raw": "{\"items\":[{\r\n      \"version\": \"1.4.2\",\r\n      \"timestamp\": \"1924-03-25T16:16:31+00:00\",\r\n      \"points\": {\r\n        \"co2_level\": {\r\n          \"present_value\": 460\r\n        },\r\n        \"total_volatile_organic_compounds\": {\r\n          \"present_value\": 31\r\n        }\r\n      }\r\n    }\r\n]\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1434,18 +1023,17 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/api/v1/history/GB-LON-9212/level-01/QSE-999999/",
+              "raw": "{{base_url}}/api/v1/GB-LON-9213/level-02/QSE-999999/history",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "api",
                 "v1",
-                "history",
-                "GB-LON-9212",
-                "level-01",
+                "GB-LON-9213",
+                "level-02",
                 "QSE-999999",
-                ""
+                "history"
               ]
             }
           },
@@ -1457,7 +1045,42 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/api/v1/history/GB-LON-9212/level-01/QSE-999999?from=2026-03-25T16:16:31.000Z&to=2026-03-26T00:00:00.000Z",
+              "raw": "{{base_url}}/api/v1/buildings/Waterside/levels/Level-00/devices/LCM-00001/history?from=2024-06-01T00:00:00.000Z&to=2026-05-12T12:00:00.000Z",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "buildings",
+                "Waterside",
+                "levels",
+                "Level-00",
+                "devices",
+                "LCM-00001",
+                "history"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "2024-06-01T00:00:00.000Z"
+                },
+                {
+                  "key": "to",
+                  "value": "2026-05-12T12:00:00.000Z"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "new_fetch_history_data_prefix",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/history/prefix/Waterside/Level-00/LT-000198?from=2024-06-01T00:00:00Z&to=2024-07-01T00:00:00Z",
               "host": [
                 "{{base_url}}"
               ],
@@ -1465,140 +1088,53 @@
                 "api",
                 "v1",
                 "history",
-                "GB-LON-9212",
-                "level-01",
-                "QSE-999999"
+                "prefix",
+                "Waterside",
+                "Level-00",
+                "LT-000198"
               ],
               "query": [
                 {
                   "key": "from",
-                  "value": "2026-03-25T16:16:31.000Z"
+                  "value": "2024-06-01T00:00:00Z"
                 },
                 {
                   "key": "to",
-                  "value": "2026-03-26T00:00:00.000Z"
+                  "value": "2024-07-01T00:00:00Z"
                 }
               ]
             }
           },
-          "response": [
-            {
-              "name": "fetch_history_data",
-              "originalRequest": {
-                "method": "GET",
-                "header": [],
-                "url": {
-                  "raw": "{{base_url}}/api/v1/history/data?from=2026-03-25T00:00:00.000Z&to=2026-03-26T00:00:00.000Z&_t=123",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "api",
-                    "v1",
-                    "history",
-                    "data"
-                  ],
-                  "query": [
-                    {
-                      "key": "from",
-                      "value": "2026-03-25T00:00:00.000Z"
-                    },
-                    {
-                      "key": "to",
-                      "value": "2026-03-26T00:00:00.000Z"
-                    },
-                    {
-                      "key": "_t",
-                      "value": "123"
-                    }
-                  ]
-                }
-              },
-              "status": "OK",
-              "code": 200,
-              "_postman_previewlanguage": null,
-              "header": [
-                {
-                  "key": "Content-Security-Policy",
-                  "value": "default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests"
-                },
-                {
-                  "key": "Cross-Origin-Opener-Policy",
-                  "value": "same-origin"
-                },
-                {
-                  "key": "Cross-Origin-Resource-Policy",
-                  "value": "same-origin"
-                },
-                {
-                  "key": "Origin-Agent-Cluster",
-                  "value": "?1"
-                },
-                {
-                  "key": "Referrer-Policy",
-                  "value": "no-referrer"
-                },
-                {
-                  "key": "Strict-Transport-Security",
-                  "value": "max-age=31536000; includeSubDomains"
-                },
-                {
-                  "key": "X-Content-Type-Options",
-                  "value": "nosniff"
-                },
-                {
-                  "key": "X-DNS-Prefetch-Control",
-                  "value": "off"
-                },
-                {
-                  "key": "X-Download-Options",
-                  "value": "noopen"
-                },
-                {
-                  "key": "X-Frame-Options",
-                  "value": "SAMEORIGIN"
-                },
-                {
-                  "key": "X-Permitted-Cross-Domain-Policies",
-                  "value": "none"
-                },
-                {
-                  "key": "X-XSS-Protection",
-                  "value": "0"
-                },
-                {
-                  "key": "vary",
-                  "value": "Origin"
-                },
-                {
-                  "key": "access-control-allow-credentials",
-                  "value": "true"
-                },
-                {
-                  "key": "content-type",
-                  "value": "application/json; charset=utf-8"
-                },
-                {
-                  "key": "content-length",
-                  "value": "753"
-                },
-                {
-                  "key": "Date",
-                  "value": "Fri, 05 Jun 2026 15:28:06 GMT"
-                },
-                {
-                  "key": "Connection",
-                  "value": "keep-alive"
-                },
-                {
-                  "key": "Keep-Alive",
-                  "value": "timeout=72"
-                }
+          "response": []
+        },
+        {
+          "name": "new_fetch_history_device_ids",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/buildings/Waterside/levels/Level-01/devices?devicePrefix=MTS-",
+              "host": [
+                "{{base_url}}"
               ],
-              "cookie": [],
-              "body": "{\n    \"records\": [\n        {\n            \"device_id\": \"acu-999999\",\n            \"points\": {\n                \"humidity\": {\n                    \"present_value\": 32\n                },\n                \"pressure\": {\n                    \"present_value\": 1009\n                },\n                \"co2_level\": {\n                    \"present_value\": 551\n                },\n                \"temperature\": {\n                    \"present_value\": 21.8\n                },\n                \"air_quality_index\": {\n                    \"present_value\": \"Excellent\"\n                },\n                \"illuminance_sensor\": {\n                    \"present_value\": 10\n                },\n                \"minute_sound_level\": {\n                    \"present_value\": 48\n                },\n                \"total_volatile_organic_compounds\": {\n                    \"present_value\": 31\n                }\n            }\n        },\n        {\n            \"device_id\": \"QSE-999999\",\n            \"points\": {\n                \"humidity\": {\n                    \"present_value\": 32\n                },\n                \"pressure\": {\n                    \"present_value\": 1009\n                },\n                \"co2_level\": {\n                    \"present_value\": 551\n                },\n                \"temperature\": {\n                    \"present_value\": 21.8\n                },\n                \"air_quality_index\": {\n                    \"present_value\": \"Excellent\"\n                },\n                \"illuminance_sensor\": {\n                    \"present_value\": 10\n                },\n                \"minute_sound_level\": {\n                    \"present_value\": 48\n                },\n                \"total_volatile_organic_compounds\": {\n                    \"present_value\": 31\n                }\n            }\n        }\n    ],\n    \"count\": 2\n}"
+              "path": [
+                "api",
+                "v1",
+                "buildings",
+                "Waterside",
+                "levels",
+                "Level-01",
+                "devices"
+              ],
+              "query": [
+                {
+                  "key": "devicePrefix",
+                  "value": "MTS-"
+                }
+              ]
             }
-          ]
+          },
+          "response": []
         }
       ]
     },
