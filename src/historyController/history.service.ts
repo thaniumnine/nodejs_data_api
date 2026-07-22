@@ -57,12 +57,16 @@ export class HistoryService {
   }
 
 
-async getDeviceNames(){
+async getDeviceNames(building:string,level:string, prefix = ""){
+
   const result = await this.database.query(
      `  SELECT DISTINCT device_id
         FROM device_identifier
-    `);
-    return result.rows
+        where building = $1
+        and level = $2
+        and device_id LIKE $3
+    `,[building,level,`${prefix}%`]);
+  return {records:result.rows.map(row => row.device_id),count: result.rowCount  }
 
 }
 

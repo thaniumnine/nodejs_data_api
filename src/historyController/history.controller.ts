@@ -12,10 +12,13 @@
 
 
 
-  @Get('device_ids')
+  @Get('device_ids/:building/:level/')
   getDeviceNames(
+      @Param('building') building: string,
+      @Param('level') level: string,
+      @Query('prefix') prefix?: string,
   ) {
-    return this.historyService.getDeviceNames();
+    return this.historyService.getDeviceNames(building,level,prefix);
   }
 
   
