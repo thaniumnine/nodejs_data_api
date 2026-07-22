@@ -58,13 +58,15 @@
 
 
 
-    @Delete("history")
+    @Delete("buildings/:building/levels/:level/history")
     @HttpCode(204)
     deleteHistoryData(  
+        @Param('building') building: string,
+      @Param('level') level: string,
       @Body('ids') ids: string[],
       @Query() query: QueryDeviceHistoryRecords) {
 
-      return this.historyService.deleteDeviceHistoryDataEvent(ids, query);
+      return this.historyService.deleteDeviceHistoryDataEvent(building,level,ids, query);
     }
 
   }
