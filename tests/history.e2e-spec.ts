@@ -64,20 +64,20 @@ describe('History E2E', () => {
       await app.close();
     }
   });
-  it('POST /history/', async () => {
+  it('POST buildings/:building/levels/:level/devices/history', async () => {
     const result = await app.inject({
       method: 'POST',
-      url: `/history/GB-LON-9212/level-01/QSE-999996`,
+      url: `/buildings/GB-LON-9212/levels/level-01/devices/QSE-999996/history`,
       payload:     {"items":historyData}
     });
     expect(result.statusCode).toEqual(201);
   });
 
 
-  it('GET /history/data', async () => {
+  it('GET buildings/:building/levels/:level/devices/history', async () => {
     const result = await app.inject({
       method: 'GET',
-      url: '/history/GB-LON-9212/level-01/QSE-999996?from=1923-03-25T00:00:00.000Z&to=1923-03-26T00:00:00.000Z',
+      url: '/buildings/GB-LON-9212/levels/level-01/devices/QSE-999996/history?from=1923-03-25T00:00:00.000Z&to=1923-03-26T00:00:00.000Z',
     });
 
     expect(result.statusCode).toEqual(200);
@@ -89,10 +89,10 @@ describe('History E2E', () => {
 
 
 
-  it('DELETE /history/data/:id', async () => {
+  it('DELETE buildings/:building/levels/:level/history', async () => {
     const result = await app.inject({
       method: 'DELETE',
-      url: '/history?from=1920-03-25T16:16:31.000Z&to=1923-03-26T00:00:00.000Z',
+      url: '/buildings/GB-LON-9212/levels/level-01/history?from=1920-03-25T16:16:31.000Z&to=1923-03-26T00:00:00.000Z',
       payload: {
         "ids": ["QSE-999996"]
       }

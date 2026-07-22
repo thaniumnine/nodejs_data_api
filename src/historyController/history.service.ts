@@ -89,8 +89,8 @@ async queryDeviceHistoryWithPrefix(query: QueryDeviceHistoryPrefixRecords,buildi
       AND di.building = $3
       AND di.level = $4
       AND di.device_id LIKE $5
-      ORDER BY device_id ASC, timestamp ASC
-    `,[query.from, query.to,building,level,`${query.devicePrefix}%`]
+      ORDER BY device_id ASC, timestamp ASC`,
+      [query.from, query.to,building,level,`${query.devicePrefix}%`]
   )
     return { records: result.rows, count: result.rowCount };
 
@@ -118,7 +118,7 @@ async queryDeviceHistory(query: QueryDeviceHistoryRecords,building:string,level:
 
 // /http://kysely-org.github.io/kysely-apidoc/classes/OnConflictBuilder.html
   async createDeviceIdentifier(building: string, level: string, deviceId: string) {
-    return await this.database.db
+    return await this.database.db 
       .insertInto("device_identifier")
       .values({
         building,
