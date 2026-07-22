@@ -8,7 +8,9 @@ describe('History Controller', () => {
     let mockHistoryService = {
         queryDeviceHistory: jest.fn(),
         createDeviceHistoryDataEvent: jest.fn(),
-        deleteDeviceHistoryDataEvent:jest.fn()
+        deleteDeviceHistoryDataEvent:jest.fn(),
+        queryDeviceHistoryWithPrefix:jest.fn(),
+        getDeviceNames:jest.fn()
     }
 
     beforeEach(async () => {
@@ -51,6 +53,42 @@ describe('History Controller', () => {
 
     })
 
+       test('queryHistoryDataPrefix', async () => {
+        mockHistoryService.queryDeviceHistoryWithPrefix.mockResolvedValue({ records: [], count: 0 });
+        let mockQueryData = {
+            from: '2026-06-08T00:00:00.000Z',
+            to: '2026-06-09T00:00:00.000Z',
+            devicePrefix:'acu-999999'
+        }
+        const result = await controller.queryHistoryDataPrefix( "GB-LON-9212", "level-01",mockQueryData);
+
+        expect(mockHistoryService.queryDeviceHistoryWithPrefix).toHaveBeenCalledWith(
+            mockQueryData,
+            'GB-LON-9212',
+            'level-01',
+        );
+        expect(result).toEqual({ records: [], count: 0 })
+
+    })
+
+
+    
+       test('getDeviceNames', async () => {
+        mockHistoryService.getDeviceNames.mockResolvedValue({ records: [], count: 0 });
+        const devciePrefix = "acu-999999"
+        const result = await controller.getDeviceNames(devciePrefix,    "GB-LON-9212", "level-01");
+
+        expect(mockHistoryService.getDeviceNames).toHaveBeenCalledWith(
+            devciePrefix,
+            'GB-LON-9212',
+            'level-01',
+        );
+        expect(result).toEqual({ records: [], count: 0 })
+
+    })
+
+
+
     test('createHistoryData', async () => {
 
         let mockPostData ={items: [{
@@ -80,6 +118,9 @@ describe('History Controller', () => {
 
     });
 
+
+
+    
 
     test('deleteDeviceHistoryDataEvent', async () => {
         const idsToDelete = ['QSE-9999'];

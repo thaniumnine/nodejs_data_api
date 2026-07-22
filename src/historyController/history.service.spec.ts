@@ -142,6 +142,111 @@ describe('HistoryService', () => {
 
   })
 
+
+
+
+
+    test('queryDeviceHistoryPrefix', async () => {
+
+    const mockQueryResult = {
+      "rows": [
+        {
+          "points": {
+            "humidity": {
+              "present_value": 32
+            },
+            "pressure": {
+              "present_value": 1009
+            }
+          }
+        }
+      ],
+      "rowCount": 1
+    }
+    mockDatabaseService.query.mockResolvedValue(mockQueryResult)
+
+    const result = await service.queryDeviceHistoryWithPrefix({
+      from: '2026-06-08T00:00:00.000Z',
+      to: '2026-06-09T00:00:00.000Z',
+      devicePrefix:    "acu-999999"
+    },
+    "GB-LON-9212",
+    "level-01",
+  );
+
+    const queryCommand =        `SELECT di.device_id, dh.points, dh.timestamp, dh.version
+    FROM device_history dh JOIN device_identifier di
+    ON dh.device_ref_id = di.id
+      WHERE dh.timestamp >= $1
+      AND dh.timestamp < $2
+      AND di.building = $3
+      AND di.level = $4
+      AND di.device_id LIKE $5
+      ORDER BY device_id ASC, timestamp ASC`;
+
+        const [querySql, querySqlParams] = mockDatabaseService.query.mock.calls[0]
+        expect(normalizeSql(querySql)).toEqual(normalizeSql(queryCommand))
+        expect(querySqlParams).toEqual(['2026-06-08T00:00:00.000Z', '2026-06-09T00:00:00.000Z', "GB-LON-9212",
+    "level-01",
+    "acu-999999%"])
+
+
+    expect(result).toEqual({
+      "records": [
+        {
+          "points": {
+            "humidity": {
+              "present_value": 32
+            },
+            "pressure": {
+              "present_value": 1009
+            }
+          }
+        }
+      ],
+      "count": 1
+    })
+
+  })
+
+
+
+    test('getDeviceNames', async () => {
+
+    const mockQueryResult = {
+      "rows":       [{ device_id: "MTS-001" },
+      { device_id: "MTS-002" }],
+      "rowCount": 2
+    }
+    mockDatabaseService.query.mockResolvedValue(mockQueryResult)
+
+    const result = await service.getDeviceNames(
+    "GB-LON-9212",
+    "level-01",
+    "MTS-"
+  );
+
+    const queryCommand =  `  SELECT DISTINCT device_id
+        FROM device_identifier
+        where building = $1
+        and level = $2
+        and device_id LIKE $3
+    `;
+
+        const [querySql, querySqlParams] = mockDatabaseService.query.mock.calls[0]
+        expect(normalizeSql(querySql)).toEqual(normalizeSql(queryCommand))
+        expect(querySqlParams).toEqual(["GB-LON-9212","level-01","MTS-%"])
+
+
+    expect(result).toEqual({
+      "records": ["MTS-001",
+               "MTS-002"],
+      "count": 2
+    })
+
+  })
+
+
   test('createDeviceHistoryDataEvent', async () => {
 
 
