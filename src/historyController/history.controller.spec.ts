@@ -87,8 +87,10 @@ describe('History Controller', () => {
             from: '2026-06-08T00:00:00.000Z',
             to: '2026-06-09T00:00:00.000Z',
         }
-        const result = await controller.deleteHistoryData(idsToDelete,mockQueryData);
-        expect(mockHistoryService.deleteDeviceHistoryDataEvent).toHaveBeenCalledWith(idsToDelete,mockQueryData);
+        let building = "Waterside-test"
+        let level = "Level-01"
+        const result = await controller.deleteHistoryData(building,level,idsToDelete,mockQueryData);
+        expect(mockHistoryService.deleteDeviceHistoryDataEvent).toHaveBeenCalledWith(building,level,idsToDelete,mockQueryData);
         expect(result).toBeUndefined();
 
     })
