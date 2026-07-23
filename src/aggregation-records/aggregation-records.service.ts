@@ -2,7 +2,7 @@ import {  Injectable } from "@nestjs/common";
 import { AggregationDeviceTypeColumnRecord, AggregationService } from "../aggregationController/aggregation.service";
 import { DatabaseService } from "../database/database.service";
 import z from "zod";
-import { quoteIdentifier, quoteQualifiedIdentifier } from "src/common/sql/identifiers";
+import { quoteIdentifier, quoteQualifiedIdentifier } from "../common/sql/identifiers";
 
 export type AggregationRecord = {
   device_id: string;

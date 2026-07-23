@@ -105,10 +105,10 @@ POST /api/v1/aggregation/:device_type/data
 GET /api/v1/aggregation/:device_type/data
 DELETE /api/v1/aggregation/:device_type/data
 
-POST /api/v1/buildings/:building/levels/:level/devices/history
-GET /api/v1/buildings/:building/levels/:level/devices/history
-GET /api/v1/buildings/:building/levels/:level/devices/:device_id/history
-DELETE /api/v1/buildings/:building/levels/:level/history
+POST /api/v1/organisations/:organisation/buildings/:building/levels/:level/devices/history
+GET /api/v1/organisations/:organisation/buildings/:building/levels/:level/devices/history
+GET /api/v1/organisations/:organisation/buildings/:building/levels/:level/devices/:device_id/history
+DELETE /api/v1/organisations/:organisation/buildings/:building/levels/:level/history
 
 GET /api/v1/uildings/:building/levels/:level/devices/
 

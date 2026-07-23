@@ -2,7 +2,7 @@ import {  Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { DatabaseService } from "../database/database.service";
 import { DeviceHistoryName, DeviceHistoryTables, DeviceIdentifierName, JsonValue, Organisation } from "../database/db.types";
 import z, { string } from "zod";
-import { quoteIdentifier } from "src/common/sql/identifiers";
+import { quoteIdentifier } from "../common/sql/identifiers";
 
 export type DeviceHistoryRecord= {
     timestamp: string;
