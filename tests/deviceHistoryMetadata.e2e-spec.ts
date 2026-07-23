@@ -249,7 +249,7 @@ describe('History E2E', () => {
   });
 
 
-  it('GET /history/data', async () => {
+  it('GET /device_metadata/data', async () => {
     const result = await app.inject({
       method: 'GET',
       url: '/device_metadata/data?from=1920-03-20T00:00:00.000Z&to=1920-03-22T00:00:00.000Z',
@@ -265,7 +265,7 @@ describe('History E2E', () => {
 
 
 
-  it('DELETE /history/data/:id', async () => {
+  it('DELETE /device_metadata/data/:id', async () => {
     const result = await app.inject({
       method: 'DELETE',
       url: '/device_metadata/data',

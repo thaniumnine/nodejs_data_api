@@ -89,7 +89,7 @@ describe('History E2E', () => {
 
 
 
-  it('DELETE buildings/:building/levels/:level/history', async () => {
+  it('DELETE buildings/:building/levels/:level/devices/:device_id/history', async () => {
     const result = await app.inject({
       method: 'DELETE',
       url: '/buildings/GB-LON-9212/levels/level-01/history?from=1920-03-25T16:16:31.000Z&to=1923-03-26T00:00:00.000Z',
