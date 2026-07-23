@@ -4,8 +4,16 @@ DROP TABLE IF EXISTS organisations;
 CREATE TABLE organisations (
     id BIGSERIAL PRIMARY KEY,
     organisation_name TEXT NOT NULL,
-    history_table_name TEXT,
-    aggregation_table_name TEXT,
-    organization_prefix TEXT,
-    created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+    organization_prefix TEXT NOT NULL UNIQUE,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+    CHECK (organization_prefix ~ '^[A-Z][A-Z0-9_]*$')
+);
+
+INSERT INTO organisations (
+    organisation_name,
+    organization_prefix
+)
+VALUES (
+    'Simtronics',
+    'SIM'
 );
