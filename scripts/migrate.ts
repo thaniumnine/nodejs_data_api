@@ -1,3 +1,6 @@
+//don't want to accidentally run it
+// only safe if calculate all checksums without executing them and add them to migrations database
+
 import 'dotenv/config';
 import { createHash } from 'crypto';
 import { readdir, readFile } from 'fs/promises';
@@ -50,7 +53,7 @@ async function main() {
       console.log(`Applying ${file}`);
       await client.query('begin');
       try {
-        await client.query(sql);
+        // await client.query(sql); don't want to execute them now as it will reset the database
         await client.query('insert into _migrations(filename, checksum) values ($1, $2)', [
           file,
           checksum
