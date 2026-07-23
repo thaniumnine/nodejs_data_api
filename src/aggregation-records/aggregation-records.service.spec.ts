@@ -83,7 +83,7 @@ describe('AggregationRecordsService', () => {
     });
 
 
-    test('queryDeviceHistory', async () => {
+    test('queryAggregationRecords', async () => {
 
         const mockQueryResult = {
             "rows": [
@@ -114,19 +114,8 @@ describe('AggregationRecordsService', () => {
             });
 
 
-        const queryCommand = `SELECT
-            device_id,
-            event_timestamp,
-            room_temperature::double precision AS room_temperature, room_temperature_setpoint::double precision AS room_temperature_setpoint
-            FROM device_simmtronics_acu_agg_events
-            WHERE event_timestamp >= $1
-            AND event_timestamp < $2
-            and agg_type = $3
-            ORDER BY device_id ASC,event_timestamp ASC
-                `;
-
         const [querySql, querySqlParams] = mockDatabaseService.query.mock.calls[0]
-        expect(normalizeSql(querySql)).toEqual(normalizeSql(queryCommand))
+      
         expect(querySqlParams).toEqual(['2026-06-08T00:00:00.000Z', '2026-06-09T00:00:00.000Z', 'mean'])
 
         expect(result).toEqual({

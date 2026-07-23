@@ -7,7 +7,7 @@ import { createHistoryDatabaseServiceMock } from './history.test-mocks';
 
 
 describe('HistoryService', () => {
-
+  const ORGANISATION = "Simtronics"
   const BUILDING = 'GB-LON-9212'
   const LEVEL= 'Level-01'
   const ACU_DEVICE = 'acu-999999'
@@ -52,6 +52,14 @@ describe('HistoryService', () => {
     }).compile();
 
     service = module.get<HistoryService>(HistoryService);
+    jest
+      .spyOn(service, "queryOrganisationMetadata")
+      .mockResolvedValue({
+        id: 1,
+        name: ORGANISATION,
+        prefix: "SIM",
+        created_at: new Date(),
+      });
   });
 
   it('should be defined', () => {
@@ -64,11 +72,13 @@ describe('HistoryService', () => {
 
     mockDatabaseService.query.mockResolvedValueOnce(mockQueryResult)
 
-    const result = await service.queryDeviceHistory({
+
+
+    const result = await service.queryDeviceHistory(
+      ORGANISATION, BUILDING, LEVEL, ACU_DEVICE, {
       from: FROM,
       to: TO,
     },
-      BUILDING, LEVEL, ACU_DEVICE
     );
 
     const queryCommand = SQL['queryDeviceHistory']
@@ -88,13 +98,15 @@ describe('HistoryService', () => {
 
     mockDatabaseService.query.mockResolvedValueOnce(mockQueryResult)
 
-    const result = await service.queryDeviceHistoryWithPrefix({
-      from: FROM,
-      to: TO,
-      devicePrefix: ACU_DEVICE
-    },
+    const result = await service.queryDeviceHistoryWithPrefix(
+      ORGANISATION,
       BUILDING,
       LEVEL,
+      {
+        from: FROM,
+        to: TO,
+        devicePrefix: ACU_DEVICE
+      },
     );
 
     const queryCommand = SQL['queryDeviceHistoryPrefix']
@@ -113,6 +125,7 @@ describe('HistoryService', () => {
     mockDatabaseService.query.mockResolvedValueOnce(mockQueryResult)
 
     const result = await service.getDeviceNames(
+      ORGANISATION,
       BUILDING,
       LEVEL,
       "MTS-"
@@ -128,8 +141,8 @@ describe('HistoryService', () => {
   test('createDeviceHistoryDataEvent', async () => {
 
     const historyDataMock = EXPECTED_RESULTS['createDeviceHistoryDataEvent']
-    const result = await service.createDeviceHistoryDataEvent(historyDataMock, BUILDING, LEVEL, ACU_DEVICE);
-    expect(mockDatabaseService.db.insertInto).toHaveBeenCalledWith("device_history")
+    const result = await service.createDeviceHistoryDataEvent(historyDataMock, ORGANISATION,BUILDING, LEVEL, ACU_DEVICE);
+    expect(mockDatabaseService.db.insertInto).toHaveBeenCalledWith("sim_device_history")
     const input = historyDataMock.items[0]
     expect(databaseMock.mocks.valuesMock).toHaveBeenCalledWith([
       {
@@ -154,7 +167,7 @@ describe('HistoryService', () => {
     }
     mockDatabaseService.query.mockResolvedValueOnce(queryResult([]));
 
-    const result = await service.deleteDeviceHistoryDataEvent(BUILDING, LEVEL, idsToDelete, mockQueryData);
+    const result = await service.deleteDeviceHistoryDataEvent(ORGANISATION,BUILDING, LEVEL, idsToDelete, mockQueryData);
 
     const queryCommand = SQL['deleteDeviceHistoryDataEvent']
     expectSqlQuery(queryCommand, [idsToDelete, mockQueryData.from, mockQueryData.to, BUILDING, LEVEL])
