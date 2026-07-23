@@ -2,6 +2,7 @@ import {  Injectable } from "@nestjs/common";
 import { AggregationDeviceTypeColumnRecord, AggregationService } from "../aggregationController/aggregation.service";
 import { DatabaseService } from "../database/database.service";
 import z from "zod";
+import { quoteIdentifier, quoteQualifiedIdentifier } from "src/common/sql/identifiers";
 
 export type AggregationRecord = {
   device_id: string;
@@ -68,16 +69,22 @@ export class AggregationRecordsService {
   async queryAggregationRecords(deviceType: string, query: QueryAggregationRecords) {
     const deviceTypeData = await this.aggregationService.getRequiredByName(deviceType)
     if (!deviceTypeData) return;
+    
     const columns = deviceTypeData.columns as AggregationDeviceTypeColumnRecord[]
-    const table_name = deviceTypeData.table_name
-    const column_names = columns.map((column) => `${column.name}::double precision AS ${column.name}`)
-      .join(', ');
+
+    const safe_table_name = quoteQualifiedIdentifier(deviceTypeData.table_name)
+
+    const column_names = columns.map((column) => {
+      const safeColumnName = quoteIdentifier(column.name)
+      return `${safeColumnName}::double precision AS ${safeColumnName}`
+    }).join(', ');
+
     const result = await this.database.query(
       `SELECT 
             device_id,
             event_timestamp,
             ${column_names}
-            FROM ${table_name}
+            FROM ${safe_table_name}
             WHERE event_timestamp >= $1
             AND event_timestamp < $2
             and agg_type = $3
