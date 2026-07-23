@@ -163,3 +163,13 @@ Before exposing this publicly:
   https://blog.stackademic.com/testing-your-api-services-with-nestjs-mocking-vs-real-database-bbfe689ed745
 
   https://zenn.dev/maronn/articles/nestjs-vitest-migrate?locale=en
+
+
+
+# software errors
+
+PGadmin white screen cache error
+
+https://stackoverflow.com/questions/62426245/pgadmin-4-window-is-completely-blank
+
+delete or rename pgadmin4.db in storage folder and retype in connection info

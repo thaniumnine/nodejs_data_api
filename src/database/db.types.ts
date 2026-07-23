@@ -116,18 +116,39 @@ export type DeviceMetadataTypeTable = {
   };
 };
 
+export type OrganisationsTable = {
+    id: Generated<number>;
+    name:string;
+    prefix:string;
+    created_at: Generated<Date>;
+}
+
+
 export type DB = {
   users: UsersTable;
   user_sessions: UserSessionsTable;
   aggregation:AggregationDeviceTypeTable;
-  device_history:DeviceHistoryTypeTable;
   device_metadata:DeviceMetadataTypeTable;
-  device_identifier:DeviceIdentifierTypeTable;
-} & AggregationTables
+  organisations:OrganisationsTable;
+} & AggregationTables & DeviceHistoryTables  & DeviceIdentifierTables
 
+
+
+export type DeviceHistoryName =  `${string}_device_history`; 
+export type DeviceIdentifierName =  `${string}_device_identifier`
+export type DeviceHistoryTables = {
+  [k in DeviceHistoryName] : DeviceHistoryTypeTable
+}
+
+export type DeviceIdentifierTables = {
+  [k in DeviceIdentifierName] : DeviceIdentifierTypeTable
+}
 interface AggregationTables {
   [tableName: string]: AggregationTable
 }
+
+
+export type Organisation = Selectable<OrganisationsTable>;
 
 export type User = Selectable<UsersTable>;
 export type NewUser = Insertable<UsersTable>;

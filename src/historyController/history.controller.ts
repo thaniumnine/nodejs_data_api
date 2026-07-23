@@ -11,30 +11,33 @@
     constructor(   private readonly historyService: HistoryService) {}
 
 
-  @Get('buildings/:building/levels/:level/devices/')
+  @Get('organisations/:organisation/buildings/:building/levels/:level/devices/')
   getDeviceNames(
+      @Param('organisation') organisation: string,
       @Param('building') building: string,
       @Param('level') level: string,
       @Query('devicePrefix') prefix?: string,
   ) {
-    return this.historyService.getDeviceNames(building,level,prefix);
+    return this.historyService.getDeviceNames(organisation,building,level,prefix);
   }
 
 
-    @Get('buildings/:building/levels/:level/devices/history')
+    @Get('organisations/:organisation/buildings/:building/levels/:level/devices/history')
     queryHistoryDataPrefix(
+      @Param('organisation') organisation: string,
       @Param('building') building: string,
       @Param('level') level: string,
       //@Query(new ZodValidationPipe(QueryDeviceHistorySchema)) query: QueryDeviceHistoryRecords
       @Query() query: QueryDeviceHistoryPrefixRecords
     ) {
 
-      return this.historyService.queryDeviceHistoryWithPrefix(query, building, level);
+      return this.historyService.queryDeviceHistoryWithPrefix(organisation, building, level,query);
     }
 
-  @Get('buildings/:building/levels/:level/devices/:device_id/history')
+  @Get('organisations/:organisation/buildings/:building/levels/:level/devices/:device_id/history')
   queryHistoryData(
-        @Param('building') building: string,
+      @Param('organisation') organisation: string,
+      @Param('building') building: string,
       @Param('level') level: string,
       @Param('device_id') deviceId: string,
     
@@ -42,31 +45,33 @@
      @Query() query: QueryDeviceHistoryRecords
   ) {
 
-    return this.historyService.queryDeviceHistory(query,building,level,deviceId);
+    return this.historyService.queryDeviceHistory(organisation,building,level,deviceId,query);
   }
 
-    @Post('buildings/:building/levels/:level/devices/:device_id/history')
+    @Post('organisations/:organisation/buildings/:building/levels/:level/devices/:device_id/history')
     async createHistoryData(
+      @Param('organisation') organisation: string,
       @Param('building') building: string,
       @Param('level') level: string,
       @Param('device_id') deviceId: string,
       @Body() deviceHistoryData: DeviceHistoryData,
     ) {
-      return this.historyService.createDeviceHistoryDataEvent(deviceHistoryData,building,level,deviceId);
+      return this.historyService.createDeviceHistoryDataEvent(deviceHistoryData,organisation,building,level,deviceId);
   }
 
 
 
 
-    @Delete("buildings/:building/levels/:level/history")
+    @Delete("organisations/:organisation/buildings/:building/levels/:level/history")
     @HttpCode(204)
     deleteHistoryData(  
-        @Param('building') building: string,
+      @Param('organisation') organisation: string,
+      @Param('building') building: string,
       @Param('level') level: string,
       @Body('ids') ids: string[],
       @Query() query: QueryDeviceHistoryRecords) {
 
-      return this.historyService.deleteDeviceHistoryDataEvent(building,level,ids, query);
+      return this.historyService.deleteDeviceHistoryDataEvent(organisation,building,level,ids, query);
     }
 
   }

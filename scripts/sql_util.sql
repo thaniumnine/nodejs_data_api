@@ -34,3 +34,8 @@
 -- USING public.device_identifier di
 -- WHERE dh.device_ref_id = di.id
 --   AND di.device_id LIKE 'LCM-%';
+
+
+-- ALTER TABLE IF EXISTS  device_history  RENAME TO sim_device_history
+
+-- ALTER TABLE IF EXISTS  device_identifier  RENAME TO sim_device_identifier
