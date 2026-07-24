@@ -52,26 +52,6 @@ export interface UserSessionsTable {
 //   created_at: TimestampColumn;
 // }
 
-type BaseAggregationTable = {
-    id: Generated<number>;
-    device_id: string;
-    event_timestamp: TimestampColumn;
-    agg_type:string;
-     created_at: Generated<Date>;
-}
-type ColumnAggregationMetrics = {
-  [columnName: string]: number
-}
-export type AggregationTable = BaseAggregationTable & ColumnAggregationMetrics
-
-export interface AggregationDeviceTypeTable {
-    id: Generated<number>;
-    device_type:string
-    columns:JsonValue
-    table_name:string
-     created_at: Generated<Date>;
-}
-
 
 export type DeviceIdentifierTypeTable = {
     id: Generated<number>;
@@ -90,6 +70,31 @@ export type DeviceHistoryTypeTable = {
   }
    created_at: Generated<Date>;
 }
+
+
+type BaseAggregationTable = {
+    id: Generated<number>;
+    device_id: string;
+    event_timestamp: TimestampColumn;
+    agg_type:string;
+     created_at: Generated<Date>;
+}
+type ColumnAggregationMetrics = {
+  [columnName: string]: number
+}
+export type AggregationTypeTable = BaseAggregationTable & ColumnAggregationMetrics
+
+
+
+export interface AggregationDeviceTypeTable {
+    id: Generated<number>;
+    device_type:string
+    columns:JsonValue
+    table_name:string
+     created_at: Generated<Date>;
+}
+
+
 
 export type DeviceMetadataTypeTable = {
   device_id: string;
@@ -127,25 +132,35 @@ export type OrganisationsTable = {
 export type DB = {
   users: UsersTable;
   user_sessions: UserSessionsTable;
-  aggregation:AggregationDeviceTypeTable;
   device_metadata:DeviceMetadataTypeTable;
   organisations:OrganisationsTable;
-} & AggregationTables & DeviceHistoryTables  & DeviceIdentifierTables
+} & AggregationsDeviceTypeTable& AggregationsTable & DeviceHistoryTables  & DeviceIdentifierTables
 
 
 
 export type DeviceHistoryName =  `${string}_device_history`; 
-export type DeviceIdentifierName =  `${string}_device_identifier`
 export type DeviceHistoryTables = {
-  [k in DeviceHistoryName] : DeviceHistoryTypeTable
+  [k in DeviceHistoryName |  `"${DeviceHistoryName}"`] : DeviceHistoryTypeTable
 }
 
+export type DeviceIdentifierName =  `${string}_device_identifier`
 export type DeviceIdentifierTables = {
-  [k in DeviceIdentifierName] : DeviceIdentifierTypeTable
+  [k in DeviceIdentifierName |  `"${DeviceIdentifierName}"`] : DeviceIdentifierTypeTable
 }
-interface AggregationTables {
-  [tableName: string]: AggregationTable
+
+
+export type AggregationsName = `${string}_aggregations`
+export type AggregationsTable = {
+  [k in AggregationsName |  `"${AggregationsName}"`] : AggregationTypeTable
 }
+
+
+export type AggregationsDeviceTypeName = `${string}_aggregation_device_type`
+export type AggregationsDeviceTypeTable = {
+  [k in AggregationsDeviceTypeName | `"${AggregationsDeviceTypeName}"`] : AggregationDeviceTypeTable
+}
+
+
 
 
 export type Organisation = Selectable<OrganisationsTable>;

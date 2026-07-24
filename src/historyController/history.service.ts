@@ -1,8 +1,9 @@
-import {  Injectable, Logger, NotFoundException } from "@nestjs/common";
+import {  Injectable, Logger } from "@nestjs/common";
 import { DatabaseService } from "../database/database.service";
-import { DeviceHistoryName, DeviceHistoryTables, DeviceIdentifierName, JsonValue, Organisation } from "../database/db.types";
+import { DeviceHistoryName, DeviceIdentifierName, JsonValue } from "../database/db.types";
 import z, { string } from "zod";
-import { quoteIdentifier } from "../common/sql/identifiers";
+import { OrganisationService } from "../organisations/organisations.service";
+
 
 export type DeviceHistoryRecord= {
     timestamp: string;
@@ -46,10 +47,11 @@ export class HistoryService {
   private readonly logger = new Logger(HistoryService.name);
   constructor(
     private readonly database: DatabaseService,
+    private readonly organisationService: OrganisationService
 
   ) { }
   async createDeviceHistoryDataEvent(inputs: DeviceHistoryData,organisation:string,building: string, level: string, deviceId: string) {
-    const metadata = await this.queryOrganisationMetadata(organisation);
+    const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
     const historyTableName = this.createHistoryTableName(metadata.prefix)
     
     let deviceIdentifier = await this.createDeviceIdentifier(organisation,building, level, deviceId);
@@ -74,7 +76,7 @@ export class HistoryService {
 
 
 async getDeviceNames(organisation:string,building:string,level:string, prefix = ""){
-  const metadata = await this.queryOrganisationMetadata(organisation);
+  const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
   const identifierTableName = this.createIdentifierTableName(metadata.prefix)
 
   const result = await this.database.query(
@@ -89,7 +91,7 @@ async getDeviceNames(organisation:string,building:string,level:string, prefix = 
 }
 
 async queryDeviceHistoryWithPrefix(organisation:string,building:string,level:string,query: QueryDeviceHistoryPrefixRecords){
-  const metadata = await this.queryOrganisationMetadata(organisation);
+  const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
   const identifierTableName = this.createIdentifierTableName(metadata.prefix)
   const historyTableName = this.createHistoryTableName(metadata.prefix)
 
@@ -112,7 +114,7 @@ async queryDeviceHistoryWithPrefix(organisation:string,building:string,level:str
  
 
 async queryDeviceHistory(organisation:string,building:string,level:string,deviceId:string,query: QueryDeviceHistoryRecords) {
-  const metadata = await this.queryOrganisationMetadata(organisation);
+  const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
   const identifierTableName = this.createIdentifierTableName(metadata.prefix)
   const historyTableName = this.createHistoryTableName(metadata.prefix)  
 
@@ -133,7 +135,7 @@ async queryDeviceHistory(organisation:string,building:string,level:string,device
 
 // /http://kysely-org.github.io/kysely-apidoc/classes/OnConflictBuilder.html
   async createDeviceIdentifier(organisation:string,building: string, level: string, deviceId: string) {
-    const metadata = await this.queryOrganisationMetadata(organisation);
+    const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
     const identifierTableName = this.createIdentifierTableName(metadata.prefix)
     return await this.database.db 
       .insertInto(identifierTableName)
@@ -151,7 +153,7 @@ async queryDeviceHistory(organisation:string,building:string,level:string,device
   }
 
   async findDeviceIdentifier(organisation:string,building:string,level:string,deviceId:string):Promise<deviceIdentifierType>{ 
-   const metadata = await this.queryOrganisationMetadata(organisation);
+   const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
    const identifierTableName = this.createIdentifierTableName(metadata.prefix)
    let result =   await this.database.db
     .selectFrom(identifierTableName)
@@ -168,7 +170,7 @@ async queryDeviceHistory(organisation:string,building:string,level:string,device
 
 
 async deleteDeviceHistoryDataEvent(organisation:string,building:string,level:string,ids: string[],query:QueryDeviceHistoryRecords) {
-  const metadata = await this.queryOrganisationMetadata(organisation);
+  const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
   const historyTableName = this.createHistoryTableName(metadata.prefix) 
   const identifierTableName = this.createIdentifierTableName(metadata.prefix)
   const result = await this.database.query(
@@ -190,40 +192,13 @@ async deleteDeviceHistoryDataEvent(organisation:string,building:string,level:str
 
 }
 
-
-
- async queryOrganisationMetadata(
-    organisation: string,
-  ): Promise<Organisation> {
-    const result = await this.database.query<Organisation>(
-      `
-    SELECT id, prefix
-    FROM organisations
-    WHERE name = $1
-    LIMIT 1
-    `,
-      [organisation],
-    );
-
-    if(!result) {
-      throw new Error(`Organisation '${organisation}' not found`);
-    }
-
-    return result.rows[0];
-  }
-
-
-  createTableName<S extends string>(prefix: string, suffix: S): `${string}_${S}` {
-    return `${prefix.toLowerCase()}_${suffix}` as `${string}_${S}`;
-  }
-
   createIdentifierTableName(prefix: string): DeviceIdentifierName {
-    return this.createTableName(prefix, IDENTIFIER_TABLE_NAME)
+    return this.organisationService.createTableName(prefix, IDENTIFIER_TABLE_NAME)
 
   }
 
   createHistoryTableName(prefix: string) :DeviceHistoryName {
-    return this.createTableName(prefix, HISTORY_TABLE_NAME)
+    return this.organisationService.createTableName(prefix, HISTORY_TABLE_NAME)
 
   }
 }

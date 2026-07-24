@@ -3,6 +3,9 @@ import { AggregationDeviceTypeColumnRecord, AggregationService } from "../aggreg
 import { DatabaseService } from "../database/database.service";
 import z from "zod";
 import { quoteIdentifier, quoteQualifiedIdentifier } from "../common/sql/identifiers";
+import { OrganisationService } from "src/organisations/organisations.service";
+
+const DEVICE_TABLE_NAME = "aggregations"
 
 export type AggregationRecord = {
   device_id: string;
@@ -28,19 +31,21 @@ export type QueryAggregationRecords = z.infer<typeof QueryAggregationRecordsSche
 export class AggregationRecordsService {
   constructor(
     private readonly database: DatabaseService,
-    private readonly aggregationService: AggregationService
+    private readonly aggregationService: AggregationService,
+    private readonly organisationService: OrganisationService
   ) { }
 
-  async createAggregationDataEvent(deviceType: string, inputs: AggregationData) {
-
-    const deviceTypeData = await this.aggregationService.getRequiredByName(deviceType)
-    //TODO check it is right type first 
-    if (!deviceTypeData) return;
-    const table_name = deviceTypeData.table_name
+  async createAggregationDataEvent(organistaion:string,deviceType: string, inputs: AggregationData) {
+    const orgData = await this.organisationService.queryOrganisationMetadata(organistaion);
+    const deviceTypeData = await this.aggregationService.getRequiredType(organistaion,deviceType)
+    
+    const table_name = this.createDeviceTypeTableName(orgData.prefix,deviceTypeData.device_type);
+    const safe_table_name = quoteIdentifier(table_name)    
+ 
     const columns = deviceTypeData.columns as AggregationDeviceTypeColumnRecord[]
 
     const event = await this.database.db
-      .insertInto(table_name)
+      .insertInto(safe_table_name)
       .values(inputs.items.map((input)=>{
 
           const payload = columns.map(column =>(
@@ -66,14 +71,14 @@ export class AggregationRecordsService {
       .execute();
   }
 
-  async queryAggregationRecords(deviceType: string, query: QueryAggregationRecords) {
-    const deviceTypeData = await this.aggregationService.getRequiredByName(deviceType)
-    if (!deviceTypeData) return;
+  async queryAggregationRecords(organistaion:string,deviceType: string, query: QueryAggregationRecords) {
+    const orgData = await this.organisationService.queryOrganisationMetadata(organistaion);
+    const deviceTypeData = await this.aggregationService.getRequiredType(organistaion,deviceType)
+
+    const table_name = this.createDeviceTypeTableName(orgData.prefix,deviceTypeData.device_type);
+    const safe_table_name = quoteQualifiedIdentifier(table_name)    
     
     const columns = deviceTypeData.columns as AggregationDeviceTypeColumnRecord[]
-
-    const safe_table_name = quoteQualifiedIdentifier(deviceTypeData.table_name)
-
     const column_names = columns.map((column) => {
       const safeColumnName = quoteIdentifier(column.name)
       return `${safeColumnName}::double precision AS ${safeColumnName}`
@@ -104,10 +109,11 @@ export class AggregationRecordsService {
 
 
       
-  async deleteAggregationDataEvent(deviceType:string,ids: string[]) {
-    const deviceTypeData =  await this.aggregationService.getRequiredByName(deviceType)
-    if (!deviceTypeData) return;
+  async deleteAggregationDataEvent(organisation:string,deviceType:string,ids: string[]) {
+    const orgData = await this.organisationService.queryOrganisationMetadata(organisation);
+    const deviceTypeData =  await this.aggregationService.getRequiredType(organisation,deviceType)
     const table_name = deviceTypeData.table_name
+
     const result = await this.database.query(
       `
     DELETE FROM ${table_name}
@@ -118,5 +124,11 @@ export class AggregationRecordsService {
   }
 
 
+  createDeviceTypeTableName(OrgPrefix: string,deviceType :string) {
+    const prefix = OrgPrefix + "_" + deviceType;
+    return this.organisationService.createTableName(prefix, DEVICE_TABLE_NAME)
+
+  }
   
 }
+

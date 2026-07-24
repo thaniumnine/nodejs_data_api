@@ -2,6 +2,8 @@ import {  Injectable, NotFoundException } from "@nestjs/common";
 import { DatabaseService } from "../database/database.service";
 import { JsonValue } from "../database/db.types";
 import z from "zod";
+import { OrganisationService } from "../organisations/organisations.service";
+import { quoteIdentifier, quoteQualifiedIdentifier } from "src/common/sql/identifiers";
 export type AggregationDeviceTypeColumnRecord = {
   name: string
   type: string
@@ -15,15 +17,19 @@ export type AggregationDeviceTypeRecord= {
 
 }
 
+  const AGGREGATIONS_DEVICE_TYPE_TABLE_NAME   = "aggregation_device_type"
+
 @Injectable()
 export class AggregationService {
   constructor(
     private readonly database: DatabaseService,
+    private readonly organisationService: OrganisationService
   ) { }
 
-  async createDeviceType(input: AggregationDeviceTypeRecord) {
+  async createDeviceType(organisation:string,input: AggregationDeviceTypeRecord) {
+    const table_name = await this.fetchTableName(organisation)
     const event = await this.database.db
-      .insertInto("aggregation")
+      .insertInto(table_name)
       .values( {device_type: input.device_type,
         table_name:input.table_name,
       columns: JSON.stringify(input.columns),
@@ -34,9 +40,10 @@ export class AggregationService {
   }
 
 
-async list() {
+async list(organisation:string) {
+  const table_name = await this.fetchTableName(organisation)
   return this.database.db
-    .selectFrom('aggregation')
+    .selectFrom(table_name)
     .select([
       'device_type',
       'columns',
@@ -47,16 +54,18 @@ async list() {
 }
 
 
-  async getByName(device_type: string) {
-    return this.database.db.selectFrom('aggregation').select([
+  async getType(organisation:string,device_type: string) {
+     const table_name = await this.fetchTableName(organisation)
+
+    return this.database.db.selectFrom(table_name).select([
       'device_type',
       'columns',
       'table_name',
     ]).where('device_type', '=', device_type).executeTakeFirst();
   }
 
-  async getRequiredByName(name: string) {
-    const deviceTypeData = await this.getByName(name);
+  async getRequiredType(organisation:string,name: string) {
+    const deviceTypeData = await this.getType(organisation,name);
     if (!deviceTypeData) {
       throw new NotFoundException(`device name not found: ${name}`);
     }
@@ -66,14 +75,29 @@ async list() {
 
       
 
-  async deleteAggregationMetadataEvent(ids: string[]) {
+  async deleteAggregationMetadataEvent(organisation: string, ids: string[]) {
+    const table_name = await this.fetchTableName(organisation)
     const result = await this.database.query(
       `
-    DELETE FROM aggregation
+    DELETE FROM ${table_name}
     WHERE device_type = ANY($1)
     `,
       [ids],
     );
   }
+
+
+    createDeviceTypesTableName(OrgPrefix: string) {
+    return this.organisationService.createTableName(OrgPrefix, AGGREGATIONS_DEVICE_TYPE_TABLE_NAME)
+
+  }
+
+  async fetchTableName(organisation:string) {
+    const orgData = await this.organisationService.queryOrganisationMetadata(organisation);
+    const table_name = this.createDeviceTypesTableName(orgData.prefix);
+    const safe_table_name = quoteIdentifier(table_name) 
+    return safe_table_name
+  }
+
 
 }
