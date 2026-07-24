@@ -4,7 +4,7 @@ import { DatabaseModule } from './database/database.module';
 import { HealthController } from './health.controller';
 import { UsersModule } from './users/users.module';
 import { AggregationRecordsModule } from './aggregation-records/aggregation-records.module';
-import { AggregationModule } from './aggregationController/aggregation.module';
+import { AggregationModule } from './aggregationType/aggregation.module';
 import { HomeController } from './home.controller';
 import { HistoryModule } from './historyController/history.module';
 import { DeviceMetadataModule } from './deviceMetadataController/deviceMetadata.module';

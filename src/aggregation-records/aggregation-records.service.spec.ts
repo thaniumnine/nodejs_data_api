@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AggregationRecordsService } from './aggregation-records.service';
 import { DatabaseService } from '../database/database.service';
-import { AggregationService } from '../aggregationController/aggregation.service';
+import { AggregationService } from '../aggregationType/aggregation.service';
 import { OnConflictBuilder } from 'kysely';
 describe('AggregationRecordsService', () => {
 

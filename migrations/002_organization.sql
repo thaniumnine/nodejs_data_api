@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS organisations;
+-- DROP TABLE IF EXISTS organisations;
 
 
 CREATE TABLE organisations (

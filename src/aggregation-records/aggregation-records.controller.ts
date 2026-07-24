@@ -9,7 +9,7 @@ import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
 export class AggregationRecordsController {
   constructor(   private readonly aggregationService: AggregationRecordsService) {}
 
-@Get('data')
+@Get('records')
 queryAggregationData(
    @Param('organisation') organisation: string,
   @Param('device_type') deviceType: string,
@@ -22,7 +22,7 @@ queryAggregationData(
 
 
 
-@Post('data')
+@Post('records')
 createAggregationData(
    @Param('organisation') organisation: string,
   @Param('device_type') deviceType: string,
@@ -32,7 +32,7 @@ createAggregationData(
     }  
     
     
-  @Delete("data")
+  @Delete("records")
   @HttpCode(204)
   deleteAggregationData(
     @Param('organisation') organisation: string,

@@ -1,5 +1,5 @@
 import {  Injectable } from "@nestjs/common";
-import { AggregationDeviceTypeColumnRecord, AggregationService } from "../aggregationController/aggregation.service";
+import { AggregationDeviceTypeColumnRecord, AggregationService } from "../aggregationType/aggregation.service";
 import { DatabaseService } from "../database/database.service";
 import z from "zod";
 import { quoteIdentifier, quoteQualifiedIdentifier } from "../common/sql/identifiers";
@@ -40,12 +40,11 @@ export class AggregationRecordsService {
     const deviceTypeData = await this.aggregationService.getRequiredType(organistaion,deviceType)
     
     const table_name = this.createDeviceTypeTableName(orgData.prefix,deviceTypeData.device_type);
-    const safe_table_name = quoteIdentifier(table_name)    
- 
+  
     const columns = deviceTypeData.columns as AggregationDeviceTypeColumnRecord[]
 
     const event = await this.database.db
-      .insertInto(safe_table_name)
+      .insertInto(table_name)
       .values(inputs.items.map((input)=>{
 
           const payload = columns.map(column =>(
@@ -112,11 +111,12 @@ export class AggregationRecordsService {
   async deleteAggregationDataEvent(organisation:string,deviceType:string,ids: string[]) {
     const orgData = await this.organisationService.queryOrganisationMetadata(organisation);
     const deviceTypeData =  await this.aggregationService.getRequiredType(organisation,deviceType)
-    const table_name = deviceTypeData.table_name
+    const table_name = this.createDeviceTypeTableName(orgData.prefix,deviceTypeData.device_type);
+    const safe_table_name = quoteQualifiedIdentifier(table_name)  
 
     const result = await this.database.query(
       `
-    DELETE FROM ${table_name}
+    DELETE FROM ${safe_table_name}
     WHERE device_id = ANY($1)
     `,
       [ids],
@@ -125,8 +125,7 @@ export class AggregationRecordsService {
 
 
   createDeviceTypeTableName(OrgPrefix: string,deviceType :string) {
-    const prefix = OrgPrefix + "_" + deviceType;
-    return this.organisationService.createTableName(prefix, DEVICE_TABLE_NAME)
+    return this.organisationService.create3PartTableName(OrgPrefix, DEVICE_TABLE_NAME,deviceType)
 
   }
   

@@ -2,11 +2,12 @@ import { Module } from '@nestjs/common';
 import { AuthModule } from '../auth/auth.module';
 import { AggregationRecordsController } from './aggregation-records.controller';
 import { AggregationRecordsService } from './aggregation-records.service';
-import { AggregationModule } from '../aggregationController/aggregation.module';
+import { AggregationModule } from '../aggregationType/aggregation.module';
+import { OrganisationModule } from '../organisations/organisations.module';
 
 
 @Module({
-  imports: [AuthModule, AggregationModule],
+  imports: [AuthModule, AggregationModule,OrganisationModule],
   controllers: [AggregationRecordsController],
   providers: [AggregationRecordsService]
 })

@@ -1,4 +1,4 @@
-import {  Injectable, NotFoundException } from "@nestjs/common";
+import {  Injectable, Logger, NotFoundException } from "@nestjs/common";
 import { DatabaseService } from "../database/database.service";
 import { JsonValue } from "../database/db.types";
 import z from "zod";
@@ -12,15 +12,15 @@ export type AggregationDeviceTypeColumnRecord = {
 
 export type AggregationDeviceTypeRecord= {
     device_type:string
-    table_name:string
     columns:AggregationDeviceTypeColumnRecord[]
 
 }
 
-  const AGGREGATIONS_DEVICE_TYPE_TABLE_NAME   = "aggregation_device_type"
+  const AGGREGATIONS_DEVICE_TYPE_TABLE_NAME   = "device_type_aggregation"
 
 @Injectable()
 export class AggregationService {
+  private readonly logger = new Logger(AggregationService.name);
   constructor(
     private readonly database: DatabaseService,
     private readonly organisationService: OrganisationService
@@ -31,7 +31,6 @@ export class AggregationService {
     const event = await this.database.db
       .insertInto(table_name)
       .values( {device_type: input.device_type,
-        table_name:input.table_name,
       columns: JSON.stringify(input.columns),
     
   })
@@ -46,8 +45,7 @@ async list(organisation:string) {
     .selectFrom(table_name)
     .select([
       'device_type',
-      'columns',
-      'table_name',
+      'columns'
     ])
     .orderBy('device_type', 'asc')
     .execute();
@@ -56,11 +54,10 @@ async list(organisation:string) {
 
   async getType(organisation:string,device_type: string) {
      const table_name = await this.fetchTableName(organisation)
-
+ 
     return this.database.db.selectFrom(table_name).select([
       'device_type',
-      'columns',
-      'table_name',
+      'columns'
     ]).where('device_type', '=', device_type).executeTakeFirst();
   }
 
@@ -94,9 +91,10 @@ async list(organisation:string) {
 
   async fetchTableName(organisation:string) {
     const orgData = await this.organisationService.queryOrganisationMetadata(organisation);
+     this.logger.log('org_data...',orgData,organisation);
     const table_name = this.createDeviceTypesTableName(orgData.prefix);
-    const safe_table_name = quoteIdentifier(table_name) 
-    return safe_table_name
+    //const safe_table_name = quoteIdentifier(table_name) 
+    return table_name
   }
 
 

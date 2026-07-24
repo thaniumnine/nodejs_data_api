@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS device_history;
-DROP TABLE IF EXISTS device_identifier;
+-- DROP TABLE IF EXISTS device_history;
+-- DROP TABLE IF EXISTS device_identifier;
 
 
 CREATE TABLE device_identifier (
