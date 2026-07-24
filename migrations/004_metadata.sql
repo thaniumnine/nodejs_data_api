@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS device_metadata;
+-- DROP TABLE IF EXISTS device_metadata;
 
 CREATE TABLE device_metadata (
     id BIGSERIAL PRIMARY KEY,

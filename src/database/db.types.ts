@@ -88,10 +88,9 @@ export type AggregationTypeTable = BaseAggregationTable & ColumnAggregationMetri
 
 export interface AggregationDeviceTypeTable {
     id: Generated<number>;
-    device_type:string
-    columns:JsonValue
-    table_name:string
-     created_at: Generated<Date>;
+    device_type:string;
+    columns:JsonValue;
+    created_at: Generated<Date>;
 }
 
 
@@ -149,13 +148,13 @@ export type DeviceIdentifierTables = {
 }
 
 
-export type AggregationsName = `${string}_aggregations`
+export type AggregationsName = `${string}_aggregations_${string}`
 export type AggregationsTable = {
   [k in AggregationsName |  `"${AggregationsName}"`] : AggregationTypeTable
 }
 
 
-export type AggregationsDeviceTypeName = `${string}_aggregation_device_type`
+export type AggregationsDeviceTypeName = `${string}_device_type_aggregation`
 export type AggregationsDeviceTypeTable = {
   [k in AggregationsDeviceTypeName | `"${AggregationsDeviceTypeName}"`] : AggregationDeviceTypeTable
 }

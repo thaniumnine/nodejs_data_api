@@ -7,7 +7,7 @@ import { ZodValidationPipe } from 'src/common/pipes/zod-validation.pipe.js';
 
 
 @UseGuards(JwtAuthGuard)
-@Controller('aggregation/organisations/:organisation/')
+@Controller('aggregation/organisations/:organisation/device_types')
 export class AggregationController {
   constructor(private readonly aggregationService: AggregationService) { }
 
@@ -16,24 +16,29 @@ export class AggregationController {
      @Param('organisation') organisation: string,
     @Body() aggregationTypedata: AggregationDeviceTypeRecord,
   ) {
-    return this.aggregationService.createDeviceType(aggregationTypedata)
+    return this.aggregationService.createDeviceType(organisation,aggregationTypedata)
   }
 
-  @Get(":device_name")
-  getDeviceType( @Param('organisation') organisation: string,@Param('device_name') deviceName: string) {
-    return this.aggregationService.getRequiredByName(deviceName)
+  @Get("/:device_type")
+  getDeviceType( 
+    @Param('organisation') organisation: string,
+    @Param('device_type') deviceName: string) {
+    return this.aggregationService.getRequiredType(organisation,deviceName)
   }
 
   @Get()
-  getAllDeviceTypes( @Param('organisation') organisation: string,) {
-    return this.aggregationService.list()
+  getAllDeviceTypes( 
+    @Param('organisation') organisation: string,
+  
+  ) {
+    return this.aggregationService.list(organisation)
   }
 
 
   @Delete()
   @HttpCode(204)
   deleteAggregationData( @Param('organisation') organisation: string,@Body('ids') ids: string[]) {
-    return this.aggregationService.deleteAggregationMetadataEvent(ids);
+    return this.aggregationService.deleteAggregationMetadataEvent(organisation,ids);
   }
 
 

@@ -7,7 +7,6 @@ export class OrganisationService {
     private readonly logger = new Logger(OrganisationService.name);
     constructor(
         private readonly database: DatabaseService,
-        
 
     ) { }
 
@@ -34,6 +33,11 @@ export class OrganisationService {
 
     createTableName<S extends string>(prefix: string, suffix: S): `${string}_${S}` {
         return `${prefix.toLowerCase()}_${suffix}` as `${string}_${S}`;
+    }
+
+    
+  create3PartTableName<S extends string>(prefix: string, main: S,suffix:string): `${string}_${S}_${string}` {
+        return `${prefix.toLowerCase()}_${main}_${suffix.toLowerCase()}` as `${string}_${S}_${string}`;
     }
 
 
