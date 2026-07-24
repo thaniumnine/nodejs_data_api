@@ -82,7 +82,7 @@ To create a new aggregation device type along after you have created its table
 Usage: node insert-new-deviceType.js <orgPrefix> <deviceType> <deviceColumns>
 
 ```
-npm run insert-new:deviceType -- sim mts '[
+npm run insert-new:deviceType -- sim mts2 '[
             {
                 "name": "illuminance_sensor",
                 "type": "numeric"
