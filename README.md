@@ -108,15 +108,35 @@ Usage: node insert-new-organisation.js <orgName> <orgPrefix>
 
 ```
 npm run insert-new:organisation -- Simtronics sim
+
+
+
+To create a new aggregation device type table for that organisation
+
+Usage: node create_new_aggregation_tables.ts <orgPrefix>
+
+```npm run create_new_aggregation_type_table -- SIM2```
 ```
+
+To create new aggregation tables based of of the data in aggregation device table
+
+Usage: node create_new_aggregation_tables.ts <orgPrefix>
+
+```
+npm run create_new_aggregation_record_tables -- SIM2
+```
+
+
 ## Setup
 
 ### Aggregation
-You need to create a table for each aggregation device type for each organisation
+1) if don't have an organisation run npm run insert-new:organisation
+2) run create_new_aggregation_type_table with that organisations prefix to create device table 
+3) either use the postman request or insert-new:deviceType to populate the table with device types and their columns
+4) finally run create_new_aggregation_tables to create aggregation record tables based of the aggregation device type table records
 
-as well as a table to contain device type metadata per organisation
 
-to populate either use the api or run npm run insert-new:deviceType with the correct data as shown above
+
 
 ## Main endpoints
 

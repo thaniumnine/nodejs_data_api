@@ -723,7 +723,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\"device_type\": \"mts\",\r\n\"columns\":[\r\n    {\r\n    \"name\" :\"illuminance_sensor\",\r\n    \"type\":\"numeric\"\r\n    },\r\n    {\r\n    \"name\":\"last_week_total_occupancy\",\r\n    \"type\":\"numeric\"\r\n    },\r\n    {\r\n    \"name\":\"motion_event\" ,\r\n    \"type\":\"numeric\"\r\n    },\r\n    { \r\n    \"name\":\"this_week_cumulative_occupancy\" ,\r\n    \"type\":\"numeric\"\r\n    }\r\n]\r\n}",
+              "raw": "{\"items\":{\"device_type\": \"mts\",\r\n\"columns\":[\r\n    {\r\n    \"name\" :\"illuminance_sensor\",\r\n    \"type\":\"numeric\"\r\n    },\r\n    {\r\n    \"name\":\"last_week_total_occupancy\",\r\n    \"type\":\"numeric\"\r\n    },\r\n    {\r\n    \"name\":\"motion_event\" ,\r\n    \"type\":\"numeric\"\r\n    },\r\n    { \r\n    \"name\":\"this_week_cumulative_occupancy\" ,\r\n    \"type\":\"numeric\"\r\n    }\r\n]\r\n}\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -785,7 +785,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\"device_type\": \"qse\",\r\n\"columns\":[\r\n    {\r\n    \"name\" :\"co2_level\",\r\n    \"type\":\"numeric\"\r\n    },\r\n    {\r\n    \"name\":\"humidity\",\r\n    \"type\":\"numeric\"\r\n    },\r\n    {\r\n    \"name\":\"illuminance_sensor\" ,\r\n    \"type\":\"numeric\"\r\n    },\r\n    { \r\n    \"name\":\"minute_sound_level\" ,\r\n    \"type\":\"numeric\"\r\n    },\r\n       { \r\n    \"name\":\"pressure\" ,\r\n    \"type\":\"numeric\"\r\n    },\r\n  { \r\n    \"name\":\"temperature\" ,\r\n    \"type\":\"numeric\"\r\n    },\r\n      { \r\n    \"name\":\"total_volatile_organic_compounds\" ,\r\n    \"type\":\"numeric\"\r\n    }\r\n]\r\n}",
+              "raw": "{\"items\":{\"device_type\": \"qse\",\r\n\"columns\":[\r\n    {\r\n    \"name\" :\"co2_level\",\r\n    \"type\":\"numeric\"\r\n    },\r\n    {\r\n    \"name\":\"humidity\",\r\n    \"type\":\"numeric\"\r\n    },\r\n    {\r\n    \"name\":\"illuminance_sensor\" ,\r\n    \"type\":\"numeric\"\r\n    },\r\n    { \r\n    \"name\":\"minute_sound_level\" ,\r\n    \"type\":\"numeric\"\r\n    },\r\n       { \r\n    \"name\":\"pressure\" ,\r\n    \"type\":\"numeric\"\r\n    },\r\n  { \r\n    \"name\":\"temperature\" ,\r\n    \"type\":\"numeric\"\r\n    },\r\n      { \r\n    \"name\":\"total_volatile_organic_compounds\" ,\r\n    \"type\":\"numeric\"\r\n    }\r\n]\r\n}\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
