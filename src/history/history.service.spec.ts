@@ -3,6 +3,8 @@ import { HistoryService } from './history.service';
 import { DatabaseService } from '../database/database.service';
 import { EXPECTED_RESULTS, RESULT, SQL } from './history.test-fixtures';
 import { createHistoryDatabaseServiceMock } from './history.test-mocks';
+import { Organisation } from '../database/db.types';
+import { OrganisationService } from '../organisations/organisations.service';
 
 
 
@@ -19,6 +21,16 @@ describe('HistoryService', () => {
   let service: HistoryService;
   const databaseMock = createHistoryDatabaseServiceMock();
   const mockDatabaseService = databaseMock.service;
+  
+    const mockOrganisationService = {
+    queryOrganisationMetadata: jest.fn().mockResolvedValue({
+      id: 1,
+      name: ORGANISATION,
+      prefix: "SIM",
+      created_at: new Date(),
+    }),
+    createTableName: jest.fn().mockReturnValue("sim_device_type_aggregation")
+  };
 
   databaseMock.mocks.executeMock.mockResolvedValue(
     RESULT.createDeviceHistoryDataEvent,
@@ -47,19 +59,16 @@ describe('HistoryService', () => {
           provide: DatabaseService,
           useValue: mockDatabaseService
 
+        },
+        {
+          provide: OrganisationService,
+          useValue: mockOrganisationService
+
         }
       ]
     }).compile();
 
     service = module.get<HistoryService>(HistoryService);
-    jest
-      .spyOn(service, "queryOrganisationMetadata")
-      .mockResolvedValue({
-        id: 1,
-        name: ORGANISATION,
-        prefix: "SIM",
-        created_at: new Date(),
-      });
   });
 
   it('should be defined', () => {

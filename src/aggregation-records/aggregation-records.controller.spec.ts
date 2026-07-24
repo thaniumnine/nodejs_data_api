@@ -11,6 +11,12 @@ describe('History Controller', () => {
         deleteAggregationDataEvent:jest.fn()
     }
 
+    const FROM = '2026-06-08T00:00:00.000Z';
+    const TO = '2026-06-09T00:00:00.000Z';
+    const AGG_TYPE = 'mean';
+    const ORGANISATION = "Simtronics";
+    const DEVICE_TYPE = "mts";
+
     beforeEach(async () => {
         jest.clearAllMocks();
         const module: TestingModule = await Test.createTestingModule({
@@ -48,16 +54,16 @@ describe('History Controller', () => {
     }   
 
         const query =  {
-                from: '2026-06-08T00:00:00.000Z',
-                to: '2026-06-09T00:00:00.000Z',
-                aggType: 'mean'
+                from: FROM,
+                to: TO,
+                aggType: AGG_TYPE
             }
-               let deviceType = "mts";
+
 
         mockAggregationService.queryAggregationRecords.mockResolvedValue(mockAggregationQueryResults);
-        const result = await controller.queryAggregationData(deviceType,  query);
+        const result = await controller.queryAggregationData(ORGANISATION,DEVICE_TYPE,  query);
 
-        expect(mockAggregationService.queryAggregationRecords).toHaveBeenCalledWith(deviceType, query);
+        expect(mockAggregationService.queryAggregationRecords).toHaveBeenCalledWith(ORGANISATION,DEVICE_TYPE, query);
 
         expect(result).toEqual( mockAggregationQueryResults )
 
@@ -78,12 +84,12 @@ describe('History Controller', () => {
             }
         }]
     }
-        let deviceType = "mts";
+    
 
         mockAggregationService.createAggregationDataEvent.mockResolvedValue(CreateMockCreateQueryResult);
-        const result = await controller.createAggregationData(deviceType,CreateMockCreateQueryResult);
+        const result = await controller.createAggregationData(ORGANISATION,DEVICE_TYPE,CreateMockCreateQueryResult);
 
-        expect(mockAggregationService.createAggregationDataEvent).toHaveBeenCalledWith(deviceType,CreateMockCreateQueryResult);
+        expect(mockAggregationService.createAggregationDataEvent).toHaveBeenCalledWith(ORGANISATION,DEVICE_TYPE,CreateMockCreateQueryResult);
         expect(result).toEqual(CreateMockCreateQueryResult)
 
     });
@@ -94,8 +100,8 @@ describe('History Controller', () => {
     
     test('deleteDeviceHistoryDataEvent', async () => {
         const idsToDelete = ['ACU-9999'];
-        const result = await controller.deleteAggregationData("acu",idsToDelete);
-        expect(mockAggregationService.deleteAggregationDataEvent).toHaveBeenCalledWith("acu",idsToDelete);
+        const result = await controller.deleteAggregationData(ORGANISATION,"acu",idsToDelete);
+        expect(mockAggregationService.deleteAggregationDataEvent).toHaveBeenCalledWith(ORGANISATION,"acu",idsToDelete);
         expect(result).toBeUndefined();
 
     })

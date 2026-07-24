@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
-import { DatabaseService } from "src/database/database.service";
-import { Organisation } from "src/database/db.types";
+import { DatabaseService } from "../database/database.service";
+import { Organisation } from "../database/db.types";
 
 @Injectable()
 export class OrganisationService {
