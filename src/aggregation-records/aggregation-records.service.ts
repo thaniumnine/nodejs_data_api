@@ -3,7 +3,7 @@ import { AggregationDeviceTypeColumnRecord, AggregationService } from "../aggreg
 import { DatabaseService } from "../database/database.service";
 import z from "zod";
 import { quoteIdentifier, quoteQualifiedIdentifier } from "../common/sql/identifiers";
-import { OrganisationService } from "src/organisations/organisations.service";
+import { OrganisationService } from "../organisations/organisations.service";
 
 const DEVICE_TABLE_NAME = "aggregations"
 

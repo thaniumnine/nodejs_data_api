@@ -1,76 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AggregationService } from './aggregation.service';
 import { DatabaseService } from '../database/database.service';
+import { DB_SERVICE_RETURNED_RESULTS, EXPECTED_RESULTS } from './aggregation-type.test-fixtures';
+import { OrganisationService } from '../organisations/organisations.service';
 describe('AggregationService', () => {
-  const ListMockcQueryResult = [
-    {
-      "id": "54a1b2f2-0e74-45cb-a164-c24dc302b5e5",
-      "device_type": "acu",
-      "table_name": "device_simmtronics_acu_agg_events",
-      "columns": [
-        {
-          "name": "room_temperature",
-          "type": "numeric"
-        },
-        {
-          "name": "room_temperature_setpoint",
-          "type": "numeric"
-        }
-      ],
-      "created_at": "2026-06-03T15:06:39.847Z"
-    }]
-  const CreateMockCreateQueryResult = {
-    "device_type": "qse",
-    "table_name": "device_simmtronics_qse_agg_events",
-    "columns": [
-      {
-        "name": "co2_level",
-        "type": "numeric"
-      },
-      {
-        "name": "humidity",
-        "type": "numeric"
-      }
-    ]
-  }
 
-
-  const getdByNameMockQueryResult = {
-    "id": "e0a73079-0845-4ad4-80f4-dd977ae22ede",
-    "device_type": "qse",
-    "table_name": "device_simmtronics_qse_agg_events",
-    "columns": [
-      {
-        "name": "co2_level",
-        "type": "numeric"
-      },
-      {
-        "name": "humidity",
-        "type": "numeric"
-      },
-      {
-        "name": "illuminance_sensor",
-        "type": "numeric"
-      },
-      {
-        "name": "minute_sound_level",
-        "type": "numeric"
-      },
-      {
-        "name": "pressure",
-        "type": "numeric"
-      },
-      {
-        "name": "temperature",
-        "type": "numeric"
-      },
-      {
-        "name": "total_volatile_organic_compounds",
-        "type": "numeric"
-      }
-    ],
-    "created_at": "2026-05-08T11:40:05.215Z"
-  }
+  const ORGANISATION = "Simtronics"
 
   let service: AggregationService;
   const mockDatabaseService = {
@@ -78,7 +13,7 @@ describe('AggregationService', () => {
     db: {
       insertInto: jest.fn().mockReturnValue({
         values: jest.fn().mockReturnValue({
-            executeTakeFirstOrThrow: jest.fn().mockResolvedValue(CreateMockCreateQueryResult)
+            executeTakeFirstOrThrow: jest.fn().mockResolvedValue(DB_SERVICE_RETURNED_RESULTS['createDeviceType'])
 
         })
       }
@@ -87,10 +22,10 @@ describe('AggregationService', () => {
       selectFrom: jest.fn().mockReturnValue({
         select: jest.fn().mockReturnValue({
           orderBy: jest.fn().mockReturnValue({
-            execute: jest.fn().mockResolvedValue(ListMockcQueryResult)
+            execute: jest.fn().mockResolvedValue(DB_SERVICE_RETURNED_RESULTS['list'])
           }),
           where: jest.fn().mockReturnValue({
-            executeTakeFirst: jest.fn().mockResolvedValue(getdByNameMockQueryResult)
+            executeTakeFirst: jest.fn().mockResolvedValue(DB_SERVICE_RETURNED_RESULTS['getRequiredType'])
           })
         })
       }
@@ -99,7 +34,15 @@ describe('AggregationService', () => {
     }
 
   }
-
+  const mockOrganisationService = {
+    queryOrganisationMetadata: jest.fn().mockResolvedValue({
+      id: 1,
+      name: ORGANISATION,
+      prefix: "SIM",
+      created_at: new Date(),
+    }),
+    createTableName: jest.fn().mockResolvedValue("sim_device_type_aggregation")
+  };
 
   beforeEach(async () => {
     jest.clearAllMocks();
@@ -109,7 +52,10 @@ describe('AggregationService', () => {
           provide: DatabaseService,
           useValue: mockDatabaseService
 
-        }
+        } ,{
+      provide: OrganisationService,
+      useValue: mockOrganisationService,
+    },
       ]
     }).compile();
 
@@ -121,23 +67,22 @@ describe('AggregationService', () => {
   });
 
   test('list', async () => {
-    const result = await service.list();
-    expect(mockDatabaseService.db.selectFrom).toHaveBeenCalledWith("aggregation")
+    const result = await service.list(ORGANISATION);
+    expect(mockDatabaseService.db.selectFrom).toHaveBeenCalledWith("sim_device_type_aggregation")
     const selectFromResults = (mockDatabaseService.db.selectFrom as jest.Mock).mock.results[0].value
     const selectResults = selectFromResults.select.mock.results[0].value
     expect(selectResults.orderBy).toHaveBeenCalledWith('device_type', 'asc'  )
-    expect(result).toEqual(ListMockcQueryResult)
+    expect(result).toEqual(EXPECTED_RESULTS["list"])
 
   })
 
   test('createDeviceType', async () => {
 
 
-    const result = await service.createDeviceType(CreateMockCreateQueryResult);
+    const result = await service.createDeviceType(ORGANISATION,DB_SERVICE_RETURNED_RESULTS['createDeviceType']);
 
     expect((mockDatabaseService.db.insertInto as jest.Mock).mock.results[0].value.values).toHaveBeenCalledWith({
       device_type: "qse",
-      table_name: "device_simmtronics_qse_agg_events",
       columns: JSON.stringify([
         {
           "name": "co2_level",
@@ -153,14 +98,14 @@ describe('AggregationService', () => {
   });
 
 
-  test('getRequiredByName', async () => {
+  test('getRequiredType', async () => {
     const deviceName = "lt"
-    const result = await service.getRequiredByName(deviceName);
-    expect(mockDatabaseService.db.selectFrom).toHaveBeenCalledWith("aggregation")
+    const result = await service.getRequiredType(ORGANISATION,deviceName);
+    expect(mockDatabaseService.db.selectFrom).toHaveBeenCalledWith("sim_device_type_aggregation")
     const selectFromResults = (mockDatabaseService.db.selectFrom as jest.Mock).mock.results[0].value
     const selectResults = selectFromResults.select.mock.results[0].value
     expect(selectResults.where).toHaveBeenCalledWith('device_type', '=', deviceName)
-    expect(result).toEqual(getdByNameMockQueryResult)
+    expect(result).toEqual(EXPECTED_RESULTS['getRequiredType'])
 
 
   });
@@ -174,10 +119,10 @@ test('deleteDeviceHistoryDataEvent', async () => {
       rows: [],
     });
 
-    const result = await service.deleteAggregationMetadataEvent(idsToDelete);
+    const result = await service.deleteAggregationMetadataEvent(ORGANISATION,idsToDelete);
 
     expect(mockDatabaseService.query).toHaveBeenCalledWith(
-      expect.stringContaining('DELETE FROM aggregation'),
+      expect.stringContaining('DELETE FROM sim_device_type_aggregation'),
       [idsToDelete],
     );
 

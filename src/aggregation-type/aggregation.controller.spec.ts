@@ -4,11 +4,14 @@ import { AggregationController } from './aggregation.controller';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 
 describe('History Controller', () => {
+
+    const ORGANISATION = "Simtronics"  
+
     let controller: AggregationController;
     let mockAggregationService = {
         createDeviceType: jest.fn(),
         list:jest.fn(),
-        getRequiredByName:jest.fn(),
+        getRequiredType:jest.fn(),
         deleteAggregationMetadataEvent:jest.fn()
     }
 
@@ -52,9 +55,9 @@ describe('History Controller', () => {
             ]
         }
         mockAggregationService.createDeviceType.mockResolvedValue(CreateMockCreateQueryResult);
-        const result = await controller.createAggregationDeviceType(CreateMockCreateQueryResult);
+        const result = await controller.createAggregationDeviceType(ORGANISATION,CreateMockCreateQueryResult);
 
-        expect(mockAggregationService.createDeviceType).toHaveBeenCalledWith(CreateMockCreateQueryResult);
+        expect(mockAggregationService.createDeviceType).toHaveBeenCalledWith(ORGANISATION,CreateMockCreateQueryResult);
         expect(result).toEqual( CreateMockCreateQueryResult )
 
     })
@@ -79,7 +82,7 @@ describe('History Controller', () => {
                 "created_at": "2026-06-03T15:06:39.847Z"
             }]
         mockAggregationService.list.mockResolvedValue(getAllDeviceTypesQueryResult);
-        const result = await controller.getAllDeviceTypes();
+        const result = await controller.getAllDeviceTypes(ORGANISATION);
 
         expect(mockAggregationService.list).toHaveBeenCalled();
         expect(result).toEqual(getAllDeviceTypesQueryResult)
@@ -107,10 +110,10 @@ describe('History Controller', () => {
                 "created_at": "2026-06-03T15:06:39.847Z"
             }
        let deviceType = "acu";
-        mockAggregationService.getRequiredByName.mockResolvedValue(getAllDeviceTypesQueryResult);
-        const result = await controller.getDeviceType(deviceType);
+        mockAggregationService.getRequiredType.mockResolvedValue(getAllDeviceTypesQueryResult);
+        const result = await controller.getDeviceType(ORGANISATION,deviceType);
 
-        expect(mockAggregationService.getRequiredByName).toHaveBeenCalledWith(deviceType);
+        expect(mockAggregationService.getRequiredType).toHaveBeenCalledWith(ORGANISATION,deviceType);
         expect(result).toEqual(getAllDeviceTypesQueryResult)
 
     })
@@ -119,8 +122,8 @@ describe('History Controller', () => {
     
     test('deleteDeviceHistoryDataEvent', async () => {
         const idsToDelete = ['QSE-9999'];
-        const result = await controller.deleteAggregationData(idsToDelete);
-        expect(mockAggregationService.deleteAggregationMetadataEvent).toHaveBeenCalledWith(idsToDelete);
+        const result = await controller.deleteAggregationData(ORGANISATION,idsToDelete);
+        expect(mockAggregationService.deleteAggregationMetadataEvent).toHaveBeenCalledWith(ORGANISATION,idsToDelete);
         expect(result).toBeUndefined();
 
     })
