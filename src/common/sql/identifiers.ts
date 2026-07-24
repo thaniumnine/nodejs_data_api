@@ -8,12 +8,12 @@ export function assertSafeIdentifier(identifier: string): void {
   }
 }
 
-export function quoteIdentifier(identifier: string): string {
+export function quoteIdentifier<T extends string>(identifier: T) {
   assertSafeIdentifier(identifier);
-  return `"${identifier}"`;
+  return `"${identifier}"` as `"${T}"`;
 }
 
-export function quoteQualifiedIdentifier(identifier: string): string {
+export function quoteQualifiedIdentifier(identifier: string) {
   const parts = identifier.split('.');
 
   if (parts.length === 0 || parts.length > 2 || parts.some((part) => !part)) {

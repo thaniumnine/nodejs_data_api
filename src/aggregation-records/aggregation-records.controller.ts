@@ -5,37 +5,40 @@ import {AggregationData, AggregationRecordsService, QueryAggregationRecords, Que
 import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
 
 @UseGuards(JwtAuthGuard)
-@Controller('aggregation/:device_type')
+@Controller('aggregation/organisations/:organisation/device_types/:device_type')
 export class AggregationRecordsController {
   constructor(   private readonly aggregationService: AggregationRecordsService) {}
 
 @Get('data')
 queryAggregationData(
+   @Param('organisation') organisation: string,
   @Param('device_type') deviceType: string,
   @Query(new ZodValidationPipe(QueryAggregationRecordsSchema)) query: QueryAggregationRecords
  // @Query("from") from:string , @Query("to") to:string
 ) {
 
-   return this.aggregationService.queryAggregationRecords(deviceType,query);
+   return this.aggregationService.queryAggregationRecords(organisation,deviceType,query);
 }
 
 
 
 @Post('data')
 createAggregationData(
+   @Param('organisation') organisation: string,
   @Param('device_type') deviceType: string,
   @Body() aggregationData: AggregationData,
 ) {
-    return this.aggregationService.createAggregationDataEvent(deviceType,aggregationData)
+    return this.aggregationService.createAggregationDataEvent(organisation,deviceType,aggregationData)
     }  
     
     
   @Delete("data")
   @HttpCode(204)
   deleteAggregationData(
+    @Param('organisation') organisation: string,
    @Param('device_type') deviceType: string,
     @Body('ids') ids: string[]) {
-    return this.aggregationService.deleteAggregationDataEvent(deviceType,ids);
+    return this.aggregationService.deleteAggregationDataEvent(organisation,deviceType,ids);
   }
 
 
