@@ -36,33 +36,3 @@ CREATE INDEX idx_device_simmtronics_acu_agg_events_device_time_type
 
 
 
-DROP TABLE IF EXISTS sim_aggregations_acu;
-
-CREATE TABLE sim_aggregations_acu (
-  id BIGSERIAL PRIMARY KEY,
-
-  device_id TEXT NOT NULL,
-  event_timestamp TIMESTAMPTZ NOT NULL,
-  agg_type TEXT NOT NULL,
-
-  room_temperature NUMERIC NULL,
-  room_temperature_setpoint NUMERIC NULL,
-
-   UNIQUE (device_id,agg_type, event_timestamp),
-  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
-);
-
-CREATE INDEX idx_sim_aggregations_acu_device_id
-  ON sim_aggregations_acu (device_id);
-
-CREATE INDEX idx_sim_aggregations_acu_timestamp
-  ON sim_aggregations_acu (event_timestamp);
-
-CREATE INDEX idx_sim_aggregations_acu_agg_type
-  ON sim_aggregations_acu (agg_type);
-
-CREATE INDEX idx_sim_aggregations_acu_device_time
-  ON sim_aggregations_acu (device_id, event_timestamp DESC);
-
-CREATE INDEX idx_sim_aggregations_acu_device_time_type
-  ON sim_aggregations_acu (device_id, agg_type, event_timestamp DESC);

@@ -96,14 +96,14 @@ POST /api/v1/device_metadata/data
 GET /api/v1/device_metadata/data
 DELETE /api/v1//device_metadata/data
 
-POST /api/v1/aggregation/
-GET /api/v1/aggregation/
-GET /api/v1/aggregation/:device_type
-DELETE /api/v1/aggregation/
+POST /api/v1/aggregation/organisations/:organisation/device_types
+GET /api/v1/aggregation/organisations/:organisation/device_types
+GET /api/v1/aggregation/organisations/:organisation/device_types/:device_type
+DELETE /api/v1/aggregation/organisations/:organisation/device_types
 
-POST /api/v1/aggregation/:device_type/data
-GET /api/v1/aggregation/:device_type/data
-DELETE /api/v1/aggregation/:device_type/data
+POST /api/v1/aggregation/organisations/:organisation/device_types/:device_type/records
+GET /api/v1/aggregation/organisations/:organisation/device_types/:device_type/records
+DELETE /api/v1/aggregation/organisations/:organisation/device_types/:device_type/records
 
 POST /api/v1/organisations/:organisation/buildings/:building/levels/:level/devices/history
 GET /api/v1/organisations/:organisation/buildings/:building/levels/:level/devices/history
@@ -123,9 +123,10 @@ src/
   sessions/                   hashed refresh token sessions and rotation
   users/                      user lookup and password storage
   aggregation-records/        aggregation records
-  aggregationController/      metadata about aggregation records table
-  deviceMetadataController/   device metadata
-  historyController/          device history data
+  aggregation-type/           metadata about aggregation records table
+  deviceMetadata/             device metadata
+  history/                    device history data
+  organisations/              organisations and their metadata such as table prefix
   database/                   PostgreSQL/Kysely connection
   common/                     guards, decorators, validation pipes, SQL identifier helpers
 migrations/                   SQL migrations

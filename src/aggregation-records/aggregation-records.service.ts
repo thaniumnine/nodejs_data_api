@@ -1,5 +1,5 @@
 import {  Injectable } from "@nestjs/common";
-import { AggregationDeviceTypeColumnRecord, AggregationService } from "../aggregationType/aggregation.service";
+import { AggregationDeviceTypeColumnRecord, AggregationService } from "../aggregation-type/aggregation.service";
 import { DatabaseService } from "../database/database.service";
 import z from "zod";
 import { quoteIdentifier, quoteQualifiedIdentifier } from "../common/sql/identifiers";

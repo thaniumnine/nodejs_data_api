@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AuthModule } from '../auth/auth.module';
 import { AggregationRecordsController } from './aggregation-records.controller';
 import { AggregationRecordsService } from './aggregation-records.service';
-import { AggregationModule } from '../aggregationType/aggregation.module';
+import { AggregationModule } from '../aggregation-type/aggregation.module';
 import { OrganisationModule } from '../organisations/organisations.module';
 
 
