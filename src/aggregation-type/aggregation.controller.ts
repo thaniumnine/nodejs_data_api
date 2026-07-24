@@ -14,7 +14,7 @@ export class AggregationController {
   @Post()
   createAggregationDeviceType(
      @Param('organisation') organisation: string,
-    @Body() aggregationTypedata: AggregationDeviceTypeRecord,
+    @Body('items') aggregationTypedata: AggregationDeviceTypeRecord,
   ) {
     return this.aggregationService.createDeviceType(organisation,aggregationTypedata)
   }
