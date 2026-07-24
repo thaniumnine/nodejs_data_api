@@ -7,18 +7,24 @@
     "node": ">=24.0.0"
   },
   "scripts": {
+
     "build": "nest build",
     "start": "node dist/main.js",
     "start:dev": "nest start --watch",
+
     "db:migrate": "tsx scripts/migrate.ts",
     "seed:admin": "tsx scripts/seed-admin.ts",
     "hash:password": "tsx scripts/hash-password.ts",
+    "insert-new:deviceType": "tsx scripts/insert-new-deviceType.ts",
+    "insert-new:organisation": "tsx scripts/insert-new-organisation",
+
     "test": "jest",
     "test:e2e": "jest --config ./tests/jest-e2e.config.json",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:e2e:cov": "jest --config ./tests/jest-e2e.config.json --coverage",
     "test:all:cov": "jest --coverage && jest --config ./tests/jest-e2e.config.json --coverage",
+
     "lint": "eslint \"src/**/*.ts\" \"scripts/**/*.ts\" --fix",
     "format": "prettier --write \"src/**/*.ts\" \"scripts/**/*.ts\""
   },

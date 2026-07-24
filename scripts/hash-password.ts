@@ -1,14 +1,10 @@
 import 'dotenv/config';
-import { Client } from 'pg';
+
 import { hashPassword, verifyPassword } from '../src/auth/password';
 
-const databaseUrl = process.env.DATABASE_URL;
-const email = process.env.ADMIN_EMAIL;
+
 const password = process.env.ADMIN_PASSWORD;
 
-if (!databaseUrl) throw new Error('DATABASE_URL is required');
-if (!email) throw new Error('ADMIN_EMAIL is required');
-//if (!password || password.length < 12) throw new Error('ADMIN_PASSWORD must be at least 12 characters');
 
 async function main() {
 

@@ -75,7 +75,48 @@ Logout revokes the current session:
 curl -s -X POST http://localhost:3500/api/v1/auth/logout \
   -H 'authorization: Bearer <access_token>'
 ```
+## Scripts
 
+To create a new aggregation device type along after you have created its table
+
+Usage: node insert-new-deviceType.js <orgPrefix> <deviceType> <deviceColumns>
+
+```
+npm run insert-new:deviceType -- sim mts '[
+            {
+                "name": "illuminance_sensor",
+                "type": "numeric"
+            },
+            {
+                "name": "last_week_total_occupancy",
+                "type": "numeric"
+            },
+            {
+                "name": "motion_event",
+                "type": "numeric"
+            },
+            {
+                "name": "this_week_cumulative_occupancy",
+                "type": "numeric"
+            }
+        ]'
+```
+
+To create a new organisation
+
+Usage: node insert-new-organisation.js <orgName> <orgPrefix>
+
+```
+npm run insert-new:organisation -- Simtronics sim
+```
+## Setup
+
+### Aggregation
+You need to create a table for each aggregation device type for each organisation
+
+as well as a table to contain device type metadata per organisation
+
+to populate either use the api or run npm run insert-new:deviceType with the correct data as shown above
 
 ## Main endpoints
 
@@ -132,6 +173,7 @@ src/
 migrations/                   SQL migrations
 scripts/                      migration runner and admin seed
 ```
+
 
 ## Production notes
 
