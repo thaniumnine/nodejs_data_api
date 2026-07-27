@@ -18,6 +18,7 @@ describe('AggregationRecordsService', () => {
     const ORGANISATION = "Simtronics"
     
     let service: AggregationRecordsService;
+    let organisationService:OrganisationService;
     const mockDatabaseService = {
         query: jest.fn(),
         db: {
@@ -37,27 +38,18 @@ describe('AggregationRecordsService', () => {
 
     }
 
-    const mockOrganisationService = {
-        queryOrganisationMetadata: jest.fn().mockResolvedValue({
-            id: 1,
-            name: ORGANISATION,
-            prefix: "SIM",
-            created_at: new Date(),
-        }),
-        createTableName: jest.fn().mockReturnValue("sim_device_type_aggregation"),
-    };
-
     const mockAggregationService = {
         getRequiredByName: jest.fn(),
-             getRequiredType:jest.fn().mockRejectedValue({
-                device_type:"mts"
+             getRequiredType:jest.fn().mockResolvedValue({
+                device_type:"acu",
+                columns: [{name:'room_temperature'},{name:'room_temperature_setpoint'}]
              })
     }
 
     beforeEach(async () => {
         jest.clearAllMocks();
         const module: TestingModule = await Test.createTestingModule({
-            providers: [AggregationRecordsService,
+            providers: [AggregationRecordsService, OrganisationService,
                 {
                     provide: DatabaseService,
                     useValue: mockDatabaseService
@@ -65,14 +57,20 @@ describe('AggregationRecordsService', () => {
                     provide: AggregationService,
                     useValue: mockAggregationService
 
-                },{
-                      provide: OrganisationService,
-                      useValue: mockOrganisationService,
-                    },
+                }
             ]
         }).compile();
 
         service = module.get<AggregationRecordsService>(AggregationRecordsService);
+        organisationService = module.get<OrganisationService>(OrganisationService);
+        jest.spyOn(organisationService, 'queryOrganisationMetadata').mockResolvedValue({
+            id: 1,
+            name: ORGANISATION,
+            prefix: "SIM",
+            created_at: new Date(),
+        });
+
+
     });
 
     it('should be defined', () => {
@@ -114,7 +112,7 @@ describe('AggregationRecordsService', () => {
         const deviceType = "acu"
         mockAggregationService.getRequiredByName.mockResolvedValue(AGGREGATION_SERVICE_RETURNED_RESULTS["getRequiredByName"]);
         const result = await service.createAggregationDataEvent(ORGANISATION,deviceType, DB_SERVICE_RETURNED_RESULTS["createAggregationDataEvent"]);
-        expect(mockDatabaseService.db.insertInto).toHaveBeenCalledWith("device_simmtronics_acu_agg_events")
+        expect(mockDatabaseService.db.insertInto).toHaveBeenCalledWith("sim_aggregations_acu")
         const insertIntoResults = (mockDatabaseService.db.insertInto as jest.Mock).mock.results[0].value
         expect(insertIntoResults.values).toHaveBeenCalledWith([
             {
@@ -122,7 +120,7 @@ describe('AggregationRecordsService', () => {
                 agg_type: "max",
                 event_timestamp: new Date("2026-04-24T12:34:00Z"),
                 room_temperature: null,
-                room_temperature_setpoint: null,
+                room_temperature_setpoint: null
             }
         ])
         expect(result).toBeUndefined();

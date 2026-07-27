@@ -117,7 +117,6 @@ async queryDeviceHistory(organisation:string,building:string,level:string,device
   const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
   const identifierTableName = this.createIdentifierTableName(metadata.prefix)
   const historyTableName = this.createHistoryTableName(metadata.prefix)  
-
   const result = await this.database.query(
       `SELECT dh.points, dh.timestamp
     FROM ${historyTableName} dh JOIN ${identifierTableName} di 

@@ -3,7 +3,6 @@ import { HistoryService } from './history.service';
 import { DatabaseService } from '../database/database.service';
 import { EXPECTED_RESULTS, RESULT, SQL } from './history.test-fixtures';
 import { createHistoryDatabaseServiceMock } from './history.test-mocks';
-import { Organisation } from '../database/db.types';
 import { OrganisationService } from '../organisations/organisations.service';
 
 
@@ -11,26 +10,18 @@ import { OrganisationService } from '../organisations/organisations.service';
 describe('HistoryService', () => {
   const ORGANISATION = "Simtronics"
   const BUILDING = 'GB-LON-9212'
-  const LEVEL= 'Level-01'
+  const LEVEL = 'Level-01'
   const ACU_DEVICE = 'acu-999999'
-  const FROM=  '2026-06-08T00:00:00.000Z'
-  const TO ='2026-06-09T00:00:00.000Z'
+  const FROM = '2026-06-08T00:00:00.000Z'
+  const TO = '2026-06-09T00:00:00.000Z'
 
 
 
   let service: HistoryService;
+  let organisationService: OrganisationService;
   const databaseMock = createHistoryDatabaseServiceMock();
   const mockDatabaseService = databaseMock.service;
-  
-    const mockOrganisationService = {
-    queryOrganisationMetadata: jest.fn().mockResolvedValue({
-      id: 1,
-      name: ORGANISATION,
-      prefix: "SIM",
-      created_at: new Date(),
-    }),
-    createTableName: jest.fn().mockReturnValue("sim_device_type_aggregation")
-  };
+
 
   databaseMock.mocks.executeMock.mockResolvedValue(
     RESULT.createDeviceHistoryDataEvent,
@@ -54,21 +45,26 @@ describe('HistoryService', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
     const module: TestingModule = await Test.createTestingModule({
-      providers: [HistoryService,
+      providers: [HistoryService, OrganisationService,
         {
           provide: DatabaseService,
           useValue: mockDatabaseService
-
-        },
-        {
-          provide: OrganisationService,
-          useValue: mockOrganisationService
 
         }
       ]
     }).compile();
 
     service = module.get<HistoryService>(HistoryService);
+    organisationService = module.get(OrganisationService);
+
+    jest.spyOn(organisationService, 'queryOrganisationMetadata').mockResolvedValue({
+      id: 1,
+      name: ORGANISATION,
+      prefix: "SIM",
+      created_at: new Date(),
+    });
+
+
   });
 
   it('should be defined', () => {
@@ -150,7 +146,7 @@ describe('HistoryService', () => {
   test('createDeviceHistoryDataEvent', async () => {
 
     const historyDataMock = EXPECTED_RESULTS['createDeviceHistoryDataEvent']
-    const result = await service.createDeviceHistoryDataEvent(historyDataMock, ORGANISATION,BUILDING, LEVEL, ACU_DEVICE);
+    const result = await service.createDeviceHistoryDataEvent(historyDataMock, ORGANISATION, BUILDING, LEVEL, ACU_DEVICE);
     expect(mockDatabaseService.db.insertInto).toHaveBeenCalledWith("sim_device_history")
     const input = historyDataMock.items[0]
     expect(databaseMock.mocks.valuesMock).toHaveBeenCalledWith([
@@ -176,7 +172,7 @@ describe('HistoryService', () => {
     }
     mockDatabaseService.query.mockResolvedValueOnce(queryResult([]));
 
-    const result = await service.deleteDeviceHistoryDataEvent(ORGANISATION,BUILDING, LEVEL, idsToDelete, mockQueryData);
+    const result = await service.deleteDeviceHistoryDataEvent(ORGANISATION, BUILDING, LEVEL, idsToDelete, mockQueryData);
 
     const queryCommand = SQL['deleteDeviceHistoryDataEvent']
     expectSqlQuery(queryCommand, [idsToDelete, mockQueryData.from, mockQueryData.to, BUILDING, LEVEL])
@@ -186,11 +182,11 @@ describe('HistoryService', () => {
 })
 
 
-function queryResult<T>(rows:T[]){
-    return {
-      rows,
-      rowCount:rows.length,
-    }
+function queryResult<T>(rows: T[]) {
+  return {
+    rows,
+    rowCount: rows.length,
+  }
 }
 
 function serviceResult<T>(records: T[]) {
@@ -202,5 +198,5 @@ function serviceResult<T>(records: T[]) {
 
 
 const normalizeSql = (sql: string) => (
-      sql.replace(/\s+/g, ' ').trim()
-  )
+  sql.replace(/\s+/g, ' ').trim()
+)
