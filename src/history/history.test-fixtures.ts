@@ -70,7 +70,7 @@ export const EXPECTED_RESULTS = {
 
 export const SQL = {
 queryDeviceHistoryPrefix:`SELECT di.device_id, dh.points, dh.timestamp, dh.version
-    FROM sim_device_history dh JOIN sim_device_type_identifier di
+    FROM sim_device_history dh JOIN sim_device_identifier di
     ON dh.device_ref_id = di.id
       WHERE dh.timestamp >= $1
       AND dh.timestamp < $2
@@ -80,7 +80,7 @@ queryDeviceHistoryPrefix:`SELECT di.device_id, dh.points, dh.timestamp, dh.versi
       ORDER BY device_id ASC, timestamp ASC`,
 
 queryDeviceHistory:`SELECT dh.points, dh.timestamp
-    FROM sim_device_history dh JOIN sim_device_type_identifier di 
+    FROM sim_device_history dh JOIN sim_device_identifier di 
       ON dh.device_ref_id = di.id
     WHERE dh.timestamp >= $1
       AND dh.timestamp < $2
@@ -90,7 +90,7 @@ queryDeviceHistory:`SELECT dh.points, dh.timestamp
     ORDER BY device_id ASC, timestamp ASC`,
 
   getDeviceNames:`  SELECT DISTINCT device_id
-        FROM sim_device_type_identifier
+        FROM sim_device_identifier
         where building = $1
         and level = $2
         and device_id LIKE $3`,
@@ -98,7 +98,7 @@ queryDeviceHistory:`SELECT dh.points, dh.timestamp
 
     deleteDeviceHistoryDataEvent:    `
     DELETE FROM sim_device_history dh
-    USING sim_device_type_identifier di
+    USING sim_device_identifier di
     WHERE dh.device_ref_id = di.id
       AND di.device_id = ANY($1)
       AND dh.timestamp >= $2

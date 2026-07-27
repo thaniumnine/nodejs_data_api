@@ -41,7 +41,7 @@ export class AggregationRecordsService {
     
     const table_name = this.createDeviceTypeTableName(orgData.prefix,deviceTypeData.device_type);
   
-    const columns = deviceTypeData.columns as AggregationDeviceTypeColumnRecord[]
+    const columns = deviceTypeData.columns as AggregationDeviceTypeColumnRecord[];
 
     const event = await this.database.db
       .insertInto(table_name)
@@ -77,7 +77,7 @@ export class AggregationRecordsService {
     const table_name = this.createDeviceTypeTableName(orgData.prefix,deviceTypeData.device_type);
     const safe_table_name = quoteQualifiedIdentifier(table_name)    
     
-    const columns = deviceTypeData.columns as AggregationDeviceTypeColumnRecord[]
+    const columns = deviceTypeData.columns as AggregationDeviceTypeColumnRecord[];
     const column_names = columns.map((column) => {
       const safeColumnName = quoteIdentifier(column.name)
       return `${safeColumnName}::double precision AS ${safeColumnName}`
