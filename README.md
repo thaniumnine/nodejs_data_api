@@ -2,10 +2,6 @@
 
 A NestJS + TypeScript starter API for PostgreSQL data access with both:
 
-1. JSONB topic/event storage for flexible device/application payloads.
-2. Native SQL table access for structured tables that already exist or need relational modelling.
-
-The API keeps database tables private and exposes stable topic-based endpoints.
 
 ## Stack
 
@@ -79,95 +75,76 @@ Logout revokes the current session:
 curl -s -X POST http://localhost:3500/api/v1/auth/logout \
   -H 'authorization: Bearer <access_token>'
 ```
+## Scripts
 
-## Topic model
+To create a new aggregation device type along after you have created its table
 
-The API supports two topic storage types.
+Usage: node insert-new-deviceType.js <orgPrefix> <deviceType> <deviceColumns>
 
-### 1. JSONB event-log topics
-
-Best for semi-structured objects from devices/applications.
-
-Physical table:
-
-```text
-topic_events
+```
+npm run insert-new:deviceType -- sim mts2 '[
+            {
+                "name": "illuminance_sensor",
+                "type": "numeric"
+            },
+            {
+                "name": "last_week_total_occupancy",
+                "type": "numeric"
+            },
+            {
+                "name": "motion_event",
+                "type": "numeric"
+            },
+            {
+                "name": "this_week_cumulative_occupancy",
+                "type": "numeric"
+            }
+        ]'
 ```
 
-Core fields:
+To create a new organisation
 
-```text
-topic_name
-device_id
-event_timestamp
-received_at
-payload jsonb
+Usage: node insert-new-organisation.js <orgName> <orgPrefix>
+
+```
+npm run insert-new:organisation -- Simtronics sim
+
+
+
+To create a new aggregation device type table for that organisation
+
+Usage: node create_new_aggregation_tables.ts <orgPrefix>
+
+```npm run create_new_aggregation_type_table -- SIM2```
 ```
 
-Example write:
+To create new aggregation tables based of of the data in aggregation device table
 
-```bash
-curl -s -X POST http://localhost:3500/api/v1/topics/sensor_readings/events \
-  -H 'authorization: Bearer <access_token>' \
-  -H 'content-type: application/json' \
-  -d '{
-    "device_id": "demo-device-1",
-    "event_timestamp": "2026-04-26T12:34:00Z",
-    "payload": {
-      "temperature": 21.4,
-      "humidity": 67,
-      "battery": 89
-    }
-  }'
+Usage: node create_new_aggregation_tables.ts <orgPrefix>
+
+```
+npm run create_new_aggregation_record_tables -- SIM2
 ```
 
-Example query:
 
-```bash
-curl -s 'http://localhost:3500/api/v1/topics/sensor_readings/events?device_id=demo-device-1&limit=50' \
-  -H 'authorization: Bearer <access_token>'
-```
+## Setup
 
-### 2. Native SQL table topics
+### Aggregation
+1) if don't have an organisation run npm run insert-new:organisation
+2) run create_new_aggregation_type_table with that organisations prefix to create device table 
+3) either use the postman request or insert-new:deviceType to populate the table with device types and their columns
+4) finally run create_new_aggregation_tables to create aggregation record tables based of the aggregation device type table records
 
-Best for structured tables with real columns and relational constraints.
 
-The sample migration creates a native table:
 
-```text
-device_status
-```
-
-and maps it to a public topic with the same name.
-
-Example insert:
-
-```bash
-curl -s -X POST http://localhost:3500/api/v1/topics/device_status/rows \
-  -H 'authorization: Bearer <access_token>' \
-  -H 'content-type: application/json' \
-  -d '{
-    "row": {
-      "device_id": "demo-device-1",
-      "status": "online",
-      "firmware_version": "1.0.0",
-      "battery_percent": 98.5,
-      "event_timestamp": "2026-04-26T12:34:00Z",
-      "raw_payload": {"source":"bootstrap"}
-    }
-  }'
-```
-
-Example query through the same topic API shape:
-
-```bash
-curl -s 'http://localhost:3500/api/v1/topics/device_status/events?device_id=demo-device-1&limit=50' \
-  -H 'authorization: Bearer <access_token>'
-```
 
 ## Main endpoints
 
 ```text
+Look at postman for examples
+
+GET  /api/v1/
+
 GET  /api/v1/health
 
 POST /api/v1/auth/register      development only, controlled by AUTH_ALLOW_REGISTRATION
@@ -176,35 +153,47 @@ POST /api/v1/auth/refresh
 POST /api/v1/auth/logout
 GET  /api/v1/auth/me
 
-POST /api/v1/topics
-GET  /api/v1/topics
-GET  /api/v1/topics/:topic
-PATCH /api/v1/topics/:topic
+POST /api/v1/device_metadata/data
+GET /api/v1/device_metadata/data
+DELETE /api/v1//device_metadata/data
 
-POST /api/v1/topics/:topic/events
-GET  /api/v1/topics/:topic/events
-GET  /api/v1/topics/:topic/devices/:deviceId/latest
-POST /api/v1/topics/:topic/rows
+POST /api/v1/aggregation/organisations/:organisation/device_types
+GET /api/v1/aggregation/organisations/:organisation/device_types
+GET /api/v1/aggregation/organisations/:organisation/device_types/:device_type
+DELETE /api/v1/aggregation/organisations/:organisation/device_types
+
+POST /api/v1/aggregation/organisations/:organisation/device_types/:device_type/records
+GET /api/v1/aggregation/organisations/:organisation/device_types/:device_type/records
+DELETE /api/v1/aggregation/organisations/:organisation/device_types/:device_type/records
+
+POST /api/v1/organisations/:organisation/buildings/:building/levels/:level/devices/history
+GET /api/v1/organisations/:organisation/buildings/:building/levels/:level/devices/history
+GET /api/v1/organisations/:organisation/buildings/:building/levels/:level/devices/:device_id/history
+DELETE /api/v1/organisations/:organisation/buildings/:building/levels/:level/history
+
+GET /api/v1/uildings/:building/levels/:level/devices/
+
+
 ```
-
-## Why this layout
-
-The public API is topic-based, not table-based. Each topic is registered in the `topics` table. A topic can use shared JSONB storage or map to a native SQL table. That means applications can use stable URLs while the database design can evolve.
 
 ## Project layout
 
 ```text
 src/
-  auth/           login, refresh, logout, JWT access tokens
-  sessions/       hashed refresh token sessions and rotation
-  users/          user lookup and password storage
-  topics/         topic registry and metadata
-  topic-records/  JSONB event and native SQL row access
-  database/       PostgreSQL/Kysely connection
-  common/         guards, decorators, validation pipes, SQL identifier helpers
-migrations/       SQL migrations
-scripts/          migration runner and admin seed
+  auth/                       login, refresh, logout, JWT access tokens
+  sessions/                   hashed refresh token sessions and rotation
+  users/                      user lookup and password storage
+  aggregation-records/        aggregation records
+  aggregation-type/           metadata about aggregation records table
+  deviceMetadata/             device metadata
+  history/                    device history data
+  organisations/              organisations and their metadata such as table prefix
+  database/                   PostgreSQL/Kysely connection
+  common/                     guards, decorators, validation pipes, SQL identifier helpers
+migrations/                   SQL migrations
+scripts/                      migration runner and admin seed
 ```
+
 
 ## Production notes
 
@@ -215,12 +204,12 @@ Before exposing this publicly:
 - Set `AUTH_ALLOW_REGISTRATION=false`.
 - Restrict CORS origins.
 - Add rate limiting on `/auth/login` and ingestion endpoints.
-- Add topic/device-level permissions.
+- Add permissions.
 - Add request-size limits for JSON payloads.
 - Add observability, audit logs, backups, and alerting.
 
 
-## testing docs
+## testing docs (usefull files about testing)
 
   https://www.freecodecamp.org/news/nestjs-unit-testing-e2e-testing-guide/
 
@@ -237,3 +226,13 @@ Before exposing this publicly:
   https://blog.stackademic.com/testing-your-api-services-with-nestjs-mocking-vs-real-database-bbfe689ed745
 
   https://zenn.dev/maronn/articles/nestjs-vitest-migrate?locale=en
+
+
+
+# software errors
+
+PGadmin white screen cache error
+
+https://stackoverflow.com/questions/62426245/pgadmin-4-window-is-completely-blank
+
+delete or rename pgadmin4.db in storage folder and retype in connection info

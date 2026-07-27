@@ -1,7 +1,11 @@
 import {  Injectable } from "@nestjs/common";
-import { AggregationDeviceTypeColumnRecord, AggregationService } from "../aggregationController/aggregation.service";
+import { AggregationDeviceTypeColumnRecord, AggregationService } from "../aggregation-type/aggregation.service";
 import { DatabaseService } from "../database/database.service";
 import z from "zod";
+import { quoteIdentifier, quoteQualifiedIdentifier } from "../common/sql/identifiers";
+import { OrganisationService } from "../organisations/organisations.service";
+
+const DEVICE_TABLE_NAME = "aggregations"
 
 export type AggregationRecord = {
   device_id: string;
@@ -27,16 +31,17 @@ export type QueryAggregationRecords = z.infer<typeof QueryAggregationRecordsSche
 export class AggregationRecordsService {
   constructor(
     private readonly database: DatabaseService,
-    private readonly aggregationService: AggregationService
+    private readonly aggregationService: AggregationService,
+    private readonly organisationService: OrganisationService
   ) { }
 
-  async createAggregationDataEvent(deviceType: string, inputs: AggregationData) {
-
-    const deviceTypeData = await this.aggregationService.getRequiredByName(deviceType)
-    //TODO check it is right type first 
-    if (!deviceTypeData) return;
-    const table_name = deviceTypeData.table_name
-    const columns = deviceTypeData.columns as AggregationDeviceTypeColumnRecord[]
+  async createAggregationDataEvent(organistaion:string,deviceType: string, inputs: AggregationData) {
+    const orgData = await this.organisationService.queryOrganisationMetadata(organistaion);
+    const deviceTypeData = await this.aggregationService.getRequiredType(organistaion,deviceType)
+    
+    const table_name = this.createDeviceTypeTableName(orgData.prefix,deviceTypeData.device_type);
+  
+    const columns = deviceTypeData.columns as AggregationDeviceTypeColumnRecord[];
 
     const event = await this.database.db
       .insertInto(table_name)
@@ -65,19 +70,25 @@ export class AggregationRecordsService {
       .execute();
   }
 
-  async queryAggregationRecords(deviceType: string, query: QueryAggregationRecords) {
-    const deviceTypeData = await this.aggregationService.getRequiredByName(deviceType)
-    if (!deviceTypeData) return;
-    const columns = deviceTypeData.columns as AggregationDeviceTypeColumnRecord[]
-    const table_name = deviceTypeData.table_name
-    const column_names = columns.map((column) => `${column.name}::double precision AS ${column.name}`)
-      .join(', ');
+  async queryAggregationRecords(organistaion:string,deviceType: string, query: QueryAggregationRecords) {
+    const orgData = await this.organisationService.queryOrganisationMetadata(organistaion);
+    const deviceTypeData = await this.aggregationService.getRequiredType(organistaion,deviceType)
+
+    const table_name = this.createDeviceTypeTableName(orgData.prefix,deviceTypeData.device_type);
+    const safe_table_name = quoteQualifiedIdentifier(table_name)    
+    
+    const columns = deviceTypeData.columns as AggregationDeviceTypeColumnRecord[];
+    const column_names = columns.map((column) => {
+      const safeColumnName = quoteIdentifier(column.name)
+      return `${safeColumnName}::double precision AS ${safeColumnName}`
+    }).join(', ');
+
     const result = await this.database.query(
       `SELECT 
             device_id,
             event_timestamp,
             ${column_names}
-            FROM ${table_name}
+            FROM ${safe_table_name}
             WHERE event_timestamp >= $1
             AND event_timestamp < $2
             and agg_type = $3
@@ -97,13 +108,15 @@ export class AggregationRecordsService {
 
 
       
-  async deleteAggregationDataEvent(deviceType:string,ids: string[]) {
-    const deviceTypeData =  await this.aggregationService.getRequiredByName(deviceType)
-    if (!deviceTypeData) return;
-    const table_name = deviceTypeData.table_name
+  async deleteAggregationDataEvent(organisation:string,deviceType:string,ids: string[]) {
+    const orgData = await this.organisationService.queryOrganisationMetadata(organisation);
+    const deviceTypeData =  await this.aggregationService.getRequiredType(organisation,deviceType)
+    const table_name = this.createDeviceTypeTableName(orgData.prefix,deviceTypeData.device_type);
+    const safe_table_name = quoteQualifiedIdentifier(table_name)  
+
     const result = await this.database.query(
       `
-    DELETE FROM ${table_name}
+    DELETE FROM ${safe_table_name}
     WHERE device_id = ANY($1)
     `,
       [ids],
@@ -111,5 +124,10 @@ export class AggregationRecordsService {
   }
 
 
+  createDeviceTypeTableName(OrgPrefix: string,deviceType :string) {
+    return this.organisationService.create3PartTableName(OrgPrefix, DEVICE_TABLE_NAME,deviceType)
+
+  }
   
 }
+

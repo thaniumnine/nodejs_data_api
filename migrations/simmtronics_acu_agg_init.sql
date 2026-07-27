@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS device_simmtronics_acu_agg_events;
+-- DROP TABLE IF EXISTS device_simmtronics_acu_agg_events;
 
 CREATE TABLE device_simmtronics_acu_agg_events (
   id BIGSERIAL PRIMARY KEY,
@@ -28,3 +28,11 @@ CREATE INDEX idx_device_simmtronics_acu_agg_events_device_time
 
 CREATE INDEX idx_device_simmtronics_acu_agg_events_device_time_type
   ON device_simmtronics_acu_agg_events (device_id, agg_type, event_timestamp DESC);
+
+
+
+
+
+
+
+

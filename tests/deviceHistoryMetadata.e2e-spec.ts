@@ -1,10 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
-import { HistoryModule } from '../src/historyController/history.module'
 import { JwtAuthGuard } from '../src/auth/jwt-auth.guard';
 import { AppModule } from '../src/app.module';
 
-describe('History E2E', () => {
+describe('History metadata E2E', () => {
   let app: NestFastifyApplication;
 
     const expectedHistoryData = {
@@ -249,7 +248,7 @@ describe('History E2E', () => {
   });
 
 
-  it('GET /history/data', async () => {
+  it('GET /device_metadata/data', async () => {
     const result = await app.inject({
       method: 'GET',
       url: '/device_metadata/data?from=1920-03-20T00:00:00.000Z&to=1920-03-22T00:00:00.000Z',
@@ -265,7 +264,7 @@ describe('History E2E', () => {
 
 
 
-  it('DELETE /history/data/:id', async () => {
+  it('DELETE /device_metadata/data/:id', async () => {
     const result = await app.inject({
       method: 'DELETE',
       url: '/device_metadata/data',
