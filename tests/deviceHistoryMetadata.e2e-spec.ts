@@ -1,10 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
-import { HistoryModule } from '../src/history/history.module'
 import { JwtAuthGuard } from '../src/auth/jwt-auth.guard';
 import { AppModule } from '../src/app.module';
 
-describe('History E2E', () => {
+describe('History metadata E2E', () => {
   let app: NestFastifyApplication;
 
     const expectedHistoryData = {

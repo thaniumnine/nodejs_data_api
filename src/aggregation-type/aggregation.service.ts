@@ -18,24 +18,24 @@ export type AggregationDeviceTypeRecord= {
 
   const AGGREGATIONS_DEVICE_TYPE_TABLE_NAME   = "device_type_aggregation"
 
-@Injectable()
-export class AggregationService {
-  private readonly logger = new Logger(AggregationService.name);
-  constructor(
-    private readonly database: DatabaseService,
-    private readonly organisationService: OrganisationService
-  ) { }
+  @Injectable()
+  export class AggregationService {
+    private readonly logger = new Logger(AggregationService.name);
+    constructor(
+      private readonly database: DatabaseService,
+      private readonly organisationService: OrganisationService
+    ) { }
 
-  async createDeviceType(organisation:string,input: AggregationDeviceTypeRecord) {
-    const table_name = await this.fetchTableName(organisation)
-    const event = await this.database.db
-      .insertInto(table_name)
-      .values( {device_type: input.device_type,
-      columns: JSON.stringify(input.columns),
-    
-  })
-      .executeTakeFirstOrThrow();
- 
+    async createDeviceType(organisation:string,input: AggregationDeviceTypeRecord) {
+      const table_name = await this.fetchTableName(organisation)
+      const event = await this.database.db
+        .insertInto(table_name)
+        .values( {device_type: input.device_type,
+        columns: JSON.stringify(input.columns),
+      
+    })
+        .executeTakeFirstOrThrow();
+  
   }
 
 
@@ -91,7 +91,6 @@ async list(organisation:string) {
 
   async fetchTableName(organisation:string) {
     const orgData = await this.organisationService.queryOrganisationMetadata(organisation);
-     this.logger.log('org_data...',orgData,organisation);
     const table_name = this.createDeviceTypesTableName(orgData.prefix);
     //const safe_table_name = quoteIdentifier(table_name) 
     return table_name
