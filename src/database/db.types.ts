@@ -30,85 +30,27 @@ export interface UserSessionsTable {
   replaced_by_session_id: string | null;
 }
 
-export interface TopicsTable {
-  id: Generated<string>;
-  name: string;
-  description: string | null;
-  storage_type: 'jsonb_event_log' | 'native_table';
-  table_name: string;
-  timestamp_column: string;
-  device_id_column: string;
-  json_schema: JsonValue | null;
-  allowed_select_columns: JsonValue;
-  allowed_filter_columns: JsonValue;
-  allowed_insert_columns: JsonValue;
-  is_active: ColumnType<boolean, boolean | undefined, boolean | undefined>;
-  created_at: TimestampColumn;
-  updated_at: TimestampColumn;
-}
 
-export interface TopicEventsTable {
-  id: Generated<string>;
-  topic_id: string | null;
-  topic_name: string;
-  device_id: string;
-  event_timestamp: TimestampColumn;
-  received_at: TimestampColumn;
-  payload: JsonValue;
-  source: string | null;
-  created_by: string | null;
-}
+// export interface TopicPermissionsTable {
+//   id: Generated<string>;
+//   user_id: string | null;
+//   topic_id: string;
+//   device_id: string | null;
+//   can_read: ColumnType<boolean, boolean | undefined, boolean | undefined>;
+//   can_write: ColumnType<boolean, boolean | undefined, boolean | undefined>;
+//   can_admin: ColumnType<boolean, boolean | undefined, boolean | undefined>;
+//   created_at: TimestampColumn;
+// }
 
-export interface TopicPermissionsTable {
-  id: Generated<string>;
-  user_id: string | null;
-  topic_id: string;
-  device_id: string | null;
-  can_read: ColumnType<boolean, boolean | undefined, boolean | undefined>;
-  can_write: ColumnType<boolean, boolean | undefined, boolean | undefined>;
-  can_admin: ColumnType<boolean, boolean | undefined, boolean | undefined>;
-  created_at: TimestampColumn;
-}
-
-export interface DevicesTable {
-  id: string;
-  name: string | null;
-  description: string | null;
-  metadata: JsonValue;
-  is_active: ColumnType<boolean, boolean | undefined, boolean | undefined>;
-  created_at: TimestampColumn;
-  updated_at: TimestampColumn;
-}
-
-export interface AuditEventsTable {
-  id: Generated<string>;
-  actor_user_id: string | null;
-  action: string;
-  entity_type: string;
-  entity_id: string | null;
-  metadata: JsonValue;
-  created_at: TimestampColumn;
-}
-
-type BaseAggregationTable = {
-    id: Generated<number>;
-    device_id: string;
-    event_timestamp: TimestampColumn;
-    agg_type:string;
-     created_at: Generated<Date>;
-}
-type ColumnAggregationMetrics = {
-  [columnName: string]: number
-}
-export type AggregationTable = BaseAggregationTable & ColumnAggregationMetrics
-
-export interface AggregationDeviceTypeTable {
-    id: Generated<number>;
-    device_type:string
-    columns:JsonValue
-    table_name:string
-     created_at: Generated<Date>;
-}
+// export interface AuditEventsTable {
+//   id: Generated<string>;
+//   actor_user_id: string | null;
+//   action: string;
+//   entity_type: string;
+//   entity_id: string | null;
+//   metadata: JsonValue;
+//   created_at: TimestampColumn;
+// }
 
 
 export type DeviceIdentifierTypeTable = {
@@ -128,6 +70,30 @@ export type DeviceHistoryTypeTable = {
   }
    created_at: Generated<Date>;
 }
+
+
+type BaseAggregationTable = {
+    id: Generated<number>;
+    device_id: string;
+    event_timestamp: TimestampColumn;
+    agg_type:string;
+     created_at: Generated<Date>;
+}
+type ColumnAggregationMetrics = {
+  [columnName: string]: number
+}
+export type AggregationTypeTable = BaseAggregationTable & ColumnAggregationMetrics
+
+
+
+export interface AggregationDeviceTypeTable {
+    id: Generated<number>;
+    device_type:string;
+    columns:JsonValue;
+    created_at: Generated<Date>;
+}
+
+
 
 export type DeviceMetadataTypeTable = {
   device_id: string;
@@ -154,28 +120,51 @@ export type DeviceMetadataTypeTable = {
   };
 };
 
+export type OrganisationsTable = {
+    id: Generated<number>;
+    name:string;
+    prefix:string;
+    created_at: Generated<Date>;
+}
+
+
 export type DB = {
   users: UsersTable;
   user_sessions: UserSessionsTable;
-  topics: TopicsTable;
-  topic_events: TopicEventsTable;
-  topic_permissions: TopicPermissionsTable;
-  devices: DevicesTable;
-  audit_events: AuditEventsTable;
-  aggregation:AggregationDeviceTypeTable;
-  device_history:DeviceHistoryTypeTable;
   device_metadata:DeviceMetadataTypeTable;
-  device_identifier:DeviceIdentifierTypeTable;
-} & AggregationTables
+  organisations:OrganisationsTable;
+} & AggregationsDeviceTypeTable& AggregationsTable & DeviceHistoryTables  & DeviceIdentifierTables
 
-interface AggregationTables {
-  [tableName: string]: AggregationTable
+
+
+export type DeviceHistoryName =  `${string}_device_history`; 
+export type DeviceHistoryTables = {
+  [k in DeviceHistoryName |  `"${DeviceHistoryName}"`] : DeviceHistoryTypeTable
 }
+
+export type DeviceIdentifierName =  `${string}_device_identifier`
+export type DeviceIdentifierTables = {
+  [k in DeviceIdentifierName |  `"${DeviceIdentifierName}"`] : DeviceIdentifierTypeTable
+}
+
+
+export type AggregationsName = `${string}_aggregations_${string}`
+export type AggregationsTable = {
+  [k in AggregationsName |  `"${AggregationsName}"`] : AggregationTypeTable
+}
+
+
+export type AggregationsDeviceTypeName = `${string}_device_type_aggregation`
+export type AggregationsDeviceTypeTable = {
+  [k in AggregationsDeviceTypeName | `"${AggregationsDeviceTypeName}"`] : AggregationDeviceTypeTable
+}
+
+
+
+
+export type Organisation = Selectable<OrganisationsTable>;
 
 export type User = Selectable<UsersTable>;
 export type NewUser = Insertable<UsersTable>;
 export type UpdateUser = Updateable<UsersTable>;
 export type UserSession = Selectable<UserSessionsTable>;
-export type Topic = Selectable<TopicsTable>;
-export type NewTopic = Insertable<TopicsTable>;
-export type TopicEvent = Selectable<TopicEventsTable>;

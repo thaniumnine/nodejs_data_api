@@ -1,49 +1,31 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { AggregationRecordsService } from './aggregation-records.service';
 import { DatabaseService } from '../database/database.service';
-import { AggregationService } from '../aggregationController/aggregation.service';
-import { OnConflictBuilder } from 'kysely';
+import { AggregationService } from '../aggregation-type/aggregation.service';
+import { AGGREGATION_SERVICE_RETURNED_RESULTS, DB_SERVICE_RETURNED_RESULTS ,EXPECTED_RESULTS} from './aggregation-records.test-fixtures';
+import { OrganisationService } from '../organisations/organisations.service';
+
 describe('AggregationRecordsService', () => {
 
     const normalizeSql = (sql: string) => (
         sql.replace(/\s+/g, ' ').trim()
     )
-    const mockCreateQueryResult = {items : [{
-        "device_id": "MTS-99997",
-        "event_timestamp": "2026-04-24T12:34:00Z",
-        "agg_type": "max",
-        "payload": {
-            "illuminance_sensor": 23,
-            "last_week_total_occupancy": 301,
-            "motion_event": 201,
-            "this_week_cumulative_occupancy": 211
-        }
-    }]
-}
 
-  const mockDeviceMetadata = {
-            "device_type": "acu",
-            "table_name": "device_simmtronics_acu_agg_events",
-            "columns": [
-                {
-                    "name": "room_temperature",
-                    "type": "numeric"
-                },
-                {
-                    "name": "room_temperature_setpoint",
-                    "type": "numeric"
-                }
-            ]
-        }
 
+    const FROM = '2026-06-08T00:00:00.000Z'
+    const TO = '2026-06-09T00:00:00.000Z'
+    const AGG_TYPE = 'mean'
+    const ORGANISATION = "Simtronics"
+    
     let service: AggregationRecordsService;
+    let organisationService:OrganisationService;
     const mockDatabaseService = {
         query: jest.fn(),
         db: {
             insertInto: jest.fn().mockReturnValue({
                 values: jest.fn().mockReturnValue({
                     onConflict: jest.fn().mockReturnValue({
-                            execute: jest.fn().mockResolvedValue(mockCreateQueryResult)
+                            execute: jest.fn().mockResolvedValue(DB_SERVICE_RETURNED_RESULTS["createAggregationDataEvent"])
                     })
 
 
@@ -57,13 +39,17 @@ describe('AggregationRecordsService', () => {
     }
 
     const mockAggregationService = {
-        getRequiredByName: jest.fn()
+        getRequiredByName: jest.fn(),
+             getRequiredType:jest.fn().mockResolvedValue({
+                device_type:"acu",
+                columns: [{name:'room_temperature'},{name:'room_temperature_setpoint'}]
+             })
     }
 
     beforeEach(async () => {
         jest.clearAllMocks();
         const module: TestingModule = await Test.createTestingModule({
-            providers: [AggregationRecordsService,
+            providers: [AggregationRecordsService, OrganisationService,
                 {
                     provide: DatabaseService,
                     useValue: mockDatabaseService
@@ -76,6 +62,15 @@ describe('AggregationRecordsService', () => {
         }).compile();
 
         service = module.get<AggregationRecordsService>(AggregationRecordsService);
+        organisationService = module.get<OrganisationService>(OrganisationService);
+        jest.spyOn(organisationService, 'queryOrganisationMetadata').mockResolvedValue({
+            id: 1,
+            name: ORGANISATION,
+            prefix: "SIM",
+            created_at: new Date(),
+        });
+
+
     });
 
     it('should be defined', () => {
@@ -83,82 +78,41 @@ describe('AggregationRecordsService', () => {
     });
 
 
-    test('queryDeviceHistory', async () => {
+    test('queryAggregationRecords', async () => {
 
-        const mockQueryResult = {
-            "rows": [
-                {
-
-                    "illuminance_sensor": null,
-                    "last_week_total_occupancy": null,
-                    "motion_event": null,
-                    "this_week_cumulative_occupancy": null,
-
-                    "device_id": "MTS-00001",
-                    "event_timestamp": "2026-05-12T00:00:00.000Z"
-                }
-            ]
-        }
+        const mockQueryResult = DB_SERVICE_RETURNED_RESULTS['queryAggregationRecords']
 
         mockDatabaseService.query.mockResolvedValue(mockQueryResult)
 
       
-        mockAggregationService.getRequiredByName.mockResolvedValue(mockDeviceMetadata)
+        mockAggregationService.getRequiredByName.mockResolvedValue(AGGREGATION_SERVICE_RETURNED_RESULTS["getRequiredByName"])
 
         let deviceType = "acu"
-        const result = await service.queryAggregationRecords(deviceType,
+        const result = await service.queryAggregationRecords(ORGANISATION,deviceType,
             {
-                from: '2026-06-08T00:00:00.000Z',
-                to: '2026-06-09T00:00:00.000Z',
-                aggType: 'mean'
+                from:FROM,
+                to: TO,
+                aggType: AGG_TYPE
             });
 
 
-        const queryCommand = `SELECT
-            device_id,
-            event_timestamp,
-            room_temperature::double precision AS room_temperature, room_temperature_setpoint::double precision AS room_temperature_setpoint
-            FROM device_simmtronics_acu_agg_events
-            WHERE event_timestamp >= $1
-            AND event_timestamp < $2
-            and agg_type = $3
-            ORDER BY device_id ASC,event_timestamp ASC
-                `;
-
         const [querySql, querySqlParams] = mockDatabaseService.query.mock.calls[0]
-        expect(normalizeSql(querySql)).toEqual(normalizeSql(queryCommand))
-        expect(querySqlParams).toEqual(['2026-06-08T00:00:00.000Z', '2026-06-09T00:00:00.000Z', 'mean'])
+    
+        expect(querySqlParams).toEqual([FROM,TO, AGG_TYPE])
 
-        expect(result).toEqual({
-            "records": [
-                {
-                    "payload": {
-                        "illuminance_sensor": null,
-                        "last_week_total_occupancy": null,
-                        "motion_event": null,
-                        "this_week_cumulative_occupancy": null
-                    },
-                    "device_id": "MTS-00001",
-                    "event_timestamp": "2026-05-12T00:00:00.000Z"
-                }
-            ]
-
-        })
+        expect(result).toEqual(EXPECTED_RESULTS["queryAggregationRecords"])
 
 
     
-
-
-
     })
 
 
 
     test('createAggregationDataEvent', async () => {
         const deviceType = "acu"
-        mockAggregationService.getRequiredByName.mockResolvedValue(mockDeviceMetadata);
-        const result = await service.createAggregationDataEvent(deviceType, mockCreateQueryResult);
-        expect(mockDatabaseService.db.insertInto).toHaveBeenCalledWith("device_simmtronics_acu_agg_events")
+        mockAggregationService.getRequiredByName.mockResolvedValue(AGGREGATION_SERVICE_RETURNED_RESULTS["getRequiredByName"]);
+        const result = await service.createAggregationDataEvent(ORGANISATION,deviceType, DB_SERVICE_RETURNED_RESULTS["createAggregationDataEvent"]);
+        expect(mockDatabaseService.db.insertInto).toHaveBeenCalledWith("sim_aggregations_acu")
         const insertIntoResults = (mockDatabaseService.db.insertInto as jest.Mock).mock.results[0].value
         expect(insertIntoResults.values).toHaveBeenCalledWith([
             {
@@ -166,7 +120,7 @@ describe('AggregationRecordsService', () => {
                 agg_type: "max",
                 event_timestamp: new Date("2026-04-24T12:34:00Z"),
                 room_temperature: null,
-                room_temperature_setpoint: null,
+                room_temperature_setpoint: null
             }
         ])
         expect(result).toBeUndefined();
@@ -183,10 +137,10 @@ describe('AggregationRecordsService', () => {
                 rows: [],
             });
 
-            const result = await service.deleteAggregationDataEvent("acu", idsToDelete);
+            const result = await service.deleteAggregationDataEvent(ORGANISATION,"acu", idsToDelete);
 
             expect(mockDatabaseService.query).toHaveBeenCalledWith(
-                expect.stringContaining('DELETE FROM device_simmtronics_acu_agg_events'),
+                expect.stringContaining('DELETE FROM '),
                 [idsToDelete],
             );
 

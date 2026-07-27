@@ -2,17 +2,15 @@ import { Module } from '@nestjs/common';
 import { AuthModule } from './auth/auth.module';
 import { DatabaseModule } from './database/database.module';
 import { HealthController } from './health.controller';
-import { TopicRecordsModule } from './topic-records/topic-records.module';
-import { TopicsModule } from './topics/topics.module';
 import { UsersModule } from './users/users.module';
 import { AggregationRecordsModule } from './aggregation-records/aggregation-records.module';
-import { AggregationModule } from './aggregationController/aggregation.module';
+import { AggregationModule } from './aggregation-type/aggregation.module';
 import { HomeController } from './home.controller';
-import { HistoryModule } from './historyController/history.module';
-import { DeviceMetadataModule } from './deviceMetadataController/deviceMetadata.module';
+import { HistoryModule } from './history/history.module';
+import { DeviceMetadataModule } from './deviceMetadata/deviceMetadata.module';
 
 @Module({
-  imports: [DatabaseModule, UsersModule, AuthModule, TopicsModule, TopicRecordsModule, AggregationRecordsModule, AggregationModule, HistoryModule, DeviceMetadataModule],
+  imports: [DatabaseModule, UsersModule, AuthModule, AggregationRecordsModule, AggregationModule, HistoryModule, DeviceMetadataModule],
   controllers: [HealthController, HomeController]
 })
 export class AppModule { }

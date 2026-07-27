@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS device_simmtronics_qse_agg_events;
+-- DROP TABLE IF EXISTS device_simmtronics_qse_agg_events;
 
 CREATE TABLE device_simmtronics_qse_agg_events (
   id BIGSERIAL PRIMARY KEY,

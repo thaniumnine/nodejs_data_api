@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
-import { HistoryModule } from '../src/historyController/history.module'
 import { JwtAuthGuard } from '../src/auth/jwt-auth.guard';
 import { AppModule } from '../src/app.module';
 
@@ -64,20 +63,20 @@ describe('History E2E', () => {
       await app.close();
     }
   });
-  it('POST buildings/:building/levels/:level/devices/history', async () => {
+  it('POST organisations/:organisation/buildings/:building/levels/:level/devices/history', async () => {
     const result = await app.inject({
       method: 'POST',
-      url: `/buildings/GB-LON-9212/levels/level-01/devices/QSE-999996/history`,
+      url: `/organisations/Simtronics/buildings/GB-LON-9212/levels/level-01/devices/QSE-999996/history`,
       payload:     {"items":historyData}
     });
     expect(result.statusCode).toEqual(201);
   });
 
 
-  it('GET buildings/:building/levels/:level/devices/history', async () => {
+  it('GET organisations/:organisation/buildings/:building/levels/:level/devices/history', async () => {
     const result = await app.inject({
       method: 'GET',
-      url: '/buildings/GB-LON-9212/levels/level-01/devices/QSE-999996/history?from=1923-03-25T00:00:00.000Z&to=1923-03-26T00:00:00.000Z',
+      url: '/organisations/Simtronics/buildings/GB-LON-9212/levels/level-01/devices/QSE-999996/history?from=1923-03-25T00:00:00.000Z&to=1923-03-26T00:00:00.000Z',
     });
 
     expect(result.statusCode).toEqual(200);
@@ -89,10 +88,10 @@ describe('History E2E', () => {
 
 
 
-  it('DELETE buildings/:building/levels/:level/history', async () => {
+  it('DELETE organisations/:organisation/buildings/:building/levels/:level/devices/:device_id/history', async () => {
     const result = await app.inject({
       method: 'DELETE',
-      url: '/buildings/GB-LON-9212/levels/level-01/history?from=1920-03-25T16:16:31.000Z&to=1923-03-26T00:00:00.000Z',
+      url: '/organisations/Simtronics/buildings/GB-LON-9212/levels/level-01/history?from=1920-03-25T16:16:31.000Z&to=1923-03-26T00:00:00.000Z',
       payload: {
         "ids": ["QSE-999996"]
       }
