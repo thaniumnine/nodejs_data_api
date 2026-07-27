@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
-import { HistoryModule } from '../src/history/history.module'
 import { JwtAuthGuard } from '../src/auth/jwt-auth.guard';
 import { AppModule } from '../src/app.module';
 

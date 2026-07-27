@@ -1,6 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
-import { HistoryModule } from '../src/history/history.module'
 import { JwtAuthGuard } from '../src/auth/jwt-auth.guard';
 import { AppModule } from '../src/app.module';
 
@@ -76,10 +75,10 @@ describe('aggregation E2E', () => {
     }
   });
 
-  it('POST /aggregation/mts/data', async () => {
+  it('POST /aggregation/organisations/:organisation/device_types/mts/records', async () => {
     const result = await app.inject({
       method: 'POST',
-      url: '/aggregation/mts/data',
+      url: ' /aggregation/organisations/Simtronics2/device_types/mts/records',
       payload:     {"items":aggregationMtsData},
     
     });
@@ -87,10 +86,10 @@ describe('aggregation E2E', () => {
   });
 
 
-  it('GET /aggregation/mts/data', async () => {
+  it('GET  /aggregation/organisations/:organisation/device_types/mts/records', async () => {
     const result = await app.inject({
       method: 'GET',
-      url: '/aggregation/mts/data?from=1920-04-24T00:00:00.000Z&to=1920-04-25T00:00:00.000Z&aggType=max',
+      url: ' /aggregation/organisations/Simtronics2/device_types/mts/records?from=1920-04-24T00:00:00.000Z&to=1920-04-25T00:00:00.000Z&aggType=max',
     });
 
     expect(result.statusCode).toEqual(200);
@@ -102,10 +101,10 @@ describe('aggregation E2E', () => {
 
   
 
-  it('DELETE /aggregation/mts/data', async () => {
+  it('DELETE  /aggregation/organisations/:organisation/device_types/mts/records', async () => {
     const result = await app.inject({
       method: 'DELETE',
-      url: '/aggregation/mts/data',
+      url: ' /aggregation/organisations/Simtronics2/device_types/mts/records',
       payload: {
         "ids": ["MTS-9999999"]
       }
@@ -116,10 +115,10 @@ describe('aggregation E2E', () => {
 
 
 
-   it('POST /aggregation/lt/data', async () => {
+   it('POST /aggregation/organisations/:organisation/device_types/lt/records', async () => {
     const result = await app.inject({
       method: 'POST',
-      url: '/aggregation/lt/data',
+      url: '/aggregation/organisations/Simtronics2/device_types/lt/records',
       payload:     {"items":aggregationLtData},
     
     });
@@ -127,10 +126,10 @@ describe('aggregation E2E', () => {
   });
 
 
-  it('GET /aggregation/lt/data', async () => {
+  it('GET /aggregation/organisations/:organisation/device_types/lt/records', async () => {
     const result = await app.inject({
       method: 'GET',
-      url: '/aggregation/lt/data?from=1920-04-24T00:00:00.000Z&to=1920-04-25T00:00:00.000Z&aggType=max',
+      url: '/aggregation/organisations/Simtronics2/device_types/lt/records?from=1920-04-24T00:00:00.000Z&to=1920-04-25T00:00:00.000Z&aggType=max',
     });
 
     expect(result.statusCode).toEqual(200);
@@ -142,10 +141,10 @@ describe('aggregation E2E', () => {
 
   
 
-  it('DELETE /aggregation/lt/data', async () => {
+  it('DELETE /aggregation/organisations/:organisation/device_types/lt/records', async () => {
     const result = await app.inject({
       method: 'DELETE',
-      url: '/aggregation/lt/data',
+      url: '/aggregation/organisations/Simtronics2/device_types/lt/records',
       payload: {
         "ids": ["LT-9999999"]
       }
@@ -156,10 +155,10 @@ describe('aggregation E2E', () => {
 
 
 
-     it('POST /aggregation/qse/data', async () => {
+     it('POST /aggregation/organisations/:organisation/device_types/qse/records', async () => {
     const result = await app.inject({
       method: 'POST',
-      url: '/aggregation/qse/data',
+      url: '/aggregation/organisations/Simtronics2/device_types/qse/records',
       payload:     {"items":aggregationQseData},
     
     });
@@ -167,10 +166,10 @@ describe('aggregation E2E', () => {
   });
 
 
-  it('GET /aggregation/qse/data', async () => {
+  it('GET /aggregation/organisations/:organisations/device_types/qse/records', async () => {
     const result = await app.inject({
       method: 'GET',
-      url: '/aggregation/qse/data?from=1920-04-24T00:00:00.000Z&to=1920-04-25T00:00:00.000Z&aggType=max',
+      url: '/aggregation/organisations/Simtronics2/device_types/qse/records?from=1920-04-24T00:00:00.000Z&to=1920-04-25T00:00:00.000Z&aggType=max',
     });
 
     expect(result.statusCode).toEqual(200);
@@ -182,10 +181,10 @@ describe('aggregation E2E', () => {
 
   
 
-  it('DELETE /aggregation/qse/data', async () => {
+  it('DELETE /aggregation/organisations/:organisation/device_types/qse/records', async () => {
     const result = await app.inject({
       method: 'DELETE',
-      url: '/aggregation/qse/data',
+      url: '/aggregation/organisations/Simtronics2/device_types/qse/records',
       payload: {
         "ids": ["QSE-9999999"]
       }
