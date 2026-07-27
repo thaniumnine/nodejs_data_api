@@ -4,6 +4,7 @@ import { DatabaseService } from '../database/database.service';
 import { EXPECTED_RESULTS, RESULT, SQL } from './history.test-fixtures';
 import { createHistoryDatabaseServiceMock } from './history.test-mocks';
 import { OrganisationService } from '../organisations/organisations.service';
+import { expectSqlQuery, normalizeSql, queryResult, serviceResult } from '../common/tests/util';
 
 
 
@@ -32,14 +33,7 @@ describe('HistoryService', () => {
     id: 1,
   });
 
-  const expectSqlQuery = (sql: string, params: unknown[]) => {
-    expect(mockDatabaseService.query).toHaveBeenCalledTimes(1);
-    const [actualSql, actualParams] =
-      mockDatabaseService.query.mock.calls[0];
-
-    expect(normalizeSql(actualSql)).toBe(normalizeSql(sql));
-    expect(actualParams).toEqual(params);
-  };
+  
 
 
   beforeEach(async () => {
@@ -88,6 +82,7 @@ describe('HistoryService', () => {
 
     const queryCommand = SQL['queryDeviceHistory']
     expectSqlQuery(
+      mockDatabaseService,
       queryCommand,
       [FROM, TO, BUILDING, LEVEL, ACU_DEVICE]
     )
@@ -116,6 +111,7 @@ describe('HistoryService', () => {
 
     const queryCommand = SQL['queryDeviceHistoryPrefix']
     expectSqlQuery(
+      mockDatabaseService,
       queryCommand,
       [FROM, TO, BUILDING, LEVEL, `${ACU_DEVICE}%`]
     )
@@ -137,7 +133,7 @@ describe('HistoryService', () => {
     );
     const queryCommand = SQL['getDeviceNames']
 
-    expectSqlQuery(queryCommand, [BUILDING, LEVEL, "MTS-%"])
+    expectSqlQuery(mockDatabaseService,queryCommand, [BUILDING, LEVEL, "MTS-%"])
 
     expect(result).toEqual(serviceResult(EXPECTED_RESULTS['getDeviceNames']))
   })
@@ -175,28 +171,11 @@ describe('HistoryService', () => {
     const result = await service.deleteDeviceHistoryDataEvent(ORGANISATION, BUILDING, LEVEL, idsToDelete, mockQueryData);
 
     const queryCommand = SQL['deleteDeviceHistoryDataEvent']
-    expectSqlQuery(queryCommand, [idsToDelete, mockQueryData.from, mockQueryData.to, BUILDING, LEVEL])
+    expectSqlQuery(mockDatabaseService,queryCommand, [idsToDelete, mockQueryData.from, mockQueryData.to, BUILDING, LEVEL])
 
     expect(result).toBeUndefined();
   });
 })
 
 
-function queryResult<T>(rows: T[]) {
-  return {
-    rows,
-    rowCount: rows.length,
-  }
-}
 
-function serviceResult<T>(records: T[]) {
-  return {
-    records,
-    count: records.length,
-  };
-}
-
-
-const normalizeSql = (sql: string) => (
-  sql.replace(/\s+/g, ' ').trim()
-)
