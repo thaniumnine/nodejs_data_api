@@ -11,12 +11,13 @@
       app: thaniumos-frontend
   spec:
     tls:
-    - secretName: thaniumossecret26
+    - secretName: thaniumossecret26a
     rules:
     - host: thaniumos.com
       http:
         paths:
-        - pathType: ImplementationSpecific
+        - path: /*
+          pathType: ImplementationSpecific
           backend:
             service:
               name: thaniumos-deployment-service
@@ -25,7 +26,8 @@
     - host: www.thaniumos.com
       http:
         paths:
-        - pathType: ImplementationSpecific
+        - path: /*
+          pathType: ImplementationSpecific
           backend:
             service:
               name: thaniumos-deployment-service
@@ -34,9 +36,20 @@
     - host: api.thaniumos.com
       http:
         paths:
-        - pathType: ImplementationSpecific
+        - path: /*
+          pathType: ImplementationSpecific
           backend:
             service:
               name: thaniumos-api-service
+              port:
+                number: 80
+    - host: thanium.thaniumos.com
+      http:
+        paths:
+        - path: /*
+          pathType: ImplementationSpecific
+          backend:
+            service:
+              name: thanium-rest-service
               port:
                 number: 80
