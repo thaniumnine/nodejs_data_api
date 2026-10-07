@@ -1266,7 +1266,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\"items\":[{\r\n\r\n      \"timestamp\": \"1924-03-25T16:16:31+00:00\",\r\n\r\n  room: \"games room\";\r\n  ruleId: \"rule 1\";\r\n}\r\n      }\r\n    \r\n]\r\n}",
+              "raw": "{\"items\":[{\r\n\r\n\"timestamp\": \"1924-03-25T16:16:31+00:00\",\r\n\r\n  \"room\": \"games room\",\r\n  \"ruleId\": \"rule 1\"\r\n}\r\n      \r\n    \r\n]\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1301,7 +1301,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/api/v1/organisations/Simtronics/buildings/Waterside/levels/Level-00/devices/LCM-00001/history?from=2026-04-01T00:00:00.000Z&to=2026-06-12T12:00:00.000Z",
+              "raw": "{{base_url}}/api/v1/organisations/Simtronics/fdd",
               "host": [
                 "{{base_url}}"
               ],
@@ -1310,23 +1310,7 @@
                 "v1",
                 "organisations",
                 "Simtronics",
-                "buildings",
-                "Waterside",
-                "levels",
-                "Level-00",
-                "devices",
-                "LCM-00001",
-                "history"
-              ],
-              "query": [
-                {
-                  "key": "from",
-                  "value": "2026-04-01T00:00:00.000Z"
-                },
-                {
-                  "key": "to",
-                  "value": "2026-06-12T12:00:00.000Z"
-                }
+                "fdd"
               ]
             }
           },
