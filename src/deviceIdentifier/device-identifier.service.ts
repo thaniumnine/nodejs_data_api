@@ -1,7 +1,7 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { DatabaseService } from "../database/database.service";
 import { DeviceIdentifierName, Organisation } from "../database/db.types";
-import { OrganisationService } from "src/organisations/organisations.service";
+import { OrganisationService } from "../organisations/organisations.service";
 
 
 type deviceIdentifierType = {

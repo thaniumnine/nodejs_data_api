@@ -10,6 +10,23 @@ describe('aggregation metadata E2E', () => {
   const aggregationTypedata = {
 
       "device_type": "ZXY",
+      "table_name":"test",
+      "columns": [
+        {
+          "name": "room_temperature",
+          "type": "numeric"
+        },
+        {
+          "name": "room_temperature_setpoint",
+          "type": "numeric"
+        }
+      ]
+  
+  }
+
+    const aggregationTypedataResult = {
+
+      "device_type": "ZXY",
       "columns": [
         {
           "name": "room_temperature",
@@ -51,7 +68,7 @@ describe('aggregation metadata E2E', () => {
   it('POST /aggregation/organisations/:organisation/device_types/', async () => {
     const result = await app.inject({
       method: 'POST',
-      url: '/aggregation/organisations/Simtronics2/device_types',
+      url: '/aggregation/organisations/Simtronics/device_types',
       payload:    {items: aggregationTypedata},
     
     });
@@ -62,12 +79,12 @@ describe('aggregation metadata E2E', () => {
   it('GET aggregation/organisations/:organisation/device_types/:device_type', async () => {
     const result = await app.inject({
       method: 'GET',
-      url: 'aggregation/organisations/Simtronics2/device_types/ZXY',
+      url: 'aggregation/organisations/Simtronics/device_types/ZXY',
     });
 
     expect(result.statusCode).toEqual(200);
     const body = JSON.parse(result.payload);
-    expect(body).toEqual(aggregationTypedata)
+    expect(body).toEqual(aggregationTypedataResult)
 
   });
 
@@ -76,7 +93,7 @@ describe('aggregation metadata E2E', () => {
   it('DELETE aggregation/organisations/:organisation/device_types', async () => {
     const result = await app.inject({
       method: 'DELETE',
-      url: 'aggregation/organisations/Simtronics2/device_types',
+      url: 'aggregation/organisations/Simtronics/device_types',
       payload: {
         "ids": ["ZXY"]
       }
