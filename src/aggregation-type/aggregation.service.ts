@@ -31,6 +31,7 @@ export type AggregationDeviceTypeRecord= {
       const event = await this.database.db
         .insertInto(table_name)
         .values( {device_type: input.device_type,
+          table_name:"",
         columns: JSON.stringify(input.columns),
       
     })

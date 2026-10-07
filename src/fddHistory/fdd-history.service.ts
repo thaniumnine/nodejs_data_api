@@ -3,7 +3,7 @@ import { DatabaseService } from "../database/database.service";
 import { DeviceHistoryName, DeviceIdentifierName, FddHistoryName, JsonValue } from "../database/db.types";
 import z, { string } from "zod";
 import { OrganisationService } from "../organisations/organisations.service";
-import { DeviceIdentifierService } from "src/deviceIdentifier/device-identifier.service";
+import { DeviceIdentifierService } from "../deviceIdentifier/device-identifier.service";
 
 export type FddHistoryRecord = {
   timestamp: string;

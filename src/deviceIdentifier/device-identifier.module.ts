@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { DeviceIdentifierService } from './device-identifier.service';
-import { OrganisationModule } from 'src/organisations/organisations.module';
+import { OrganisationModule } from '../organisations/organisations.module';
 
 
 
