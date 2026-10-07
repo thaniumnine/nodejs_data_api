@@ -10,7 +10,7 @@ export type FddHistoryRecord = {
   room: string;
   ruleId: string;
 }
-export type DeviceHistoryData = {
+export type FddHistoryData = {
   items: FddHistoryRecord[]
 }
 
@@ -24,7 +24,7 @@ export class FddHistoryService {
     private readonly identifierService: DeviceIdentifierService
 
   ) { }
-  async createFddHistoryData(inputs: DeviceHistoryData, organisation: string, building: string, level: string, deviceId: string) {
+  async createFddHistoryData(inputs: FddHistoryData, organisation: string, building: string, level: string, deviceId: string) {
     const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
     const FddhistoryTableName = this.createFddHistoryTableName(metadata.prefix)
 
@@ -41,7 +41,7 @@ export class FddHistoryService {
           timestamp: new Date(input.timestamp),
           closed: false,
           room: input.room,
-          ruleId: input.ruleId,
+          rule_id: input.ruleId,
         }))
       )
       .execute();
@@ -53,7 +53,7 @@ export class FddHistoryService {
     const identifierTableName = this.identifierService.createIdentifierTableName(metadata.prefix)
     const historyTableName = this.createFddHistoryTableName(metadata.prefix)
     const result = await this.database.query(
-      `SELECT dh.points, dh.timestamp
+      `SELECT dh.rule_id, dh.closed, di.building,di.level,di.device_id, dh.room, dh.timestamp,dh.created_at
     FROM ${historyTableName} dh JOIN ${identifierTableName} di 
       ON dh.device_ref_id = di.id
     ORDER BY device_id ASC, timestamp ASC`,

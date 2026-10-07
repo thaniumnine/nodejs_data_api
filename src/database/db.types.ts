@@ -77,7 +77,7 @@ export type FddHistoryTypeTable = {
   timestamp: TimestampColumn;
   room: string;
   closed: boolean;
-  ruleId: string;
+  rule_id: string;
   created_at: Generated<Date>;
 }
 

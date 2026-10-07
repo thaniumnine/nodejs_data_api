@@ -2,7 +2,7 @@
   import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query, UseGuards } from '@nestjs/common';
   import { JwtAuthGuard } from  '../auth/jwt-auth.guard';
   import { number, string } from 'zod';
-  import {  DeviceHistoryData, FddHistoryService} from './fdd-history.service'
+  import {  FddHistoryData, FddHistoryService} from './fdd-history.service'
 
 
   @UseGuards(JwtAuthGuard)
@@ -12,7 +12,7 @@
 
     //ruleid , created_at, closed, building,level ,room, device
 
-  @Get('organisations/:organisation/')
+  @Get('organisations/:organisation/fdd')
   queryAllFddHistoryData(
       @Param('organisation') organisation: string,
   ) {
@@ -20,13 +20,13 @@
     return this.historyService.queryAllFddHistoryData(organisation);
   }
 
-    @Post('organisations/:organisation/buildings/:building/levels/:level/devices/:device_id/fddHistory')
+    @Post('organisations/:organisation/buildings/:building/levels/:level/devices/:device_id/fdd')
     async createFddHistoryData(
       @Param('organisation') organisation: string,
       @Param('building') building: string,
       @Param('level') level: string,
       @Param('device_id') deviceId: string,
-      @Body() deviceHistoryData: DeviceHistoryData,
+      @Body() deviceHistoryData: FddHistoryData,
     ) {
       return this.historyService.createFddHistoryData(deviceHistoryData,organisation,building,level,deviceId);
   }
