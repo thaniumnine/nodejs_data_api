@@ -1,4 +1,4 @@
-import {  Injectable } from "@nestjs/common";
+import {  Injectable, Logger } from "@nestjs/common";
 import { AggregationDeviceTypeColumnRecord, AggregationService } from "../aggregation-type/aggregation.service";
 import { DatabaseService } from "../database/database.service";
 import z from "zod";
@@ -29,6 +29,7 @@ export type QueryAggregationRecords = z.infer<typeof QueryAggregationRecordsSche
 
 @Injectable()
 export class AggregationRecordsService {
+  private readonly logger = new Logger(AggregationService.name);
   constructor(
     private readonly database: DatabaseService,
     private readonly aggregationService: AggregationService,
@@ -42,7 +43,8 @@ export class AggregationRecordsService {
     const table_name = this.createDeviceTypeTableName(orgData.prefix,deviceTypeData.device_type);
   
     const columns = deviceTypeData.columns as AggregationDeviceTypeColumnRecord[];
-
+    this.logger.log(columns);
+    this.logger.log(inputs);
     const event = await this.database.db
       .insertInto(table_name)
       .values(inputs.items.map((input)=>{

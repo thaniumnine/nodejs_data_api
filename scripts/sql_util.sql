@@ -37,5 +37,12 @@
 
 
 -- ALTER TABLE IF EXISTS  device_history  RENAME TO sim_device_history
-
 -- ALTER TABLE IF EXISTS  device_identifier  RENAME TO sim_device_identifier
+
+
+-- ALTER TABLE IF EXISTS  aggregation  RENAME TO sim_device_type_aggregation
+-- ALTER TABLE IF EXISTS  device_simmtronics_acu_agg_events  RENAME TO sim_aggregations_acu
+-- ALTER TABLE IF EXISTS  device_simmtronics_mts_agg_events  RENAME TO sim_aggregations_mts
+ALTER TABLE IF EXISTS  device_simmtronics_lt_agg_events  RENAME TO sim_aggregations_lt
+ALTER TABLE IF EXISTS  device_simmtronics_qse_agg_events  RENAME TO sim_aggregations_qse
+ALTER TABLE IF EXISTS  device_simmtronics_inv_agg_events  RENAME TO sim_aggregations_inv
