@@ -72,6 +72,17 @@ export type DeviceHistoryTypeTable = {
 }
 
 
+export type FddHistoryTypeTable = {
+  id: Generated<number>;
+  timestamp: TimestampColumn;
+  room: string;
+  closed: boolean;
+  rule_id: string;
+  created_at: Generated<Date>;
+}
+
+
+
 type BaseAggregationTable = {
     id: Generated<number>;
     device_id: string;
@@ -90,6 +101,7 @@ export interface AggregationDeviceTypeTable {
     id: Generated<number>;
     device_type:string;
     columns:JsonValue;
+    table_name:string;
     created_at: Generated<Date>;
 }
 
@@ -133,13 +145,18 @@ export type DB = {
   user_sessions: UserSessionsTable;
   device_metadata:DeviceMetadataTypeTable;
   organisations:OrganisationsTable;
-} & AggregationsDeviceTypeTable& AggregationsTable & DeviceHistoryTables  & DeviceIdentifierTables
+} & AggregationsDeviceTypeTable& AggregationsTable & DeviceHistoryTables &FddHistoryTables   & DeviceIdentifierTables
 
 
 
 export type DeviceHistoryName =  `${string}_device_history`; 
 export type DeviceHistoryTables = {
   [k in DeviceHistoryName |  `"${DeviceHistoryName}"`] : DeviceHistoryTypeTable
+}
+
+export type FddHistoryName =  `${string}_fdd_history`; 
+export type FddHistoryTables = {
+  [k in FddHistoryName |  `"${FddHistoryName}"`] : FddHistoryTypeTable
 }
 
 export type DeviceIdentifierName =  `${string}_device_identifier`

@@ -239,7 +239,7 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/api/v1/aggregation/organisations/Simtronics/device_types/mts/records?from=1920-07-20T00:00:00.000Z&to=1923-07-20T23:59:00.000Z&aggType=max",
+              "raw": "{{base_url}}/api/v1/aggregation/organisations/Simtronics/device_types/mts/records?from=2026-07-28T00:00:00.000Z&to=2026-07-28T23:59:00.000Z&aggType=max",
               "host": [
                 "{{base_url}}"
               ],
@@ -256,11 +256,11 @@
               "query": [
                 {
                   "key": "from",
-                  "value": "1920-07-20T00:00:00.000Z"
+                  "value": "2026-07-28T00:00:00.000Z"
                 },
                 {
                   "key": "to",
-                  "value": "1923-07-20T23:59:00.000Z"
+                  "value": "2026-07-28T23:59:00.000Z"
                 },
                 {
                   "key": "aggType",
@@ -298,7 +298,7 @@
               }
             ],
             "url": {
-              "raw": "{{base_url}}/api/v1/aggregation/organisations/Simtronics/device_types/acu/records?from=2026-05-12T00:00:00.000Z&to=2026-05-12T23:59:00.000Z&aggType=mean",
+              "raw": "{{base_url}}/api/v1/aggregation/organisations/Simtronics/device_types/acu/records?from=2026-07-25T00:00:00.000Z&to=2026-07-27T23:59:00.000Z&aggType=mean",
               "host": [
                 "{{base_url}}"
               ],
@@ -315,11 +315,11 @@
               "query": [
                 {
                   "key": "from",
-                  "value": "2026-05-12T00:00:00.000Z"
+                  "value": "2026-07-25T00:00:00.000Z"
                 },
                 {
                   "key": "to",
-                  "value": "2026-05-12T23:59:00.000Z"
+                  "value": "2026-07-27T23:59:00.000Z"
                 },
                 {
                   "key": "aggType",
@@ -643,6 +643,14 @@
                 "records"
               ]
             }
+          },
+          "response": []
+        },
+        {
+          "name": "New Request",
+          "request": {
+            "method": "GET",
+            "header": []
           },
           "response": []
         }
@@ -987,6 +995,34 @@
               "body": "{\n    \"records\": [\n        {\n            \"device_id\": \"acu-999999\",\n            \"points\": {\n                \"humidity\": {\n                    \"present_value\": 32\n                },\n                \"pressure\": {\n                    \"present_value\": 1009\n                },\n                \"co2_level\": {\n                    \"present_value\": 551\n                },\n                \"temperature\": {\n                    \"present_value\": 21.8\n                },\n                \"air_quality_index\": {\n                    \"present_value\": \"Excellent\"\n                },\n                \"illuminance_sensor\": {\n                    \"present_value\": 10\n                },\n                \"minute_sound_level\": {\n                    \"present_value\": 48\n                },\n                \"total_volatile_organic_compounds\": {\n                    \"present_value\": 31\n                }\n            }\n        },\n        {\n            \"device_id\": \"QSE-999999\",\n            \"points\": {\n                \"humidity\": {\n                    \"present_value\": 32\n                },\n                \"pressure\": {\n                    \"present_value\": 1009\n                },\n                \"co2_level\": {\n                    \"present_value\": 551\n                },\n                \"temperature\": {\n                    \"present_value\": 21.8\n                },\n                \"air_quality_index\": {\n                    \"present_value\": \"Excellent\"\n                },\n                \"illuminance_sensor\": {\n                    \"present_value\": 10\n                },\n                \"minute_sound_level\": {\n                    \"present_value\": 48\n                },\n                \"total_volatile_organic_compounds\": {\n                    \"present_value\": 31\n                }\n            }\n        }\n    ],\n    \"count\": 2\n}"
             }
           ]
+        },
+        {
+          "name": "post_inv_device_type",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"device_type\": \"inv\",\r\n\"columns\":[\r\n    {\r\n    \"name\" :\"today_imported_energy\",\r\n    \"type\":\"numeric\"\r\n    },\r\n    {\r\n    \"name\":\"total_imported_energy\",\r\n    \"type\":\"numeric\"\r\n    }\r\n]\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/aggregation",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "aggregation"
+              ]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -1111,23 +1147,63 @@
           "response": []
         },
         {
-          "name": "fetch_history_data_prefix",
+          "name": "fetch_history_data Copy",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/api/v1/history/prefix/Waterside/Level-00/LT-000198?from=2024-06-01T00:00:00Z&to=2024-07-01T00:00:00Z",
+              "raw": "{{base_url}}/api/v1/organisations/Simtronics/buildings/Waterside/levels/Level-00/devices/LCM-00001/history?from=2026-04-01T00:00:00.000Z&to=2026-06-12T12:00:00.000Z",
               "host": [
                 "{{base_url}}"
               ],
               "path": [
                 "api",
                 "v1",
-                "history",
-                "prefix",
+                "organisations",
+                "Simtronics",
+                "buildings",
                 "Waterside",
+                "levels",
                 "Level-00",
-                "LT-000198"
+                "devices",
+                "LCM-00001",
+                "history"
+              ],
+              "query": [
+                {
+                  "key": "from",
+                  "value": "2026-04-01T00:00:00.000Z"
+                },
+                {
+                  "key": "to",
+                  "value": "2026-06-12T12:00:00.000Z"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "fetch_history_data_prefix",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/organisations/Simtronics/buildings/Waterside/levels/Level-00/devices/history?from=2024-06-01T00:00:00Z&to=2024-07-01T00:00:00Z&devicePrefix=ACU-",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organisations",
+                "Simtronics",
+                "buildings",
+                "Waterside",
+                "levels",
+                "Level-00",
+                "devices",
+                "history"
               ],
               "query": [
                 {
@@ -1137,6 +1213,10 @@
                 {
                   "key": "to",
                   "value": "2024-07-01T00:00:00Z"
+                },
+                {
+                  "key": "devicePrefix",
+                  "value": "ACU-"
                 }
               ]
             }
@@ -1169,6 +1249,68 @@
                   "key": "devicePrefix",
                   "value": "MTS-"
                 }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Fdd History",
+      "item": [
+        {
+          "name": "post_history_data",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"items\":[{\r\n\r\n\"timestamp\": \"1924-03-25T16:16:31+00:00\",\r\n\r\n  \"room\": \"games room\",\r\n  \"ruleId\": \"rule 1\"\r\n}\r\n      \r\n    \r\n]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/organisations/Simtronics/buildings/GB-LON-9213/levels/level-02/devices/QSE-999999/fdd",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organisations",
+                "Simtronics",
+                "buildings",
+                "GB-LON-9213",
+                "levels",
+                "level-02",
+                "devices",
+                "QSE-999999",
+                "fdd"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "fetch_history_data",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/organisations/Simtronics/fdd",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organisations",
+                "Simtronics",
+                "fdd"
               ]
             }
           },
