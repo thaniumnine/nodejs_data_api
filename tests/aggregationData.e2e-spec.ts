@@ -78,7 +78,7 @@ describe('aggregation E2E', () => {
   it('POST /aggregation/organisations/:organisation/device_types/mts/records', async () => {
     const result = await app.inject({
       method: 'POST',
-      url: ' /aggregation/organisations/Simtronics2/device_types/mts/records',
+      url: ' /aggregation/organisations/Simtronics/device_types/mts/records',
       payload:     {"items":aggregationMtsData},
     
     });
@@ -89,7 +89,7 @@ describe('aggregation E2E', () => {
   it('GET  /aggregation/organisations/:organisation/device_types/mts/records', async () => {
     const result = await app.inject({
       method: 'GET',
-      url: ' /aggregation/organisations/Simtronics2/device_types/mts/records?from=1920-04-24T00:00:00.000Z&to=1920-04-25T00:00:00.000Z&aggType=max',
+      url: ' /aggregation/organisations/Simtronics/device_types/mts/records?from=1920-04-24T00:00:00.000Z&to=1920-04-25T00:00:00.000Z&aggType=max',
     });
 
     expect(result.statusCode).toEqual(200);
@@ -104,7 +104,7 @@ describe('aggregation E2E', () => {
   it('DELETE  /aggregation/organisations/:organisation/device_types/mts/records', async () => {
     const result = await app.inject({
       method: 'DELETE',
-      url: ' /aggregation/organisations/Simtronics2/device_types/mts/records',
+      url: ' /aggregation/organisations/Simtronics/device_types/mts/records',
       payload: {
         "ids": ["MTS-9999999"]
       }
@@ -118,7 +118,7 @@ describe('aggregation E2E', () => {
    it('POST /aggregation/organisations/:organisation/device_types/lt/records', async () => {
     const result = await app.inject({
       method: 'POST',
-      url: '/aggregation/organisations/Simtronics2/device_types/lt/records',
+      url: '/aggregation/organisations/Simtronics/device_types/lt/records',
       payload:     {"items":aggregationLtData},
     
     });
@@ -129,7 +129,7 @@ describe('aggregation E2E', () => {
   it('GET /aggregation/organisations/:organisation/device_types/lt/records', async () => {
     const result = await app.inject({
       method: 'GET',
-      url: '/aggregation/organisations/Simtronics2/device_types/lt/records?from=1920-04-24T00:00:00.000Z&to=1920-04-25T00:00:00.000Z&aggType=max',
+      url: '/aggregation/organisations/Simtronics/device_types/lt/records?from=1920-04-24T00:00:00.000Z&to=1920-04-25T00:00:00.000Z&aggType=max',
     });
 
     expect(result.statusCode).toEqual(200);
@@ -144,7 +144,7 @@ describe('aggregation E2E', () => {
   it('DELETE /aggregation/organisations/:organisation/device_types/lt/records', async () => {
     const result = await app.inject({
       method: 'DELETE',
-      url: '/aggregation/organisations/Simtronics2/device_types/lt/records',
+      url: '/aggregation/organisations/Simtronics/device_types/lt/records',
       payload: {
         "ids": ["LT-9999999"]
       }
@@ -158,7 +158,7 @@ describe('aggregation E2E', () => {
      it('POST /aggregation/organisations/:organisation/device_types/qse/records', async () => {
     const result = await app.inject({
       method: 'POST',
-      url: '/aggregation/organisations/Simtronics2/device_types/qse/records',
+      url: '/aggregation/organisations/Simtronics/device_types/qse/records',
       payload:     {"items":aggregationQseData},
     
     });
@@ -169,7 +169,7 @@ describe('aggregation E2E', () => {
   it('GET /aggregation/organisations/:organisations/device_types/qse/records', async () => {
     const result = await app.inject({
       method: 'GET',
-      url: '/aggregation/organisations/Simtronics2/device_types/qse/records?from=1920-04-24T00:00:00.000Z&to=1920-04-25T00:00:00.000Z&aggType=max',
+      url: '/aggregation/organisations/Simtronics/device_types/qse/records?from=1920-04-24T00:00:00.000Z&to=1920-04-25T00:00:00.000Z&aggType=max',
     });
 
     expect(result.statusCode).toEqual(200);
@@ -184,7 +184,7 @@ describe('aggregation E2E', () => {
   it('DELETE /aggregation/organisations/:organisation/device_types/qse/records', async () => {
     const result = await app.inject({
       method: 'DELETE',
-      url: '/aggregation/organisations/Simtronics2/device_types/qse/records',
+      url: '/aggregation/organisations/Simtronics/device_types/qse/records',
       payload: {
         "ids": ["QSE-9999999"]
       }
