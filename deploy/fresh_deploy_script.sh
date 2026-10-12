@@ -21,8 +21,8 @@ kubectl apply -f deployment.yaml
 # tail -f /dev/null
 
 ## update existing deployment
-docker build -t europe-west1-docker.pkg.dev/dev-thaniumos/dev-thaniumos-repo/thaniumos-api:v1.0.6 .
-docker push europe-west1-docker.pkg.dev/dev-thaniumos/dev-thaniumos-repo/thaniumos-api:v1.0.6
+docker build -t europe-west1-docker.pkg.dev/dev-thaniumos/dev-thaniumos-repo/thaniumos-api:v1.0.11 .
+docker push europe-west1-docker.pkg.dev/dev-thaniumos/dev-thaniumos-repo/thaniumos-api:v1.0.11
 
 
 #kubectl set image deployment/thaniumos-api thaniumos-api=europe-west1-docker.pkg.dev/dev-thaniumos/dev-thaniumos-repo/thaniumos-api:v1.0.1

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: thaniumos-api
-          image: europe-west1-docker.pkg.dev/dev-thaniumos/dev-thaniumos-repo/thaniumos-api:v1.0.9
+          image: europe-west1-docker.pkg.dev/dev-thaniumos/dev-thaniumos-repo/thaniumos-api:v1.0.11
           ports:
             - containerPort: 3500
           startupProbe:
