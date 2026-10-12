@@ -53,7 +53,7 @@ export class FddHistoryService {
     const identifierTableName = this.identifierService.createIdentifierTableName(metadata.prefix)
     const historyTableName = this.createFddHistoryTableName(metadata.prefix)
     const result = await this.database.query(
-      `SELECT dh.rule_id, dh.closed, di.building,di.level,di.device_id, dh.room, dh.timestamp,dh.created_at
+      `SELECT di.id, dh.rule_id, dh.closed, di.building,di.level,di.device_id, dh.room, dh.timestamp,dh.created_at
     FROM ${historyTableName} dh JOIN ${identifierTableName} di 
       ON dh.device_ref_id = di.id
     ORDER BY device_id ASC, timestamp ASC`,
