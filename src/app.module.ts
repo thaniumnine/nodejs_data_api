@@ -9,9 +9,10 @@ import { HomeController } from './home.controller';
 import { HistoryModule } from './history/history.module';
 import { DeviceMetadataModule } from './deviceMetadata/deviceMetadata.module';
 import { FddHistoryModule } from './fddHistory/fdd-history.module';
+import { FddAssignmentModule } from './fddAssignment/fdd-assignment.module';
 
 @Module({
-  imports: [DatabaseModule, UsersModule, AuthModule, AggregationRecordsModule, AggregationModule, HistoryModule, DeviceMetadataModule,FddHistoryModule],
+  imports: [DatabaseModule, UsersModule, AuthModule, AggregationRecordsModule, AggregationModule, HistoryModule, DeviceMetadataModule, FddHistoryModule, FddAssignmentModule],
   controllers: [HealthController, HomeController]
 })
 export class AppModule { }

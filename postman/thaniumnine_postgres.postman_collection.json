@@ -1319,6 +1319,42 @@
       ]
     },
     {
+      "name": "Fdd Assignments",
+      "item": [
+        {
+          "name": "create_assignment",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"firebase_user_id\":\"firebase-user-id\"}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/organisations/Simtronics/fdd/{{fdd_out_id}}/assignments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "organisations", "Simtronics", "fdd", "{{fdd_out_id}}", "assignments"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "list_assignments",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/organisations/Simtronics/fdd/{{fdd_out_id}}/assignments",
+              "host": ["{{base_url}}"],
+              "path": ["api", "v1", "organisations", "Simtronics", "fdd", "{{fdd_out_id}}", "assignments"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Query Device Metadata",
       "item": [
         {
