@@ -74,11 +74,19 @@ export type DeviceHistoryTypeTable = {
 
 export type FddHistoryTypeTable = {
   id: Generated<number>;
+  device_ref_id: number;
   timestamp: TimestampColumn;
   room: string;
   closed: boolean;
   rule_id: string;
   created_at: Generated<Date>;
+}
+
+export type FddAssignmentTypeTable = {
+  id: Generated<string>;
+  fdd_out_id: string;
+  timestamp: Generated<Date>;
+  firebase_user_id: string;
 }
 
 
@@ -145,7 +153,7 @@ export type DB = {
   user_sessions: UserSessionsTable;
   device_metadata:DeviceMetadataTypeTable;
   organisations:OrganisationsTable;
-} & AggregationsDeviceTypeTable& AggregationsTable & DeviceHistoryTables &FddHistoryTables   & DeviceIdentifierTables
+} & AggregationsDeviceTypeTable& AggregationsTable & DeviceHistoryTables &FddHistoryTables & FddAssignmentTables & DeviceIdentifierTables
 
 
 
@@ -157,6 +165,11 @@ export type DeviceHistoryTables = {
 export type FddHistoryName =  `${string}_fdd_history`; 
 export type FddHistoryTables = {
   [k in FddHistoryName |  `"${FddHistoryName}"`] : FddHistoryTypeTable
+}
+
+export type FddAssignmentName = `${string}_fdd_assignment`;
+export type FddAssignmentTables = {
+  [k in FddAssignmentName | `"${FddAssignmentName}"`]: FddAssignmentTypeTable
 }
 
 export type DeviceIdentifierName =  `${string}_device_identifier`
