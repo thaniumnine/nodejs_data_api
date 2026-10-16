@@ -89,6 +89,13 @@ export type FddAssignmentTypeTable = {
   firebase_user_id: string;
 }
 
+export type FddCommentTypeTable = {
+  id: Generated<string>;
+  ticket_ref_id: string;
+  timestamp: Generated<Date>;
+  comment: string;
+}
+
 
 
 type BaseAggregationTable = {
@@ -153,7 +160,7 @@ export type DB = {
   user_sessions: UserSessionsTable;
   device_metadata:DeviceMetadataTypeTable;
   organisations:OrganisationsTable;
-} & AggregationsDeviceTypeTable& AggregationsTable & DeviceHistoryTables &FddHistoryTables & FddAssignmentTables & DeviceIdentifierTables
+} & AggregationsDeviceTypeTable& AggregationsTable & DeviceHistoryTables &FddHistoryTables & FddAssignmentTables & FddCommentTables & DeviceIdentifierTables
 
 
 
@@ -170,6 +177,11 @@ export type FddHistoryTables = {
 export type FddAssignmentName = `${string}_fdd_assignment`;
 export type FddAssignmentTables = {
   [k in FddAssignmentName | `"${FddAssignmentName}"`]: FddAssignmentTypeTable
+}
+
+export type FddCommentName = `${string}_fdd_comment`;
+export type FddCommentTables = {
+  [k in FddCommentName | `"${FddCommentName}"`]: FddCommentTypeTable
 }
 
 export type DeviceIdentifierName =  `${string}_device_identifier`
