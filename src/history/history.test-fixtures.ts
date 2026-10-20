@@ -74,6 +74,7 @@ queryDeviceHistoryPrefix:`SELECT di.device_id, dh.points, dh.timestamp, dh.versi
     ON dh.device_ref_id = di.id
       WHERE dh.timestamp >= $1
       AND dh.timestamp < $2
+      AND di.org_ref_id = $6
       AND di.building = $3
       AND di.level = $4
       AND di.device_id LIKE $5
@@ -84,6 +85,7 @@ queryDeviceHistory:`SELECT dh.points, dh.timestamp
       ON dh.device_ref_id = di.id
     WHERE dh.timestamp >= $1
       AND dh.timestamp < $2
+      AND di.org_ref_id = $6
       AND di.building = $3
       AND di.level = $4
       AND di.device_id = $5
@@ -91,7 +93,8 @@ queryDeviceHistory:`SELECT dh.points, dh.timestamp
 
   getDeviceNames:`  SELECT DISTINCT device_id
         FROM sim_device_identifier
-        where building = $1
+        where org_ref_id = $4
+        and building = $1
         and level = $2
         and device_id LIKE $3`,
 
@@ -103,10 +106,11 @@ queryDeviceHistory:`SELECT dh.points, dh.timestamp
       AND di.device_id = ANY($1)
       AND dh.timestamp >= $2
       AND dh.timestamp < $3
+      AND di.org_ref_id = $6
       AND di.building = $4 
       AND di.level = $5
       
-    `
+    ` 
     
 
 }
