@@ -4,8 +4,8 @@ import { FddAssignmentName, FddCommentName } from '../database/db.types';
 import { OrganisationService } from '../organisations/organisations.service';
 import { quoteIdentifier } from '../common/sql/identifiers';
 
-const FDD_ASSIGNMENT_TABLE_NAME = 'fdd_assignment';
-const FDD_COMMENT_TABLE_NAME = 'fdd_comment';
+const FDD_ASSIGNMENT_TABLE_NAME = 'sim_fdd_assignment';
+const FDD_COMMENT_TABLE_NAME = 'sim_fdd_comment';
 
 export type FddCommentRecord = {
   id: string;
@@ -27,7 +27,7 @@ export class FddCommentService {
     const assignmentTableName = this.createFddAssignmentTableName(metadata.prefix);
     const commentTableName = this.createFddCommentTableName(metadata.prefix);
 
-    await this.requireAssignment(assignmentTableName, ticketRefId);
+    await this.requireAssignment(assignmentTableName, ticketRefId,metadata.id);
 
     return this.database.db
       .insertInto(commentTableName)
@@ -41,23 +41,31 @@ export class FddCommentService {
     const assignmentTableName = this.createFddAssignmentTableName(metadata.prefix);
     const commentTableName = this.createFddCommentTableName(metadata.prefix);
 
-    await this.requireAssignment(assignmentTableName, ticketRefId);
+    await this.requireAssignment(assignmentTableName, ticketRefId,metadata.id);
 
     const result = await this.database.query<FddCommentRecord>(
       `SELECT id, ticket_ref_id, timestamp, comment, firebase_user_id
-       FROM ${quoteIdentifier(commentTableName)}
-       WHERE ticket_ref_id = $1
-       ORDER BY timestamp ASC, id ASC`,
+   FROM ${quoteIdentifier(commentTableName)}
+   WHERE ticket_ref_id = $1
+   ORDER BY timestamp ASC, id ASC`,
       [ticketRefId],
     );
 
     return { records: result.rows, count: result.rowCount };
+
   }
 
-  private async requireAssignment(assignmentTableName: FddAssignmentName, ticketRefId: string) {
+  private async requireAssignment(assignmentTableName: FddAssignmentName, ticketRefId: string, metadataId: number) {
     const result = await this.database.query<{ id: string }>(
-      `SELECT id FROM ${quoteIdentifier(assignmentTableName)} WHERE id = $1`,
-      [ticketRefId],
+      `SELECT a.id
+     FROM ${quoteIdentifier(assignmentTableName)} a
+     JOIN sim_fdd_history h
+       ON a.fdd_out_id = h.id
+     JOIN sim_device_identifier di
+       ON h.device_ref_id = di.id
+     WHERE a.id = $1
+       AND di.org_ref_id = $2`,
+      [ticketRefId, metadataId],
     );
 
     if (!result.rows[0]) {
@@ -66,11 +74,13 @@ export class FddCommentService {
   }
 
   createFddAssignmentTableName(prefix: string): FddAssignmentName {
-    return this.organisationService.createTableName(prefix, FDD_ASSIGNMENT_TABLE_NAME);
+    return 'sim_fdd_assignment';
+    // return this.organisationService.createTableName(prefix, FDD_ASSIGNMENT_TABLE_NAME);
   }
 
   createFddCommentTableName(prefix: string): FddCommentName {
-    return this.organisationService.createTableName(prefix, FDD_COMMENT_TABLE_NAME);
+    return 'sim_fdd_comment';
+    // return this.organisationService.createTableName(prefix, FDD_COMMENT_TABLE_NAME);
   }
 }
 
