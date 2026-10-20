@@ -2,6 +2,15 @@
 -- DROP TABLE IF EXISTS device_identifier;
 
 
+-- ALTER TABLE sim_device_identifer
+-- ADD COLUMN org_ref_id BIGINT NOT NULL DEFAULT 1
+--     CONSTRAINT fk_org_identity
+--     REFERENCES organisations(id);
+
+-- ALTER TABLE sim_device_identifer
+-- DROP CONSTRAINT device_identifier_building_level_device_id_key,
+-- ADD UNIQUE (org_ref_id, building, level, device_id);
+
 CREATE TABLE device_identifier (
     id BIGSERIAL PRIMARY KEY,
     building TEXT NOT NULL,

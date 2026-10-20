@@ -7,7 +7,7 @@ import { OrganisationService } from "../organisations/organisations.service";
 type deviceIdentifierType = {
     id: number;
 } | undefined
-const IDENTIFIER_TABLE_NAME = "device_identifier"
+export const IDENTIFIER_TABLE_NAME = "sim_device_identifier"
 
 
 @Injectable()
@@ -20,40 +20,41 @@ export class DeviceIdentifierService {
 
     async createDeviceIdentifier(organisation: string, building: string, level: string, deviceId: string) {
         const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
-        const identifierTableName = this.createIdentifierTableName(metadata.prefix)
+        const identifierTableName = IDENTIFIER_TABLE_NAME
         return await this.database.db
             .insertInto(identifierTableName)
             .values({
                 building,
+                org_ref_id:metadata.id,
                 level,
                 device_id: deviceId,
             })
             .onConflict((oc) =>
-                oc.columns(["building", "level", "device_id"]).doNothing()
+                oc.columns(["org_ref_id","building", "level", "device_id"]).doNothing()
             )
             .returning("id")
             .executeTakeFirst();
 
     }
 
+    
+
     async findDeviceIdentifier(organisation: string, building: string, level: string, deviceId: string): Promise<deviceIdentifierType> {
         const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
-        const identifierTableName = this.createIdentifierTableName(metadata.prefix)
+        const identifierTableName = IDENTIFIER_TABLE_NAME
         let result = await this.database.db
             .selectFrom(identifierTableName)
             .select("id")
             .where("building", "=", building)
             .where("level", "=", level)
             .where("device_id", "=", deviceId)
-            .executeTakeFirstOrThrow();
+            .where("org_ref_id","=",metadata.id)
+            .executeTakeFirst();
 
         return result
     }
 
 
 
-    createIdentifierTableName(prefix: string): DeviceIdentifierName {
-        return this.organisationService.createTableName(prefix, IDENTIFIER_TABLE_NAME)
-
-    }
+  
 }

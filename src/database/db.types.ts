@@ -54,14 +54,16 @@ export interface UserSessionsTable {
 
 
 export type DeviceIdentifierTypeTable = {
-    id: Generated<number>;
+  id: Generated<number>;
+  org_ref_id: number;
   building: string;
   level: string;
   device_id: string;
-   created_at: Generated<Date>;
+  created_at: Generated<Date>;
 }
 export type DeviceHistoryTypeTable = {
   id: Generated<number>;
+  device_ref_id:number;
   timestamp: TimestampColumn;
   json_type: string;
   version: string;
