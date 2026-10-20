@@ -11,6 +11,7 @@ const ticketRefIdSchema = z.string().refine(
 
 const createCommentSchema = z.object({
   comment: z.string().trim().min(1),
+  firebase_user_id: z.string().trim().min(1),
 }).strict();
 
 type CreateCommentBody = z.infer<typeof createCommentSchema>;
@@ -26,7 +27,7 @@ export class FddCommentController {
     @Param('ticket_ref_id', new ZodValidationPipe(ticketRefIdSchema)) ticketRefId: string,
     @Body(new ZodValidationPipe(createCommentSchema)) body: CreateCommentBody,
   ) {
-    return this.commentService.createComment(organisation, ticketRefId, body.comment);
+    return this.commentService.createComment(organisation, ticketRefId, body.comment, body.firebase_user_id);
   }
 
   @Get()

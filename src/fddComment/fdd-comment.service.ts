@@ -12,6 +12,7 @@ export type FddCommentRecord = {
   ticket_ref_id: string;
   timestamp: Date;
   comment: string;
+  firebase_user_id: string | null;
 };
 
 @Injectable()
@@ -21,7 +22,7 @@ export class FddCommentService {
     private readonly organisationService: OrganisationService,
   ) {}
 
-  async createComment(organisation: string, ticketRefId: string, comment: string) {
+  async createComment(organisation: string, ticketRefId: string, comment: string, firebaseUserId: string) {
     const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
     const assignmentTableName = this.createFddAssignmentTableName(metadata.prefix);
     const commentTableName = this.createFddCommentTableName(metadata.prefix);
@@ -30,11 +31,8 @@ export class FddCommentService {
 
     return this.database.db
       .insertInto(commentTableName)
-      .values({
-        ticket_ref_id: ticketRefId,
-        comment,
-      })
-      .returning(['id', 'ticket_ref_id', 'timestamp', 'comment'])
+      .values({ ticket_ref_id: ticketRefId, comment, firebase_user_id: firebaseUserId })
+      .returning(['id', 'ticket_ref_id', 'timestamp', 'comment', 'firebase_user_id'])
       .executeTakeFirstOrThrow();
   }
 
@@ -46,7 +44,7 @@ export class FddCommentService {
     await this.requireAssignment(assignmentTableName, ticketRefId);
 
     const result = await this.database.query<FddCommentRecord>(
-      `SELECT id, ticket_ref_id, timestamp, comment
+      `SELECT id, ticket_ref_id, timestamp, comment, firebase_user_id
        FROM ${quoteIdentifier(commentTableName)}
        WHERE ticket_ref_id = $1
        ORDER BY timestamp ASC, id ASC`,
