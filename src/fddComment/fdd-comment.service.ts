@@ -24,8 +24,8 @@ export class FddCommentService {
 
   async createComment(organisation: string, ticketRefId: string, comment: string, firebaseUserId: string) {
     const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
-    const assignmentTableName = this.createFddAssignmentTableName(metadata.prefix);
-    const commentTableName = this.createFddCommentTableName(metadata.prefix);
+    const assignmentTableName = FDD_ASSIGNMENT_TABLE_NAME
+    const commentTableName = FDD_COMMENT_TABLE_NAME
 
     await this.requireAssignment(assignmentTableName, ticketRefId,metadata.id);
 
@@ -38,8 +38,8 @@ export class FddCommentService {
 
   async listComments(organisation: string, ticketRefId: string) {
     const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
-    const assignmentTableName = this.createFddAssignmentTableName(metadata.prefix);
-    const commentTableName = this.createFddCommentTableName(metadata.prefix);
+    const assignmentTableName =FDD_ASSIGNMENT_TABLE_NAME
+    const commentTableName = FDD_COMMENT_TABLE_NAME
 
     await this.requireAssignment(assignmentTableName, ticketRefId,metadata.id);
 
@@ -73,15 +73,7 @@ export class FddCommentService {
     }
   }
 
-  createFddAssignmentTableName(prefix: string): FddAssignmentName {
-    return 'sim_fdd_assignment';
-    // return this.organisationService.createTableName(prefix, FDD_ASSIGNMENT_TABLE_NAME);
-  }
 
-  createFddCommentTableName(prefix: string): FddCommentName {
-    return 'sim_fdd_comment';
-    // return this.organisationService.createTableName(prefix, FDD_COMMENT_TABLE_NAME);
-  }
 }
 
 // node -e "require('dotenv').config(); const fs=require('fs'); const {Pool}=require('pg'); const pool=new Pool({connectionString:process.env.DATABASE_URL,ssl:{rejectUnauthorized:false}}); (async()=>{const client=await pool.connect(); try { await client.query('BEGIN'); await client.query(fs.readFileSync('migrations/simmtronics_comment.sql','utf8')); await client.query('COMMIT'); console.log('Created sim_fdd_comment'); } catch(error) { await client.query('ROLLBACK'); console.error(error.message); process.exitCode=1; } finally { client.release(); await pool.end(); } })();"

@@ -3,7 +3,7 @@ import { DatabaseService } from "../database/database.service";
 import { DeviceHistoryName, DeviceIdentifierName, JsonValue } from "../database/db.types";
 import z, { string } from "zod";
 import { OrganisationService } from "../organisations/organisations.service";
-import { DeviceIdentifierService } from "../deviceIdentifier/device-identifier.service";
+import { DeviceIdentifierService, IDENTIFIER_TABLE_NAME } from "../deviceIdentifier/device-identifier.service";
 
 
 export type DeviceHistoryRecord= {
@@ -36,7 +36,7 @@ export const QueryDeviceHistoryPrefixSchema = z.object({
 export type QueryDeviceHistoryPrefixRecords = z.infer<typeof QueryDeviceHistoryPrefixSchema>;
 
 const HISTORY_TABLE_NAME  = "sim_device_history"
-const IDENTIFIER_TABLE_NAME = "sim_device_identifier"
+
 
 
 @Injectable()
@@ -50,7 +50,7 @@ export class HistoryService {
   ) { }
   async createDeviceHistoryDataEvent(inputs: DeviceHistoryData,organisation:string,building: string, level: string, deviceId: string) {
     const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
-    const historyTableName = this.createHistoryTableName(metadata.prefix)
+    const historyTableName =HISTORY_TABLE_NAME
     
     let deviceIdentifier = await this.identifierService.createDeviceIdentifier(organisation,building, level, deviceId);
     if (!deviceIdentifier) {
@@ -76,7 +76,7 @@ export class HistoryService {
 
 async getDeviceNames(organisation:string,building:string,level:string, prefix = ""){
   const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
-  const identifierTableName = this.createIdentifierTableName(metadata.prefix)
+  const identifierTableName = IDENTIFIER_TABLE_NAME
 
   const result = await this.database.query(
      `  SELECT DISTINCT device_id
@@ -93,8 +93,8 @@ async getDeviceNames(organisation:string,building:string,level:string, prefix = 
 
 async queryDeviceHistoryWithPrefix(organisation:string,building:string,level:string,query: QueryDeviceHistoryPrefixRecords){
   const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
-  const identifierTableName = this.createIdentifierTableName(metadata.prefix)
-  const historyTableName = this.createHistoryTableName(metadata.prefix)
+  const identifierTableName =IDENTIFIER_TABLE_NAME
+  const historyTableName = HISTORY_TABLE_NAME
 
   const result = await this.database.query(
     `SELECT di.device_id, dh.points, dh.timestamp, dh.version
@@ -117,8 +117,8 @@ async queryDeviceHistoryWithPrefix(organisation:string,building:string,level:str
 
 async queryDeviceHistory(organisation:string,building:string,level:string,deviceId:string,query: QueryDeviceHistoryRecords) {
   const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
-  const identifierTableName = this.createIdentifierTableName(metadata.prefix)
-  const historyTableName = this.createHistoryTableName(metadata.prefix)  
+  const identifierTableName = IDENTIFIER_TABLE_NAME
+  const historyTableName = HISTORY_TABLE_NAME
   const result = await this.database.query(
       `SELECT dh.points, dh.timestamp
     FROM ${historyTableName} dh JOIN ${identifierTableName} di 
@@ -140,8 +140,8 @@ async queryDeviceHistory(organisation:string,building:string,level:string,device
 
 async deleteDeviceHistoryDataEvent(organisation:string,building:string,level:string,ids: string[],query:QueryDeviceHistoryRecords) {
   const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
-  const historyTableName = this.createHistoryTableName(metadata.prefix) 
-  const identifierTableName = this.createIdentifierTableName(metadata.prefix)
+  const historyTableName = HISTORY_TABLE_NAME
+  const identifierTableName =IDENTIFIER_TABLE_NAME
   const result = await this.database.query(
     `
     DELETE FROM ${historyTableName} dh
@@ -162,16 +162,5 @@ async deleteDeviceHistoryDataEvent(organisation:string,building:string,level:str
 
 }
 
-  createIdentifierTableName(prefix: string): DeviceIdentifierName {
-    return "sim_device_identifier"
 
-    // return this.organisationService.createTableName(prefix, IDENTIFIER_TABLE_NAME)
-
-  }
-
-  createHistoryTableName(prefix: string) :DeviceHistoryName {
-    return "sim_device_history";
-    // return this.organisationService.createTableName(prefix, HISTORY_TABLE_NAME)
-
-  }
 }
