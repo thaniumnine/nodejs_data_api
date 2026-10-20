@@ -25,16 +25,19 @@ export class DeviceIdentifierService {
             .insertInto(identifierTableName)
             .values({
                 building,
+                org_ref_id:metadata.id,
                 level,
                 device_id: deviceId,
             })
             .onConflict((oc) =>
-                oc.columns(["building", "level", "device_id"]).doNothing()
+                oc.columns(["org_ref_id","building", "level", "device_id"]).doNothing()
             )
             .returning("id")
             .executeTakeFirst();
 
     }
+
+    
 
     async findDeviceIdentifier(organisation: string, building: string, level: string, deviceId: string): Promise<deviceIdentifierType> {
         const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
@@ -45,7 +48,8 @@ export class DeviceIdentifierService {
             .where("building", "=", building)
             .where("level", "=", level)
             .where("device_id", "=", deviceId)
-            .executeTakeFirstOrThrow();
+            .where("org_ref_id","=",metadata.id)
+            .executeTakeFirst();
 
         return result
     }
@@ -53,7 +57,8 @@ export class DeviceIdentifierService {
 
 
     createIdentifierTableName(prefix: string): DeviceIdentifierName {
-        return this.organisationService.createTableName(prefix, IDENTIFIER_TABLE_NAME)
+        return "sim_device_identifier"
+        // return this.organisationService.createTableName(prefix, IDENTIFIER_TABLE_NAME)
 
     }
 }
