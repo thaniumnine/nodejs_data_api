@@ -23,8 +23,8 @@ export class FddAssignmentService {
 
   async createAssignment(organisation: string, fddOutId: string, firebaseUserId: string) {
     const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
-    const historyTableName = this.createFddHistoryTableName(metadata.prefix);
-    const assignmentTableName = this.createFddAssignmentTableName(metadata.prefix);
+        const historyTableName = FDD_HISTORY_TABLE_NAME
+    const assignmentTableName = FDD_ASSIGNMENT_TABLE_NAME;
     const historyRecord = await this.database.query<{ id: string }>(
       `SELECT dc.id FROM ${quoteIdentifier(historyTableName)} dc JOIN sim_device_identifier di
         ON dc.device_ref_id = di.id
@@ -46,8 +46,8 @@ export class FddAssignmentService {
 
   async listAssignments(organisation: string, fddOutId: string) {
     const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
-    const historyTableName = this.createFddHistoryTableName(metadata.prefix);
-    const assignmentTableName = this.createFddAssignmentTableName(metadata.prefix);
+    const historyTableName = FDD_HISTORY_TABLE_NAME
+    const assignmentTableName = FDD_ASSIGNMENT_TABLE_NAME
     const exists = await this.database.query<{ id: string }>(
       `SELECT dc.id   
         FROM ${quoteIdentifier(historyTableName)} dc JOIN sim_device_identifier di
@@ -73,13 +73,4 @@ export class FddAssignmentService {
     return { records: result.rows, count: result.rowCount };
   }
 
-  createFddAssignmentTableName(prefix: string): FddAssignmentName {
-    return "sim_fdd_assignment" ;
-    // return this.organisationService.createTableName(prefix, FDD_ASSIGNMENT_TABLE_NAME);
-  }
-
-  createFddHistoryTableName(prefix: string): FddHistoryName {
-    return "sim_fdd_history";
-    // return this.organisationService.createTableName(prefix, FDD_HISTORY_TABLE_NAME);
-  }
 }

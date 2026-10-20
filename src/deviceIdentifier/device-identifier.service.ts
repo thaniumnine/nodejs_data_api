@@ -7,7 +7,7 @@ import { OrganisationService } from "../organisations/organisations.service";
 type deviceIdentifierType = {
     id: number;
 } | undefined
-const IDENTIFIER_TABLE_NAME = "device_identifier"
+export const IDENTIFIER_TABLE_NAME = "sim_device_identifier"
 
 
 @Injectable()
@@ -20,7 +20,7 @@ export class DeviceIdentifierService {
 
     async createDeviceIdentifier(organisation: string, building: string, level: string, deviceId: string) {
         const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
-        const identifierTableName = this.createIdentifierTableName(metadata.prefix)
+        const identifierTableName = IDENTIFIER_TABLE_NAME
         return await this.database.db
             .insertInto(identifierTableName)
             .values({
@@ -41,7 +41,7 @@ export class DeviceIdentifierService {
 
     async findDeviceIdentifier(organisation: string, building: string, level: string, deviceId: string): Promise<deviceIdentifierType> {
         const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
-        const identifierTableName = this.createIdentifierTableName(metadata.prefix)
+        const identifierTableName = IDENTIFIER_TABLE_NAME
         let result = await this.database.db
             .selectFrom(identifierTableName)
             .select("id")
@@ -56,9 +56,5 @@ export class DeviceIdentifierService {
 
 
 
-    createIdentifierTableName(prefix: string): DeviceIdentifierName {
-        return "sim_device_identifier"
-        // return this.organisationService.createTableName(prefix, IDENTIFIER_TABLE_NAME)
-
-    }
+  
 }

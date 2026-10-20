@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { DatabaseService } from "../database/database.service";
 import { FddHistoryName } from "../database/db.types";
 import { OrganisationService } from "../organisations/organisations.service";
-import { DeviceIdentifierService } from "../deviceIdentifier/device-identifier.service";
+import { DeviceIdentifierService, IDENTIFIER_TABLE_NAME } from "../deviceIdentifier/device-identifier.service";
 
 export type FddHistoryRecord = {
   timestamp: string;
@@ -13,7 +13,7 @@ export type FddHistoryData = {
   items: FddHistoryRecord[]
 }
 
-const FDD_HISTORY_TABLE_NAME = "fdd_history"
+const FDD_HISTORY_TABLE_NAME = "sim_fdd_history"
 
 @Injectable()
 export class FddHistoryService {
@@ -25,7 +25,7 @@ export class FddHistoryService {
   ) { }
   async createFddHistoryData(inputs: FddHistoryData, organisation: string, building: string, level: string, deviceId: string) {
     const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
-    const FddhistoryTableName = this.createFddHistoryTableName()
+    const FddhistoryTableName =FDD_HISTORY_TABLE_NAME
 
     let deviceIdentifier = await this.identifierService.createDeviceIdentifier(organisation, building, level, deviceId);
     if (!deviceIdentifier) {
@@ -50,8 +50,8 @@ export class FddHistoryService {
 
   async queryAllFddHistoryData(organisation: string) {
     const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
-    const identifierTableName = this.identifierService.createIdentifierTableName(metadata.prefix)
-    const historyTableName = this.createFddHistoryTableName()
+    const identifierTableName = IDENTIFIER_TABLE_NAME
+    const historyTableName = FDD_HISTORY_TABLE_NAME
     const result = await this.database.query(
       `SELECT dh.id AS fdd_out_id, di.id AS device_ref_id, dh.rule_id, dh.closed, di.building,di.level,di.device_id, dh.room, dh.timestamp,dh.created_at
     FROM ${historyTableName} dh JOIN ${identifierTableName} di 
@@ -65,9 +65,4 @@ export class FddHistoryService {
 
 
 
-
-  createFddHistoryTableName(): FddHistoryName {
-    return  "sim_fdd_history"
-
-  }
 }
