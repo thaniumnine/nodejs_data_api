@@ -94,6 +94,7 @@ export type FddCommentTypeTable = {
   ticket_ref_id: string;
   timestamp: Generated<Date>;
   comment: string;
+  firebase_user_id: string | null;
 }
 
 

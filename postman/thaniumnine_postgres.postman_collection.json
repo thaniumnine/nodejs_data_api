@@ -1364,7 +1364,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\"comment\":\"Engineer has started investigating the issue.\"}",
+              "raw": "{\"comment\":\"Engineer has started investigating the issue.\",\"firebase_user_id\":\"firebase-user-id\"}",
               "options": { "raw": { "language": "json" } }
             },
             "url": {
