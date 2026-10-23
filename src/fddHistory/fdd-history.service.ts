@@ -1,8 +1,9 @@
-import { Injectable } from "@nestjs/common";
+import { BadRequestException, Injectable } from "@nestjs/common";
 import { DatabaseService } from "../database/database.service";
 import { FddHistoryName } from "../database/db.types";
 import { OrganisationService } from "../organisations/organisations.service";
 import { DeviceIdentifierService } from "../deviceIdentifier/device-identifier.service";
+import { quoteIdentifier } from "../common/sql/identifiers";
 
 export type FddHistoryRecord = {
   timestamp: string;
@@ -47,15 +48,24 @@ export class FddHistoryService {
   }
 
 
-  async queryAllFddHistoryData(organisation: string) {
+  async queryAllFddHistoryData(organisation: string, branding: string) {
+    const requestedBranding = branding?.trim().toLowerCase();
+    if (!requestedBranding) throw new BadRequestException('Branding is required');
+
+    const organisationNames = ['simmtronic', 'simmtronics', 'simtronics'].includes(requestedBranding)
+      ? ['simmtronic', 'simmtronics', 'simtronics']
+      : [requestedBranding];
     const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
     const identifierTableName = this.identifierService.createIdentifierTableName(metadata.prefix)
     const historyTableName = this.createFddHistoryTableName(metadata.prefix)
     const result = await this.database.query(
-      `SELECT dh.id AS fdd_out_id, di.id AS device_ref_id, dh.rule_id, dh.closed, di.building,di.level,di.device_id, dh.room, dh.timestamp,dh.created_at
-    FROM ${historyTableName} dh JOIN ${identifierTableName} di 
-      ON dh.device_ref_id = di.id
-    ORDER BY device_id ASC, timestamp ASC`,
+      `SELECT dh.id AS fdd_out_id, di.id AS device_ref_id, o.name AS organisation_name, dh.rule_id, dh.closed, di.building, di.level, di.device_id, dh.room, dh.timestamp, dh.created_at
+       FROM ${quoteIdentifier(historyTableName)} dh
+       JOIN ${quoteIdentifier(identifierTableName)} di ON dh.device_ref_id = di.id
+       JOIN organisations o ON o.id = di.org_ref_id
+       WHERE lower(o.name) = ANY($1::text[])
+       ORDER BY di.device_id ASC, dh.timestamp ASC`,
+      [organisationNames],
     );
     return { records: result.rows, count: result.rowCount };
   };

@@ -15,9 +15,10 @@
   @Get('organisations/:organisation/fdd')
   queryAllFddHistoryData(
       @Param('organisation') organisation: string,
+      @Query('branding') branding: string,
   ) {
 
-    return this.historyService.queryAllFddHistoryData(organisation);
+    return this.historyService.queryAllFddHistoryData(organisation, branding);
   }
 
     @Post('organisations/:organisation/buildings/:building/levels/:level/devices/:device_id/fdd')
