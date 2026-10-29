@@ -52,9 +52,7 @@ export class FddHistoryService {
     const requestedBranding = branding?.trim().toLowerCase();
     if (!requestedBranding) throw new BadRequestException('Branding is required');
 
-    const organisationNames = ['simmtronic', 'simmtronics', 'simtronics'].includes(requestedBranding)
-      ? ['simmtronic', 'simmtronics', 'simtronics']
-      : [requestedBranding];
+    const organisationNames = [requestedBranding];
     const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
     const identifierTableName = this.identifierService.createIdentifierTableName(metadata.prefix)
     const historyTableName = this.createFddHistoryTableName(metadata.prefix)
@@ -65,7 +63,7 @@ export class FddHistoryService {
        JOIN organisations o ON o.id = di.org_ref_id
        WHERE lower(o.name) = ANY($1::text[])
        ORDER BY di.device_id ASC, dh.timestamp ASC`,
-      [organisationNames],
+      [requestedBranding],
     );
     return { records: result.rows, count: result.rowCount };
   };
