@@ -52,14 +52,14 @@ export class FddHistoryService {
     const requestedBranding = branding?.trim().toLowerCase();
     if (!requestedBranding) throw new BadRequestException('Branding is required');
 
-    const organisationNames = [requestedBranding];
     const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
     const identifierTableName = IDENTIFIER_TABLE_NAME
     const historyTableName = FDD_HISTORY_TABLE_NAME
     const result = await this.database.query(
-      `SELECT dh.id AS fdd_out_id, di.id AS device_ref_id, dh.rule_id, dh.closed, di.building,di.level,di.device_id, dh.room, dh.timestamp,dh.created_at
+      `SELECT dh.id AS fdd_out_id, di.id AS device_ref_id, o.name AS organisation_name, dh.rule_id, dh.closed, di.building,di.level,di.device_id, dh.room, dh.timestamp,dh.created_at
     FROM ${historyTableName} dh JOIN ${identifierTableName} di 
       ON dh.device_ref_id = di.id
+    JOIN organisations o ON di.org_ref_id = o.id
       WHERE  di.org_ref_id = $1
     ORDER BY device_id ASC, timestamp ASC`,
     [metadata.id]
