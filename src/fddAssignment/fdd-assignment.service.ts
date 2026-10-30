@@ -4,8 +4,8 @@ import { FddAssignmentName, FddHistoryName } from '../database/db.types';
 import { OrganisationService } from '../organisations/organisations.service';
 import { quoteIdentifier } from '../common/sql/identifiers';
 
-const FDD_ASSIGNMENT_TABLE_NAME = 'fdd_assignment';
-const FDD_HISTORY_TABLE_NAME = 'fdd_history';
+const FDD_ASSIGNMENT_TABLE_NAME = 'sim_fdd_assignment';
+const FDD_HISTORY_TABLE_NAME = 'sim_fdd_history';
 
 export type FddAssignmentRecord = {
   id: string;
@@ -23,11 +23,15 @@ export class FddAssignmentService {
 
   async createAssignment(organisation: string, fddOutId: string, firebaseUserId: string) {
     const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
-    const historyTableName = this.createFddHistoryTableName(metadata.prefix);
-    const assignmentTableName = this.createFddAssignmentTableName(metadata.prefix);
+        const historyTableName = FDD_HISTORY_TABLE_NAME
+    const assignmentTableName = FDD_ASSIGNMENT_TABLE_NAME;
     const historyRecord = await this.database.query<{ id: string }>(
-      `SELECT id FROM ${quoteIdentifier(historyTableName)} WHERE id = $1`,
-      [fddOutId],
+      `SELECT dc.id FROM ${quoteIdentifier(historyTableName)} dc JOIN sim_device_identifier di
+        ON dc.device_ref_id = di.id
+        WHERE 
+             di.org_ref_id = $2
+             AND dc.id = $1`,
+      [fddOutId,metadata.id],
     );
     if (!historyRecord.rows[0]) {
       throw new NotFoundException(`FDD record '${fddOutId}' not found`);
@@ -42,11 +46,16 @@ export class FddAssignmentService {
 
   async listAssignments(organisation: string, fddOutId: string) {
     const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
-    const historyTableName = this.createFddHistoryTableName(metadata.prefix);
-    const assignmentTableName = this.createFddAssignmentTableName(metadata.prefix);
+    const historyTableName = FDD_HISTORY_TABLE_NAME
+    const assignmentTableName = FDD_ASSIGNMENT_TABLE_NAME
     const exists = await this.database.query<{ id: string }>(
-      `SELECT id FROM ${quoteIdentifier(historyTableName)} WHERE id = $1`,
-      [fddOutId],
+      `SELECT dc.id   
+        FROM ${quoteIdentifier(historyTableName)} dc JOIN sim_device_identifier di
+        ON dc.device_ref_id = di.id
+        WHERE 
+             di.org_ref_id = $2
+             AND dc.id = $1`,
+      [fddOutId,metadata.id],
     );
     if (!exists.rows[0]) {
       throw new NotFoundException(`FDD record '${fddOutId}' not found`);
@@ -59,14 +68,9 @@ export class FddAssignmentService {
        ORDER BY timestamp DESC, id DESC`,
       [fddOutId],
     );
+
+    
     return { records: result.rows, count: result.rowCount };
   }
 
-  createFddAssignmentTableName(prefix: string): FddAssignmentName {
-    return this.organisationService.createTableName(prefix, FDD_ASSIGNMENT_TABLE_NAME);
-  }
-
-  createFddHistoryTableName(prefix: string): FddHistoryName {
-    return this.organisationService.createTableName(prefix, FDD_HISTORY_TABLE_NAME);
-  }
 }
