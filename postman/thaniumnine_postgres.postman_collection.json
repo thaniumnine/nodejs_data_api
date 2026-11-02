@@ -1,10 +1,10 @@
 {
   "info": {
-    "_postman_id": "afbc18d8-79e4-475b-b8d5-b8a76ab736a4",
+    "_postman_id": "e6fff7df-bc60-47e4-bf94-0e51ebe5a037",
     "name": "thaniumnine_postgres",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "54450909",
-    "_collection_link": "https://go.postman.co/collection/54450909-afbc18d8-79e4-475b-b8d5-b8a76ab736a4?source=collection_link"
+    "_exporter_id": "57882060",
+    "_collection_link": "https://go.postman.co/collection/57882060-e6fff7df-bc60-47e4-bf94-0e51ebe5a037?source=collection_link"
   },
   "item": [
     {
@@ -16,14 +16,10 @@
             {
               "listen": "test",
               "script": {
-                "exec": [
-                  "var jsonData = JSON.parse(responseBody);\r",
-                  "postman.setEnvironmentVariable(\"access_token\", jsonData.access_token);\r",
-                  "postman.setEnvironmentVariable(\"refresh_token\", jsonData.refresh_token);"
-                ],
                 "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                "exec": [
+                  "var jsonData = JSON.parse(responseBody);\r\npostman.setEnvironmentVariable(\"access_token\", jsonData.access_token);\r\npostman.setEnvironmentVariable(\"refresh_token\", jsonData.refresh_token);"
+                ]
               }
             }
           ],
@@ -35,13 +31,12 @@
             "header": [
               {
                 "key": "Content-Type",
-                "value": "application/json",
-                "type": "text"
+                "value": "application/json"
               }
             ],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"email\": \"{{email}}\",\r\n  \"password\": \"{{password}}\"\r\n}",
+              "raw": "{\n  \"email\": \"admin@thaniumnine.com\",\n  \"password\": \"Exp0ls1ve123435\"\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -63,13 +58,11 @@
                 {
                   "key": "email",
                   "value": "admin@thaniumnine.com",
-                  "type": "text",
                   "disabled": true
                 },
                 {
                   "key": "password",
                   "value": "Exp0ls1ve123435",
-                  "type": "text",
                   "disabled": true
                 }
               ]
@@ -650,7 +643,10 @@
           "name": "New Request",
           "request": {
             "method": "GET",
-            "header": []
+            "header": [],
+            "url": {
+              "raw": ""
+            }
           },
           "response": []
         }
@@ -912,7 +908,7 @@
               },
               "status": "OK",
               "code": 200,
-              "_postman_previewlanguage": null,
+              "_postman_previewlanguage": "Text",
               "header": [
                 {
                   "key": "Content-Security-Policy",
@@ -1315,6 +1311,133 @@
             }
           },
           "response": []
+        },
+        {
+          "name": "post_assignment",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\"firebase_user_id\":\"test-firebase-user\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:3500/api/v1/organisations/Simtronics/fdd/11/assignments",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3500",
+              "path": [
+                "api",
+                "v1",
+                "organisations",
+                "Simtronics",
+                "fdd",
+                "11",
+                "assignments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get_assignment",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/organisations/simmtronic/fdd/11/assignments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organisations",
+                "simmtronic",
+                "fdd",
+                "11",
+                "assignments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post_comment",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"comment\": \"Sample comment for testing the FDD ticket.\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/organisations/simmtronic/fdd/assignments/1/comments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organisations",
+                "simmtronic",
+                "fdd",
+                "assignments",
+                "1",
+                "comments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get_comment",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:3500/api/v1/organisations/Simtronics/fdd/assignments/1/comments",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "3500",
+              "path": [
+                "api",
+                "v1",
+                "organisations",
+                "Simtronics",
+                "fdd",
+                "assignments",
+                "1",
+                "comments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "New Request",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": ""
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -1442,7 +1565,7 @@
               },
               "status": "OK",
               "code": 200,
-              "_postman_previewlanguage": null,
+              "_postman_previewlanguage": "Text",
               "header": [
                 {
                   "key": "Content-Security-Policy",
