@@ -5,6 +5,7 @@ import { EXPECTED_RESULTS, RESULT, SQL } from './history.test-fixtures';
 import { createHistoryDatabaseServiceMock } from './history.test-mocks';
 import { OrganisationService } from '../organisations/organisations.service';
 import { expectSqlQuery, normalizeSql, queryResult, serviceResult } from '../common/tests/util';
+import { DeviceIdentifierService } from '../deviceIdentifier/device-identifier.service';
 
 
 
@@ -20,6 +21,7 @@ describe('HistoryService', () => {
 
   let service: HistoryService;
   let organisationService: OrganisationService;
+  let deviceIdentifierService:DeviceIdentifierService;
   const databaseMock = createHistoryDatabaseServiceMock();
   const mockDatabaseService = databaseMock.service;
 
@@ -39,7 +41,7 @@ describe('HistoryService', () => {
   beforeEach(async () => {
     jest.clearAllMocks();
     const module: TestingModule = await Test.createTestingModule({
-      providers: [HistoryService, OrganisationService,
+      providers: [HistoryService, OrganisationService,DeviceIdentifierService,
         {
           provide: DatabaseService,
           useValue: mockDatabaseService
@@ -50,6 +52,7 @@ describe('HistoryService', () => {
 
     service = module.get<HistoryService>(HistoryService);
     organisationService = module.get(OrganisationService);
+    deviceIdentifierService = module.get(DeviceIdentifierService);
 
     jest.spyOn(organisationService, 'queryOrganisationMetadata').mockResolvedValue({
       id: 1,
@@ -57,6 +60,15 @@ describe('HistoryService', () => {
       prefix: "SIM",
       created_at: new Date(),
     });
+    jest.spyOn(deviceIdentifierService, 'findDeviceIdentifier').mockResolvedValue({
+      id: 1,
+
+    });
+    jest.spyOn(deviceIdentifierService, 'createDeviceIdentifier').mockResolvedValue({
+      id: 1,
+
+    });
+
 
 
   });
@@ -84,7 +96,7 @@ describe('HistoryService', () => {
     expectSqlQuery(
       mockDatabaseService,
       queryCommand,
-      [FROM, TO, BUILDING, LEVEL, ACU_DEVICE]
+      [FROM, TO, BUILDING, LEVEL, ACU_DEVICE,1]
     )
 
     expect(result).toEqual(serviceResult(EXPECTED_RESULTS['queryDeviceHistory']))
@@ -113,7 +125,7 @@ describe('HistoryService', () => {
     expectSqlQuery(
       mockDatabaseService,
       queryCommand,
-      [FROM, TO, BUILDING, LEVEL, `${ACU_DEVICE}%`]
+      [FROM, TO, BUILDING, LEVEL, `${ACU_DEVICE}%`,1]
     )
 
     expect(result).toEqual(serviceResult(EXPECTED_RESULTS['queryDeviceHistoryPrefix']))
@@ -129,11 +141,11 @@ describe('HistoryService', () => {
       ORGANISATION,
       BUILDING,
       LEVEL,
-      "MTS-"
+      "MTS-",
     );
     const queryCommand = SQL['getDeviceNames']
 
-    expectSqlQuery(mockDatabaseService,queryCommand, [BUILDING, LEVEL, "MTS-%"])
+    expectSqlQuery(mockDatabaseService,queryCommand, [BUILDING, LEVEL, "MTS-%",1])
 
     expect(result).toEqual(serviceResult(EXPECTED_RESULTS['getDeviceNames']))
   })
@@ -171,7 +183,7 @@ describe('HistoryService', () => {
     const result = await service.deleteDeviceHistoryDataEvent(ORGANISATION, BUILDING, LEVEL, idsToDelete, mockQueryData);
 
     const queryCommand = SQL['deleteDeviceHistoryDataEvent']
-    expectSqlQuery(mockDatabaseService,queryCommand, [idsToDelete, mockQueryData.from, mockQueryData.to, BUILDING, LEVEL])
+    expectSqlQuery(mockDatabaseService,queryCommand, [idsToDelete, mockQueryData.from, mockQueryData.to, BUILDING, LEVEL,1])
 
     expect(result).toBeUndefined();
   });
