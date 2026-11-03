@@ -54,14 +54,16 @@ export interface UserSessionsTable {
 
 
 export type DeviceIdentifierTypeTable = {
-    id: Generated<number>;
+  id: Generated<number>;
+  org_ref_id: number;
   building: string;
   level: string;
   device_id: string;
-   created_at: Generated<Date>;
+  created_at: Generated<Date>;
 }
 export type DeviceHistoryTypeTable = {
   id: Generated<number>;
+  device_ref_id:number;
   timestamp: TimestampColumn;
   json_type: string;
   version: string;
@@ -74,11 +76,27 @@ export type DeviceHistoryTypeTable = {
 
 export type FddHistoryTypeTable = {
   id: Generated<number>;
+  device_ref_id: number;
   timestamp: TimestampColumn;
   room: string;
   closed: boolean;
   rule_id: string;
   created_at: Generated<Date>;
+}
+
+export type FddAssignmentTypeTable = {
+  id: Generated<string>;
+  fdd_out_id: string;
+  timestamp: Generated<Date>;
+  firebase_user_id: string;
+}
+
+export type FddCommentTypeTable = {
+  id: Generated<string>;
+  ticket_ref_id: string;
+  timestamp: Generated<Date>;
+  comment: string;
+  firebase_user_id: string | null;
 }
 
 
@@ -145,7 +163,7 @@ export type DB = {
   user_sessions: UserSessionsTable;
   device_metadata:DeviceMetadataTypeTable;
   organisations:OrganisationsTable;
-} & AggregationsDeviceTypeTable& AggregationsTable & DeviceHistoryTables &FddHistoryTables   & DeviceIdentifierTables
+} & AggregationsDeviceTypeTable& AggregationsTable & DeviceHistoryTables &FddHistoryTables & FddAssignmentTables & FddCommentTables & DeviceIdentifierTables
 
 
 
@@ -157,6 +175,16 @@ export type DeviceHistoryTables = {
 export type FddHistoryName =  `${string}_fdd_history`; 
 export type FddHistoryTables = {
   [k in FddHistoryName |  `"${FddHistoryName}"`] : FddHistoryTypeTable
+}
+
+export type FddAssignmentName = `${string}_fdd_assignment`;
+export type FddAssignmentTables = {
+  [k in FddAssignmentName | `"${FddAssignmentName}"`]: FddAssignmentTypeTable
+}
+
+export type FddCommentName = `${string}_fdd_comment`;
+export type FddCommentTables = {
+  [k in FddCommentName | `"${FddCommentName}"`]: FddCommentTypeTable
 }
 
 export type DeviceIdentifierName =  `${string}_device_identifier`
