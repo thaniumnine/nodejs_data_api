@@ -83,7 +83,7 @@ export class FddCommentService {
     const result = await this.database.query<FddCommentRecord>(
       `SELECT id, fdd_assignment_id, timestamp, comment, firebase_user_id
      FROM ${quoteIdentifier(commentTableName)}
-     WHERE assignment_id = $1
+     WHERE fdd_assignment_id = $1
      ORDER BY timestamp ASC, id ASC`,
       [assignmentId],
     );
