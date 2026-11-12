@@ -22,7 +22,8 @@ export type AggregationData = {
 export const QueryAggregationRecordsSchema = z.object({
   from: z.string().datetime(),
   to: z.string().datetime(),
-  aggType: z.string()
+  aggType: z.string(),
+  devicePrefix: z.string()
 });
 
 export type QueryAggregationRecords = z.infer<typeof QueryAggregationRecordsSchema>;
@@ -39,12 +40,10 @@ export class AggregationRecordsService {
   async createAggregationDataEvent(organistaion:string,deviceType: string, inputs: AggregationData) {
     const orgData = await this.organisationService.queryOrganisationMetadata(organistaion);
     const deviceTypeData = await this.aggregationService.getRequiredType(organistaion,deviceType)
-    
+
     const table_name = this.createDeviceTypeTableName(orgData.prefix,deviceTypeData.device_type);
-  
     const columns = deviceTypeData.columns as AggregationDeviceTypeColumnRecord[];
-    this.logger.log(columns);
-    this.logger.log(inputs);
+
     const event = await this.database.db
       .insertInto(table_name)
       .values(inputs.items.map((input)=>{
@@ -72,41 +71,47 @@ export class AggregationRecordsService {
       .execute();
   }
 
-  async queryAggregationRecords(organistaion:string,deviceType: string, query: QueryAggregationRecords) {
+  async queryAggregationRecords(organistaion: string, building: string, level: string, query: QueryAggregationRecords) {
     const orgData = await this.organisationService.queryOrganisationMetadata(organistaion);
-    const deviceTypeData = await this.aggregationService.getRequiredType(organistaion,deviceType)
+    const deviceTypeData = await this.aggregationService.getRequiredType(organistaion, query.devicePrefix)
 
-    const table_name = this.createDeviceTypeTableName(orgData.prefix,deviceTypeData.device_type);
-    const safe_table_name = quoteQualifiedIdentifier(table_name)    
-    
-    const columns = deviceTypeData.columns as AggregationDeviceTypeColumnRecord[];
-    const column_names = columns.map((column) => {
-      const safeColumnName = quoteIdentifier(column.name)
-      return `${safeColumnName}::double precision AS ${safeColumnName}`
-    }).join(', ');
+    const table_name = this.createDeviceTypeTableName(orgData.prefix, deviceTypeData.device_type);
+    const safe_table_name = quoteQualifiedIdentifier(table_name)
+
+    function createSafeColumnNames  (columns:AggregationDeviceTypeColumnRecord[]) {
+      return columns.map((column) => {
+        const safeColumnName = quoteIdentifier(column.name)
+        return `${safeColumnName}::double precision AS ${safeColumnName}`
+      }).join(', ');
+
+    }
+    const column_names = createSafeColumnNames(deviceTypeData.columns as AggregationDeviceTypeColumnRecord[]);
 
     const result = await this.database.query(
       `SELECT 
-            device_id,
-            event_timestamp,
+            da.device_id,
+            da.event_timestamp,
             ${column_names}
-            FROM ${safe_table_name}
+            FROM ${safe_table_name} da JOIN sim_device_identifier di 
+             ON da.device_ref_id = di.id
             WHERE event_timestamp >= $1
             AND event_timestamp < $2
-            and agg_type = $3
+            AND agg_type = $3
+            AND di.building = $4
+            AND di.level = $5
             ORDER BY device_id ASC,event_timestamp ASC
             `,
-      [query.from, query.to, query.aggType]
+      [query.from, query.to, query.aggType, building, level]
     );
-        return {
-          records: result.rows.map(({device_id,event_timestamp,...payload})=>({
-            payload,
-            device_id,
-            event_timestamp
+    return {
+      records: result.rows.map(({ device_id, event_timestamp, ...payload }) => ({
+        payload,
+        device_id,
+        event_timestamp
 
-          }))
-        }
-      };
+      }))
+    }
+  };
 
 
       
