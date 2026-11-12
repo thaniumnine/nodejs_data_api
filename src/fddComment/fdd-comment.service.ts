@@ -13,6 +13,8 @@ export type FddCommentRecord = {
   timestamp: Date;
   comment: string;
   firebase_user_id: string | null;
+  remaining_minutes: number | null;
+  minutes_worked: number | null;
 };
 
 @Injectable()
@@ -27,7 +29,9 @@ export class FddCommentService {
     organisation: string,
     assignmentId: string,
     comment: string,
-    firebaseUserId: string
+    firebaseUserId: string,
+    remainingMinutes?: number,
+    minutesWorked?: number
   ) {
     const metadata =
       await this.organisationService.queryOrganisationMetadata(organisation);
@@ -48,16 +52,21 @@ export class FddCommentService {
       .values({
         fdd_assignment_id: assignmentId,
         comment,
-        firebase_user_id: firebaseUserId
+        firebase_user_id: firebaseUserId,
+        remaining_minutes: remainingMinutes ?? null,
+        minutes_worked: minutesWorked ?? null,
       })
       .returning([
         'id',
         'fdd_assignment_id',
         'timestamp',
         'comment',
-        'firebase_user_id'
+        'firebase_user_id',
+        'remaining_minutes',
+    'minutes_worked',
       ])
       .executeTakeFirstOrThrow();
+
   }
 
 
@@ -81,7 +90,7 @@ export class FddCommentService {
 
     // Fetch comments for this assignment
     const result = await this.database.query<FddCommentRecord>(
-      `SELECT id, fdd_assignment_id, timestamp, comment, firebase_user_id
+      `SELECT id, fdd_assignment_id, timestamp, comment, firebase_user_id, remaining_minutes, minutes_worked
      FROM ${quoteIdentifier(commentTableName)}
      WHERE fdd_assignment_id = $1
      ORDER BY timestamp ASC, id ASC`,
