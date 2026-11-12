@@ -37,7 +37,7 @@ export class FddAssignmentController {
   @Get()
   listAssignments(
     @Param('organisation') organisation: string,
-    @Param('history_id', new ZodValidationPipe(fddHistoryIdSchema))
+    @Param('fdd_history_id', new ZodValidationPipe(fddHistoryIdSchema))
     fddHistoryId: string,
   ) {
     return this.assignmentService.listAssignments(
