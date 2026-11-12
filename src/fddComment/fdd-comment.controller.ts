@@ -12,6 +12,8 @@ const fddAssignmentIdSchema = z.string().refine(
 const createCommentSchema = z.object({
   comment: z.string().trim().min(1),
   firebase_user_id: z.string().trim().min(1),
+  remaining_minutes: z.number().int().min(0).optional(),
+  minutes_worked: z.number().int().min(0).optional(),
 }).strict();
 
 type CreateCommentBody = z.infer<typeof createCommentSchema>;
@@ -34,7 +36,9 @@ export class FddCommentController {
       organisation,
       fddAssignmentId,
       body.comment,
-      body.firebase_user_id
+      body.firebase_user_id,
+      body.remaining_minutes,
+      body.minutes_worked,
     );
   }
 

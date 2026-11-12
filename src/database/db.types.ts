@@ -14,6 +14,7 @@ export interface UsersTable {
   is_active: ColumnType<boolean, boolean | undefined, boolean | undefined>;
   created_at: TimestampColumn;
   updated_at: TimestampColumn;
+  daily_capacity_minutes: Generated<number>;
 }
 
 export interface UserSessionsTable {
@@ -97,6 +98,18 @@ export type FddCommentTypeTable = {
   timestamp: Generated<Date>;
   comment: string;
   firebase_user_id: string | null;
+
+  remaining_minutes: ColumnType<
+    number | null,
+    number | null | undefined,
+    number | null
+  >;
+
+  minutes_worked: ColumnType<
+    number | null,
+    number | null | undefined,
+    number | null
+  >;
 }
 
 export type ScheduleEntryStatus =
