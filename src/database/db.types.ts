@@ -99,6 +99,21 @@ export type FddCommentTypeTable = {
   firebase_user_id: string | null;
 }
 
+export type ScheduleEntryStatus = 
+  | 'Planned'
+  | 'Completed'
+  | 'Cancelled';
+
+export type ScheduleEntriesTypeTable = {
+  id: Generated<string>;
+  fdd_assignment_id: string;
+  scheduled_date: ColumnType<Date, string, string>;
+  scheduled_minutes: number;
+  status: Generated<ScheduleEntryStatus>;
+  is_locked: Generated<boolean>;
+  created_at: Generated<Date>;
+  updated_at: Generated<Date>;
+}
 
 
 type BaseAggregationTable = {
@@ -163,7 +178,7 @@ export type DB = {
   user_sessions: UserSessionsTable;
   device_metadata:DeviceMetadataTypeTable;
   organisations:OrganisationsTable;
-} & AggregationsDeviceTypeTable& AggregationsTable & DeviceHistoryTables &FddHistoryTables & FddAssignmentTables & FddCommentTables & DeviceIdentifierTables
+} & AggregationsDeviceTypeTable& AggregationsTable & DeviceHistoryTables &FddHistoryTables & FddAssignmentTables & FddCommentTables & DeviceIdentifierTables & ScheduleEntriesTypeTable;
 
 
 
