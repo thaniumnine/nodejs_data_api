@@ -4,42 +4,58 @@ import { AggregationRecordsService } from './aggregation-records.service'
 import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
 import { AggregationData, QueryAggregationRecords, QueryAggregationRecordsSchema } from './aggregation-records.dto';
 
+type AggregationDeviceParams = {
+  organisation: string,
+  building: string,
+  level: string,
+  deviceType: string,
+}
+
 @UseGuards(JwtAuthGuard)
-@Controller()
+@Controller('organisations/:organisation/buildings/:building/levels/:level/devices/types/:deviceType/aggregations')
 export class AggregationRecordsController {
   constructor(private readonly aggregationService: AggregationRecordsService) { }
-  
-  @Get('organisations/:organisation/buildings/:building/levels/:level/devices/types/:device_type/aggregations')
+
+  @Get()
   queryAggregationData(
-    @Param('organisation') organisation: string,
-    @Param('building') building: string,
-    @Param('level') level: string,
-    @Param('device_type') deviceType: string,
+    @Param() params: AggregationDeviceParams,
     @Query(new ZodValidationPipe(QueryAggregationRecordsSchema)) query: QueryAggregationRecords
   ) {
-    return this.aggregationService.queryAggregationRecords(organisation, building, level, deviceType, query);
+    return this.aggregationService.queryAggregationRecords(
+      params.organisation,
+      params.building,
+      params.level,
+      params.deviceType,
+      query
+    );
   }
 
-  @Post('organisations/:organisation/buildings/:building/levels/:level/devices/types/:device_type/aggregations')
+  @Post()
   createAggregationData(
-    @Param('organisation') organisation: string,
-    @Param('building') building: string,
-    @Param('level') level: string,
-    @Param('device_type') deviceType: string,
+    @Param() params: AggregationDeviceParams,
     @Body() aggregationData: AggregationData,
   ) {
-    return this.aggregationService.createAggregationDataEvent(organisation, building, level, deviceType, aggregationData)
+    return this.aggregationService.createAggregationDataEvent(
+      params.organisation,
+      params.building,
+      params.level,
+      params.deviceType,
+      aggregationData
+    )
   }
 
-  @Delete('organisations/:organisation/buildings/:building/levels/:level/devices/types/:device_type/aggregations')
+  @Delete()
   @HttpCode(204)
   deleteAggregationData(
-    @Param('organisation') organisation: string,
-    @Param('building') building: string,
-    @Param('level') level: string,
-    @Param('device_type') deviceType: string,
+    @Param() params: AggregationDeviceParams,
     @Body('ids') ids: string[]) {
-    return this.aggregationService.deleteAggregationDataEvent(organisation, building, level, deviceType, ids);
+    return this.aggregationService.deleteAggregationDataEvent(
+      params.organisation,
+      params.building,
+      params.level,
+      params.deviceType,
+      ids
+    );
   }
 
 }

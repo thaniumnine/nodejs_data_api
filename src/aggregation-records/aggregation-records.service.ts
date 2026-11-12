@@ -1,4 +1,4 @@
-import {  Injectable, Logger } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { AggregationDeviceTypeColumnRecord, AggregationService } from "../aggregation-type/aggregation.service";
 import { DatabaseService } from "../database/database.service";
 import z from "zod";
@@ -21,33 +21,27 @@ export class AggregationRecordsService {
   ) { }
 
 
+  async createAggregationDataEvent(organisation: string, building: string, level: string, deviceType: string, inputs: AggregationData) {
+    const { tableName, columns } = await this.getDynamicTableMetadata(organisation, deviceType);
+    let deviceIdentifiers = await this.getAllDeviceIdentifiers(organisation, building, level, inputs.items)
 
-  async createAggregationDataEvent(organisation:string,building: string, level: string,deviceType: string, inputs: AggregationData) {
-    const orgData = await this.organisationService.queryOrganisationMetadata(organisation);
-    const deviceTypeData = await this.aggregationService.getRequiredType(organisation,deviceType)
-
-    const table_name = this.createDeviceTypeTableName(orgData.prefix,deviceTypeData.device_type);
-    const columns = deviceTypeData.columns;
-   
-    let deviceIdentifiers = await this.getAllDeviceIdentifiers(organisation,building,level,inputs.items)
-    
     const event = await this.database.db
-      .insertInto(table_name)
-      .values(inputs.items.map((input,idx)=>{
+      .insertInto(tableName)
+      .values(inputs.items.map((input, idx) => {
 
-          const payload = columns.map(column =>(
-            [column.name,input.payload[column.name] ?? null ]
-          ));
-    
+        const payload = columns.map(column => (
+          [column.name, input.payload[column.name] ?? null]
+        ));
+
         return {
-          device_ref_id: deviceIdentifiers[idx] ,
+          device_ref_id: deviceIdentifiers[idx],
           device_id: input.device_id,
           agg_type: input.agg_type,
           event_timestamp: new Date(input.event_timestamp),
           ...Object.fromEntries(payload)
         }
       })).onConflict((oc) => oc
-        .columns(['event_timestamp', 'agg_type','device_id', 'device_ref_id']) 
+        .columns(['event_timestamp', 'agg_type', 'device_id', 'device_ref_id'])
         //TODO - keeping device_id for now as need it to determine which devices were flipped. but once removed also remove its constraint and remove it from here
         // replace the constraint with device_ref_id, agg_type and event_timestamp
         .doUpdateSet((eb) =>
@@ -60,28 +54,25 @@ export class AggregationRecordsService {
       .execute();
   }
 
-  async queryAggregationRecords(organisation: string, building: string, level: string,deviceType: string, query: QueryAggregationRecords) {
-    const orgData = await this.organisationService.queryOrganisationMetadata(organisation);
-    const deviceTypeData = await this.aggregationService.getRequiredType(organisation,deviceType)
-
-    const table_name = this.createDeviceTypeTableName(orgData.prefix, deviceTypeData.device_type);
-    const safe_table_name = quoteQualifiedIdentifier(table_name)
-
-    function createSafeColumnNames  (columns:AggregationDeviceTypeColumnRecord[]) {
+  async queryAggregationRecords(organisation: string, building: string, level: string, deviceType: string, query: QueryAggregationRecords) {
+    this.logger.log("organisationorganisationorganisation",organisation,'building',building,'level',level,'deviceType',deviceType)
+    const { safeTableName, columns } = await this.getDynamicTableMetadata(organisation, deviceType);
+    
+    function createSafeColumnNames(columns: AggregationDeviceTypeColumnRecord[]) {
       return columns.map((column) => {
         const safeColumnName = quoteIdentifier(column.name)
         return `${safeColumnName}::double precision AS ${safeColumnName}`
       }).join(', ');
     }
 
-    const column_names = createSafeColumnNames(deviceTypeData.columns as AggregationDeviceTypeColumnRecord[]);
+    const column_names = createSafeColumnNames(columns);
 
     const result = await this.database.query(
       `SELECT 
             di.device_id,
             da.event_timestamp,
             ${column_names}
-            FROM ${safe_table_name} da JOIN sim_device_identifier di 
+            FROM ${safeTableName} da JOIN sim_device_identifier di 
              ON da.device_ref_id = di.id
             WHERE event_timestamp >= $1
             AND event_timestamp < $2
@@ -104,30 +95,36 @@ export class AggregationRecordsService {
 
 
   async deleteAggregationDataEvent(organisation: string, building: string, level: string, deviceType: string, ids: string[]) {
-    const orgData = await this.organisationService.queryOrganisationMetadata(organisation);
-    const deviceTypeData = await this.aggregationService.getRequiredType(organisation, deviceType)
-    const table_name = this.createDeviceTypeTableName(orgData.prefix, deviceTypeData.device_type);
-    const safe_table_name = quoteQualifiedIdentifier(table_name)
-
+    const { safeTableName } = await this.getDynamicTableMetadata(organisation, deviceType);
     const result = await this.database.query(
       `
-      DELETE FROM ${safe_table_name} da 
+      DELETE FROM ${safeTableName} da 
       USING sim_device_identifier di 
       WHERE di.device_id = ANY($1)
         AND di.building = $2
         AND di.level  = $3
         AND  da.device_ref_id = di.id
     `,
-      [ids,building,level],
+      [ids, building, level],
     );
   }
 
 
-  createDeviceTypeTableName(OrgPrefix: string,deviceType :string) {
-    return this.organisationService.create3PartTableName(OrgPrefix, DEVICE_TABLE_NAME,deviceType)
+  createDeviceTypeTableName(OrgPrefix: string, deviceType: string) {
+    return this.organisationService.create3PartTableName(OrgPrefix, DEVICE_TABLE_NAME, deviceType)
 
   }
-  
+
+  async getDynamicTableMetadata(organisation: string, deviceType: string) {
+    const orgData = await this.organisationService.queryOrganisationMetadata(organisation);
+    const deviceTypeData = await this.aggregationService.getRequiredType(organisation, deviceType)
+    const tableName = this.createDeviceTypeTableName(orgData.prefix, deviceTypeData.device_type);
+    return {
+      tableName,
+      safeTableName: quoteQualifiedIdentifier(tableName),
+      columns: deviceTypeData.columns
+    }
+  }
 
   async getAllDeviceIdentifiers(organisation: string, building: string, level: string, items: AggregationRecord[]) {
     return Promise.all(items.map(async item => {
