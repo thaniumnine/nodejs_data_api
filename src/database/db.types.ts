@@ -1,4 +1,5 @@
-import { ColumnType, Generated, Insertable, Selectable, Updateable } from 'kysely';
+import { ColumnType, Generated, Insertable, JSONColumnType, Selectable, Updateable } from 'kysely';
+import { AggregationDeviceTypeColumnRecord } from 'src/aggregation-type/aggregation.service';
 
 export type JsonPrimitive = string | number | boolean | null;
 export type JsonValue = JsonPrimitive | JsonValue[] | { [key: string]: JsonValue };
@@ -119,7 +120,7 @@ export type AggregationTypeTable = BaseAggregationTable & ColumnAggregationMetri
 export interface AggregationDeviceTypeTable {
     id: Generated<number>;
     device_type:string;
-    columns:JsonValue;
+    columns:JSONColumnType<AggregationDeviceTypeColumnRecord[]>;
     table_name:string;
     created_at: Generated<Date>;
 }

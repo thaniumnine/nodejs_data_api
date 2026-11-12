@@ -6,16 +6,15 @@ import { OrganisationService } from "../organisations/organisations.service";
 import { DeviceIdentifierService, IDENTIFIER_TABLE_NAME } from "../deviceIdentifier/device-identifier.service";
 
 
-export type DeviceHistoryRecord= {
-    timestamp: string;
-  //  json_type:string;
+export type DeviceHistoryRecord = {
+  timestamp: string;
   version: string;
   points: {
     [pointtype: string]: JsonValue
   }
 }
 export type DeviceHistoryData = {
-  items:DeviceHistoryRecord[]
+  items: DeviceHistoryRecord[]
 }
 
 
@@ -49,17 +48,13 @@ export class HistoryService {
 
   ) { }
   async createDeviceHistoryDataEvent(inputs: DeviceHistoryData,organisation:string,building: string, level: string, deviceId: string) {
-    const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
-    const historyTableName =HISTORY_TABLE_NAME
-    
-    let deviceIdentifier = await this.identifierService.createDeviceIdentifier(organisation,building, level, deviceId);
-    if (!deviceIdentifier) {
-      deviceIdentifier = await this.identifierService.findDeviceIdentifier(organisation,building, level, deviceId)
-      if (!deviceIdentifier) return;
-    }
+    // const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
+    let deviceIdentifier = await this.identifierService.getDeviceIndentifier(organisation,building, level,deviceId)
+    if (!deviceIdentifier) throw new Error("Error getting device identifier");
     if (!inputs.items.length) return;
+
     await this.database.db
-      .insertInto(historyTableName as DeviceHistoryName)
+      .insertInto(HISTORY_TABLE_NAME as DeviceHistoryName)
       .values(
         inputs.items.map((input) => ({
           device_ref_id: deviceIdentifier.id,
@@ -76,11 +71,9 @@ export class HistoryService {
 
 async getDeviceNames(organisation:string,building:string,level:string, prefix = ""){
   const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
-  const identifierTableName = IDENTIFIER_TABLE_NAME
-
   const result = await this.database.query(
      `  SELECT DISTINCT device_id
-        FROM ${identifierTableName}
+        FROM ${IDENTIFIER_TABLE_NAME}
         where 
         org_ref_id = $4
         and building = $1
@@ -93,12 +86,9 @@ async getDeviceNames(organisation:string,building:string,level:string, prefix = 
 
 async queryDeviceHistoryWithPrefix(organisation:string,building:string,level:string,query: QueryDeviceHistoryPrefixRecords){
   const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
-  const identifierTableName =IDENTIFIER_TABLE_NAME
-  const historyTableName = HISTORY_TABLE_NAME
-
   const result = await this.database.query(
     `SELECT di.device_id, dh.points, dh.timestamp, dh.version
-    FROM ${historyTableName} dh JOIN ${identifierTableName} di
+    FROM ${HISTORY_TABLE_NAME} dh JOIN ${IDENTIFIER_TABLE_NAME} di
     ON dh.device_ref_id = di.id
       WHERE dh.timestamp >= $1
       AND dh.timestamp < $2
