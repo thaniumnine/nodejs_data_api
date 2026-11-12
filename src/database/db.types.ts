@@ -86,14 +86,14 @@ export type FddHistoryTypeTable = {
 
 export type FddAssignmentTypeTable = {
   id: Generated<string>;
-  fdd_out_id: string;
+  history_id: string;
   timestamp: Generated<Date>;
   firebase_user_id: string;
 }
 
 export type FddCommentTypeTable = {
   id: Generated<string>;
-  ticket_ref_id: string;
+  assignment_id: string;
   timestamp: Generated<Date>;
   comment: string;
   firebase_user_id: string | null;
