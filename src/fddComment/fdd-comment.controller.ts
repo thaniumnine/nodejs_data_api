@@ -4,7 +4,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
 import { FddCommentService } from './fdd-comment.service';
 
-const assignmentIdSchema = z.string().refine(
+const fddAssignmentIdSchema = z.string().refine(
   (id) => /^[1-9]\d*$/.test(id) && BigInt(id) <= 9223372036854775807n,
   'Assignment ID must be a positive BIGINT',
 );
@@ -17,7 +17,7 @@ const createCommentSchema = z.object({
 type CreateCommentBody = z.infer<typeof createCommentSchema>;
 
 @UseGuards(JwtAuthGuard)
-@Controller('organisations/:organisation/fdd/assignments/:assignment_id/comments')
+@Controller('organisations/:organisation/fdd/assignments/:fdd_assignment_id/comments')
 export class FddCommentController {
   constructor(private readonly commentService: FddCommentService) { }
 
@@ -25,14 +25,14 @@ export class FddCommentController {
   @Post()
   createComment(
     @Param('organisation') organisation: string,
-    @Param('assignment_id', new ZodValidationPipe(assignmentIdSchema))
-    assignmentId: string,
+    @Param('fdd_assignment_id', new ZodValidationPipe(fddAssignmentIdSchema))
+    fddAssignmentId: string,
     @Body(new ZodValidationPipe(createCommentSchema))
     body: CreateCommentBody,
   ) {
     return this.commentService.createComment(
       organisation,
-      assignmentId,
+      fddAssignmentId,
       body.comment,
       body.firebase_user_id
     );
@@ -41,12 +41,12 @@ export class FddCommentController {
   @Get()
   listComments(
     @Param('organisation') organisation: string,
-    @Param('assignment_id', new ZodValidationPipe(assignmentIdSchema))
-    assignmentId: string,
+    @Param('fdd_assignment_id', new ZodValidationPipe(fddAssignmentIdSchema))
+    fddAssignmentId: string,
   ) {
     return this.commentService.listComments(
       organisation,
-      assignmentId
+      fddAssignmentId
     );
   }
 }

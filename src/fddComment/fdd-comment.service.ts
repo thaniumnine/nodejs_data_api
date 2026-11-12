@@ -9,7 +9,7 @@ const FDD_COMMENT_TABLE_NAME = 'sim_fdd_comment';
 
 export type FddCommentRecord = {
   id: string;
-  assignment_id: string;
+  fdd_assignment_id: string;
   timestamp: Date;
   comment: string;
   firebase_user_id: string | null;
@@ -46,13 +46,13 @@ export class FddCommentService {
     return this.database.db
       .insertInto(commentTableName)
       .values({
-        assignment_id: assignmentId,
+        fdd_assignment_id: assignmentId,
         comment,
         firebase_user_id: firebaseUserId
       })
       .returning([
         'id',
-        'assignment_id',
+        'fdd_assignment_id',
         'timestamp',
         'comment',
         'firebase_user_id'
@@ -81,7 +81,7 @@ export class FddCommentService {
 
     // Fetch comments for this assignment
     const result = await this.database.query<FddCommentRecord>(
-      `SELECT id, assignment_id, timestamp, comment, firebase_user_id
+      `SELECT id, fdd_assignment_id, timestamp, comment, firebase_user_id
      FROM ${quoteIdentifier(commentTableName)}
      WHERE assignment_id = $1
      ORDER BY timestamp ASC, id ASC`,
