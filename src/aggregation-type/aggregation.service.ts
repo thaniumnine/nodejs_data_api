@@ -55,7 +55,7 @@ async list(organisation:string) {
 
   async getType(organisation:string,device_type: string) {
      const table_name = await this.fetchTableName(organisation)
- 
+
     return this.database.db.selectFrom(table_name).select([
       'device_type',
       'columns'
@@ -92,10 +92,11 @@ async list(organisation:string) {
 
   async fetchTableName(organisation:string) {
     const orgData = await this.organisationService.queryOrganisationMetadata(organisation);
+    if (orgData === undefined){
+      throw new NotFoundException(`Organisation not found: ${organisation}`)
+    }
     const table_name = this.createDeviceTypesTableName(orgData.prefix);
     //const safe_table_name = quoteIdentifier(table_name) 
     return table_name
   }
-
-
 }

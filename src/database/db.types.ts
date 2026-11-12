@@ -103,10 +103,11 @@ export type FddCommentTypeTable = {
 
 type BaseAggregationTable = {
     id: Generated<number>;
+    device_ref_id:number;
     device_id: string;
     event_timestamp: TimestampColumn;
     agg_type:string;
-     created_at: Generated<Date>;
+    created_at: Generated<Date>;
 }
 type ColumnAggregationMetrics = {
   [columnName: string]: number
