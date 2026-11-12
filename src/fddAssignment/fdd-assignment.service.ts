@@ -9,7 +9,7 @@ const FDD_HISTORY_TABLE_NAME = 'sim_fdd_history';
 
 export type FddAssignmentRecord = {
   id: string;
-  history_id: string;
+  fdd_history_id: string;
   timestamp: Date;
   firebase_user_id: string;
 };
@@ -24,7 +24,7 @@ export class FddAssignmentService {
 
   async createAssignment(
     organisation: string,
-    historyId: string,
+    fddHistoryId: string,
     firebaseUserId: string
   ) {
     const metadata =
@@ -41,12 +41,12 @@ export class FddAssignmentService {
        ON dc.device_ref_id = di.id
      WHERE di.org_ref_id = $2
        AND dc.id = $1`,
-      [historyId, metadata.id],
+      [fddHistoryId, metadata.id],
     );
 
     if (!historyRecord.rows[0]) {
       throw new NotFoundException(
-        `FDD record '${historyId}' not found`
+        `FDD record '${fddHistoryId}' not found`
       );
     }
 
@@ -54,12 +54,12 @@ export class FddAssignmentService {
     return this.database.db
       .insertInto(assignmentTableName)
       .values({
-        history_id: historyId,
+        fdd_history_id: fddHistoryId,
         firebase_user_id: firebaseUserId
       })
       .returning([
         'id',
-        'history_id',
+        'fdd_history_id',
         'timestamp',
         'firebase_user_id'
       ])
@@ -70,7 +70,7 @@ export class FddAssignmentService {
 
   async listAssignments(
     organisation: string,
-    historyId: string
+    fddHistoryId: string
   ) {
     const metadata =
       await this.organisationService.queryOrganisationMetadata(organisation);
@@ -86,22 +86,22 @@ export class FddAssignmentService {
        ON dc.device_ref_id = di.id
      WHERE di.org_ref_id = $2
        AND dc.id = $1`,
-      [historyId, metadata.id],
+      [fddHistoryId, metadata.id],
     );
 
     if (!exists.rows[0]) {
       throw new NotFoundException(
-        `FDD record '${historyId}' not found`
+        `FDD record '${fddHistoryId}' not found`
       );
     }
 
     // Retrieve assignments for this history record
     const result = await this.database.query<FddAssignmentRecord>(
-      `SELECT id, history_id, timestamp, firebase_user_id
+      `SELECT id, fdd_history_id, timestamp, firebase_user_id
      FROM ${quoteIdentifier(assignmentTableName)}
-     WHERE history_id = $1
+     WHERE fdd_history_id = $1
      ORDER BY timestamp DESC, id DESC`,
-      [historyId],
+      [fddHistoryId],
     );
 
     return {

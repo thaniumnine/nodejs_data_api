@@ -105,7 +105,7 @@ export class FddCommentService {
       `SELECT a.id
      FROM ${quoteIdentifier(assignmentTableName)} a
      JOIN sim_fdd_history h
-       ON a.history_id = h.id
+       ON a.fdd_history_id = h.id
      JOIN sim_device_identifier di
        ON h.device_ref_id = di.id
      WHERE a.id = $1
