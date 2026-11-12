@@ -103,8 +103,7 @@ export class AggregationRecordsService {
   };
 
 
-
-  async deleteAggregationDataEvent(organisation: string, deviceType: string, ids: string[]) {
+  async deleteAggregationDataEvent(organisation: string, building: string, level: string, deviceType: string, ids: string[]) {
     const orgData = await this.organisationService.queryOrganisationMetadata(organisation);
     const deviceTypeData = await this.aggregationService.getRequiredType(organisation, deviceType)
     const table_name = this.createDeviceTypeTableName(orgData.prefix, deviceTypeData.device_type);
@@ -112,10 +111,14 @@ export class AggregationRecordsService {
 
     const result = await this.database.query(
       `
-    DELETE FROM ${safe_table_name}
-    WHERE device_id = ANY($1)
+      DELETE FROM ${safe_table_name} da 
+      USING sim_device_identifier di 
+      WHERE di.device_id = ANY($1)
+        AND di.building = $2
+        AND di.level  = $3
+        AND  da.device_ref_id = di.id
     `,
-      [ids],
+      [ids,building,level],
     );
   }
 

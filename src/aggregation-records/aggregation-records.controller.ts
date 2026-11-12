@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import {  AggregationRecordsService } from './aggregation-records.service'
+import { AggregationRecordsService } from './aggregation-records.service'
 import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
 import { AggregationData, QueryAggregationRecords, QueryAggregationRecordsSchema } from './aggregation-records.dto';
 
@@ -8,8 +8,7 @@ import { AggregationData, QueryAggregationRecords, QueryAggregationRecordsSchema
 @Controller()
 export class AggregationRecordsController {
   constructor(private readonly aggregationService: AggregationRecordsService) { }
-
-
+  
   @Get('organisations/:organisation/buildings/:building/levels/:level/devices/types/:device_type/aggregations')
   queryAggregationData(
     @Param('organisation') organisation: string,
@@ -20,7 +19,6 @@ export class AggregationRecordsController {
   ) {
     return this.aggregationService.queryAggregationRecords(organisation, building, level, deviceType, query);
   }
-
 
   @Post('organisations/:organisation/buildings/:building/levels/:level/devices/types/:device_type/aggregations')
   createAggregationData(
@@ -33,16 +31,16 @@ export class AggregationRecordsController {
     return this.aggregationService.createAggregationDataEvent(organisation, building, level, deviceType, aggregationData)
   }
 
-
-  @Delete("records")
+  @Delete('organisations/:organisation/buildings/:building/levels/:level/devices/types/:device_type/aggregations')
   @HttpCode(204)
   deleteAggregationData(
     @Param('organisation') organisation: string,
+    @Param('building') building: string,
+    @Param('level') level: string,
     @Param('device_type') deviceType: string,
     @Body('ids') ids: string[]) {
-    return this.aggregationService.deleteAggregationDataEvent(organisation, deviceType, ids);
+    return this.aggregationService.deleteAggregationDataEvent(organisation, building, level, deviceType, ids);
   }
-
 
 }
 
