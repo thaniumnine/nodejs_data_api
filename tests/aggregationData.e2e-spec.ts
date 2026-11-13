@@ -3,7 +3,7 @@ import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify
 import { JwtAuthGuard } from '../src/auth/jwt-auth.guard';
 import { AppModule } from '../src/app.module';
 
-//todo - do one for each device type
+
 type AggregationPayload = {
   device_id: string;
   event_timestamp: string;
