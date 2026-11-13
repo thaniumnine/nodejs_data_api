@@ -11,10 +11,6 @@ type AggregationPayload = {
   payload: Record<string, number>;
 };
 
-describe('aggregation E2E', () => {
-  let app: NestFastifyApplication;
- 
-
   const aggregationMtsData:AggregationPayload[]  = [
     {
       "device_id": "MTS-9999999",
@@ -69,8 +65,12 @@ describe('aggregation E2E', () => {
   
 
 
-  const makeBaseUrl = (prefix: string) => `/organisations/simmtronic/buildings/Waterside/levels/Level-00/devices/types/${prefix}/aggregations`;
-  const extraGetUrlParameters = '?from=1920-04-24T00:00:00.000Z&to=1920-04-25T00:00:00.000Z&aggType=max'
+const makeBaseUrl = (prefix: string) => `/organisations/simmtronic/buildings/Waterside/levels/Level-00/devices/types/${prefix}/aggregations`;
+const extraGetUrlParameters = '?from=1920-04-24T00:00:00.000Z&to=1920-04-25T00:00:00.000Z&aggType=max'
+
+describe('aggregation E2E', () => {
+  let app: NestFastifyApplication;
+ 
   const testCases = [
     // { type: "mts", data: aggregationMtsData},
     // { type: "lt", data: aggregationLtData},
