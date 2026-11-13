@@ -122,10 +122,17 @@ export type ScheduleEntriesTypeTable = {
   fdd_assignment_id: string;
   scheduled_date: ColumnType<Date, string, string>;
   scheduled_minutes: number;
+  task_id: Generated<string | null>;
+  scheduled_time: NullableTimestampColumn;
   status: Generated<ScheduleEntryStatus>;
   is_locked: Generated<boolean>;
   created_at: Generated<Date>;
   updated_at: Generated<Date>;
+};
+
+export type TaskEntriesTypeTable = {
+  task_id: string;
+  assignment_id: string;
 };
 
 
@@ -191,7 +198,7 @@ export type DB = {
   user_sessions: UserSessionsTable;
   device_metadata: DeviceMetadataTypeTable;
   organisations: OrganisationsTable;
-} & AggregationsDeviceTypeTable & AggregationsTable & DeviceHistoryTables & FddHistoryTables & FddAssignmentTables & FddCommentTables & DeviceIdentifierTables & ScheduleEntriesTables
+} & AggregationsDeviceTypeTable & AggregationsTable & DeviceHistoryTables & FddHistoryTables & FddAssignmentTables & FddCommentTables & DeviceIdentifierTables & ScheduleEntriesTables & TaskEntriesTables;
 
 
 
@@ -217,6 +224,10 @@ export type FddCommentTables = {
 
 export type ScheduleEntriesTables = {
   schedule_entries: ScheduleEntriesTypeTable;
+};
+
+export type TaskEntriesTables = {
+  task_entries: TaskEntriesTypeTable;
 };
 
 export type DeviceIdentifierName = `${string}_device_identifier`
