@@ -1,4 +1,4 @@
-import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe.js';
+import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { HistoryService } from './history.service'
