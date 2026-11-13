@@ -4,7 +4,7 @@ import { DatabaseService } from "../database/database.service";
 import z from "zod";
 import { quoteIdentifier, quoteQualifiedIdentifier } from "../common/sql/identifiers";
 import { OrganisationService } from "../organisations/organisations.service";
-import { DeviceIdentifierService } from "src/deviceIdentifier/device-identifier.service";
+import { DeviceIdentifierService } from "../deviceIdentifier/device-identifier.service";
 import { AggregationData, AggregationRecord, QueryAggregationRecords } from "./aggregation-records.dto";
 
 const DEVICE_TABLE_NAME = "aggregations"
@@ -55,7 +55,6 @@ export class AggregationRecordsService {
   }
 
   async queryAggregationRecords(organisation: string, building: string, level: string, deviceType: string, query: QueryAggregationRecords) {
-    this.logger.log("organisationorganisationorganisation",organisation,'building',building,'level',level,'deviceType',deviceType)
     const { safeTableName, columns } = await this.getDynamicTableMetadata(organisation, deviceType);
     
     function createSafeColumnNames(columns: AggregationDeviceTypeColumnRecord[]) {
