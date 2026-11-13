@@ -9,12 +9,9 @@ CREATE TYPE public.schedule_entry_status AS ENUM (
 CREATE TABLE public.schedule_entries (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
-    fdd_assignment_id BIGINT NOT NULL,
+    task_id BIGINT NOT NULL,
 
-    scheduled_date DATE NOT NULL,
-
-    scheduled_minutes INTEGER NOT NULL
-        CHECK (scheduled_minutes > 0),
+    scheduled_time TIMESTAMPTZ NOT NULL,
 
     status public.schedule_entry_status
         NOT NULL DEFAULT 'Planned',
@@ -23,21 +20,18 @@ CREATE TABLE public.schedule_entries (
 
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-
-    CONSTRAINT fk_schedule_entries_fdd_assignment
-        FOREIGN KEY (fdd_assignment_id)
-        REFERENCES public.sim_fdd_assignment(id)
-        ON DELETE RESTRICT
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-CREATE INDEX idx_schedule_entries_assignment_date
+CREATE INDEX idx_schedule_entries_task_time
 ON public.schedule_entries (
-    fdd_assignment_id,
-    scheduled_date
+    task_id,
+    scheduled_time
 );
 
--- Automatically update updated_at whenever a row changes.
+CREATE INDEX idx_schedule_entries_scheduled_time
+ON public.schedule_entries (scheduled_time);
+
 CREATE FUNCTION public.set_schedule_entries_updated_at()
 RETURNS TRIGGER AS $$
 BEGIN
