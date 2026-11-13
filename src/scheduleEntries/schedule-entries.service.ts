@@ -7,9 +7,8 @@ const SCHEDULE_ENTRIES_TABLE_NAME = 'schedule_entries';
 
 export type ScheduleEntryRecord = {
     id: string;
-    fdd_assignment_id: string;
-    scheduled_date: string;
-    scheduled_minutes: number;
+    task_id: string;
+    scheduled_time: Date;
     status: ScheduleEntryStatus;
     is_locked: boolean;
     created_at: Date;
@@ -17,32 +16,33 @@ export type ScheduleEntryRecord = {
 };
 
 export type OrganisationScheduleEntryRecord = ScheduleEntryRecord & {
-  firebase_user_id: string;
-  fdd_history_id: string;
-  rule_id: string;
-  room: string;
-  building: string;
-  level: string;
-  device_id: string;
+    assignments: {
+        assignment_id: string;
+        fdd_history_id: string;
+        firebase_user_id: string;
+        rule_id: string;
+        room: string;
+        building: string;
+        level: string;
+        device_id: string;
+    }[];
 };
 
 export type CreateScheduleEntryInput = {
-    scheduled_date: string;
-    scheduled_minutes: number;
+    scheduled_time: string;
     status?: ScheduleEntryStatus;
     is_locked?: boolean;
-}
+};
 
 export type UpdateScheduleEntryInput =
-    Partial<CreateScheduleEntryInput>;
+    Partial<CreateScheduleEntryInput>
 
 //return scheduled_date consistently as YYYY-MM-DD
 const scheduleEntrySelect = `
   SELECT
     s.id,
-    s.fdd_assignment_id,
-    s.scheduled_date::text AS scheduled_date,
-    s.scheduled_minutes,
+    s.task_id::text AS task_id,
+    s.scheduled_time,
     s.status,
     s.is_locked,
     s.created_at,
@@ -57,43 +57,49 @@ export class ScheduleEntriesService {
         private readonly organisationService: OrganisationService,
     ) { }
 
-    // check that the fdd assignment belongs to this organisation
-    private async requireFddAssignment(
+
+    private async requireTask(
         organisation: string,
-        fddAssignmentId: string,
+        taskId: string,
     ) {
         const metadata =
-            await this.organisationService.queryOrganisationMetadata(organisation);
+            await this.organisationService.queryOrganisationMetadata(
+                organisation,
+            );
 
-        const result = await this.database.query<{ id: string }>(
-            `SELECT a.id
-            FROM public.sim_fdd_assignment a
-            JOIN public.sim_fdd_history h
-                ON a.fdd_history_id = h.id
-            JOIN public.sim_device_identifier di
-                ON h.device_ref_id = di.id
-            WHERE a.id = $1
-                AND di.org_ref_id = $2`,
-            [fddAssignmentId, metadata.id],
+        const result = await this.database.query<{ task_id: string }>(
+            `SELECT te.task_id::text AS task_id
+     FROM public.task_entries te
+     JOIN public.sim_fdd_assignment a
+       ON te.assignment_id = a.id
+     JOIN public.sim_fdd_history h
+       ON a.fdd_history_id = h.id
+     JOIN public.sim_device_identifier di
+       ON h.device_ref_id = di.id
+     WHERE te.task_id = $1
+     GROUP BY te.task_id
+     HAVING BOOL_AND(di.org_ref_id = $2)`,
+            [taskId, metadata.id],
         );
 
         if (!result.rows[0]) {
             throw new NotFoundException(
-                `FDD assignment '${fddAssignmentId}' not found`,
+                `Task '${taskId}' not found in this organisation`,
             );
         }
     }
 
+
     // retrieve a specific schedule entry
     private async getScheduleEntry(
-        fddAssignmentId: string,
+        taskId: string,
         entryId: string,
     ): Promise<ScheduleEntryRecord> {
         const result = await this.database.query<ScheduleEntryRecord>(
             `${scheduleEntrySelect}
             WHERE s.id = $1
-                AND s.fdd_assignment_id = $2`,
-            [entryId, fddAssignmentId],
+                AND s.task_id = $2`,
+            [entryId, taskId],
         );
 
         if (!result.rows[0]) {
@@ -108,38 +114,37 @@ export class ScheduleEntriesService {
     // create a new booking
     async createScheduleEntry(
         organisation: string,
-        fddAssignmentId: string,
+        taskId: string,
         input: CreateScheduleEntryInput,
     ): Promise<ScheduleEntryRecord> {
-        await this.requireFddAssignment(
+        await this.requireTask(
             organisation,
-            fddAssignmentId,
+            taskId,
         );
 
         const created = await this.database.db.insertInto(SCHEDULE_ENTRIES_TABLE_NAME).values({
-            fdd_assignment_id: fddAssignmentId,
-            scheduled_date: input.scheduled_date,
-            scheduled_minutes: input.scheduled_minutes,
+            task_id: taskId,
+            scheduled_time: input.scheduled_time,
             status: input.status ?? 'Planned',
             is_locked: input.is_locked ?? false,
         })
             .returning('id').executeTakeFirstOrThrow();
 
-        return this.getScheduleEntry(fddAssignmentId, created.id,);
+        return this.getScheduleEntry(taskId, created.id,);
     }
 
     // retrieve all bookings for one fdd assignment
     async listScheduleEntries(
         organisation: string,
-        fddAssignmentId: string,
+        taskId: string,
     ) {
-        await this.requireFddAssignment(organisation, fddAssignmentId);
+        await this.requireTask(organisation, taskId);
 
         const result = await this.database.query<ScheduleEntryRecord>(
             `${scheduleEntrySelect}
-            WHERE s.fdd_assignment_id = $1
-            ORDER BY s.scheduled_date ASC, s.created_at ASC`,
-            [fddAssignmentId],
+            WHERE s.task_id = $1
+            ORDER BY s.scheduled_time ASC, s.created_at ASC`,
+            [taskId],
         );
 
         return {
@@ -149,74 +154,90 @@ export class ScheduleEntriesService {
     }
 
 
-  // Retrieve all scheduled FDD work for an organisation
-  // within a selected date range.
-  async listOrganisationScheduleEntries(
-    organisation: string,
-    from: string,
-    to: string,
-  ) {
-    const metadata =
-      await this.organisationService.queryOrganisationMetadata(
-        organisation,
-      );
+    // Retrieve all scheduled FDD work for an organisation
+    // within a selected date range.
+    async listOrganisationScheduleEntries(
+        organisation: string,
+        from: string,
+        to: string,
+    ) {
+        const metadata =
+            await this.organisationService.queryOrganisationMetadata(
+                organisation,
+            );
 
-    const result =
-      await this.database.query<OrganisationScheduleEntryRecord>(
-        `SELECT
-            s.id,
-            s.fdd_assignment_id,
-            s.scheduled_date::text AS scheduled_date,
-            s.scheduled_minutes,
-            s.status,
-            s.is_locked,
-            s.created_at,
-            s.updated_at,
-            a.firebase_user_id,
-            a.fdd_history_id,
-            h.rule_id,
-            h.room,
-            di.building,
-            di.level,
-            di.device_id
-         FROM public.schedule_entries s
-         JOIN public.sim_fdd_assignment a
-           ON s.fdd_assignment_id = a.id
-         JOIN public.sim_fdd_history h
-           ON a.fdd_history_id = h.id
-         JOIN public.sim_device_identifier di
-           ON h.device_ref_id = di.id
-         WHERE di.org_ref_id = $1
-           AND s.scheduled_date >= $2::date
-           AND s.scheduled_date <= $3::date
-         ORDER BY s.scheduled_date ASC, s.id ASC`,
-        [metadata.id, from, to],
-      );
+        const result =
+            await this.database.query<OrganisationScheduleEntryRecord>(
+                `SELECT
+          s.id,
+          s.task_id::text AS task_id,
+          s.scheduled_time,
+          s.status,
+          s.is_locked,
+          s.created_at,
+          s.updated_at,
 
-    return {
-      records: result.rows,
-      count: result.rowCount,
-    };
-  }
+          JSONB_AGG(
+            JSONB_BUILD_OBJECT(
+              'assignment_id', a.id::text,
+              'fdd_history_id', a.fdd_history_id::text,
+              'firebase_user_id', a.firebase_user_id,
+              'rule_id', h.rule_id,
+              'room', h.room,
+              'building', di.building,
+              'level', di.level,
+              'device_id', di.device_id
+            )
+            ORDER BY a.id
+          ) AS assignments
+
+       FROM public.schedule_entries s
+       JOIN public.task_entries te
+         ON s.task_id = te.task_id
+       JOIN public.sim_fdd_assignment a
+         ON te.assignment_id = a.id
+       JOIN public.sim_fdd_history h
+         ON a.fdd_history_id = h.id
+       JOIN public.sim_device_identifier di
+         ON h.device_ref_id = di.id
+
+       WHERE s.scheduled_time >=
+         ($2::date::timestamp AT TIME ZONE 'Europe/London')
+         AND s.scheduled_time <
+         (($3::date + 1)::timestamp AT TIME ZONE 'Europe/London')
+
+       GROUP BY s.id
+       HAVING BOOL_AND(di.org_ref_id = $1)
+
+       ORDER BY s.scheduled_time ASC, s.id ASC`,
+                [metadata.id, from, to],
+            );
+
+        return {
+            records: result.rows,
+            count: result.rows.length,
+        };
+    }
+
 
 
     // Change an existing booking.
     async updateScheduleEntry(
         organisation: string,
-        fddAssignmentId: string,
+        taskId: string,
         entryId: string,
         input: UpdateScheduleEntryInput,
     ): Promise<ScheduleEntryRecord> {
-        await this.requireFddAssignment(
+        await this.requireTask(
             organisation,
-            fddAssignmentId,
+            taskId,
         );
 
         const updated = await this.database.db
             .updateTable(SCHEDULE_ENTRIES_TABLE_NAME)
             .set(input)
             .where('id', '=', entryId)
-            .where('fdd_assignment_id', '=', fddAssignmentId)
+            .where('task_id', '=', taskId)
             .returning('id')
             .executeTakeFirst();
 
@@ -227,7 +248,7 @@ export class ScheduleEntriesService {
         }
 
         return this.getScheduleEntry(
-            fddAssignmentId,
+            taskId,
             entryId,
         );
     }
