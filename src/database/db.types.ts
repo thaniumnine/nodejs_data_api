@@ -119,11 +119,8 @@ export type ScheduleEntryStatus =
 
 export type ScheduleEntriesTypeTable = {
   id: Generated<string>;
-  fdd_assignment_id: string;
-  scheduled_date: ColumnType<Date, string, string>;
-  scheduled_minutes: number;
-  task_id: Generated<string | null>;
-  scheduled_time: NullableTimestampColumn;
+  task_id: string;
+  scheduled_time: ColumnType<Date, Date | string, Date | string>;
   status: Generated<ScheduleEntryStatus>;
   is_locked: Generated<boolean>;
   created_at: Generated<Date>;
