@@ -16,6 +16,16 @@ export type ScheduleEntryRecord = {
     updated_at: Date;
 };
 
+export type OrganisationScheduleEntryRecord = ScheduleEntryRecord & {
+  firebase_user_id: string;
+  fdd_history_id: string;
+  rule_id: string;
+  room: string;
+  building: string;
+  level: string;
+  device_id: string;
+};
+
 export type CreateScheduleEntryInput = {
     scheduled_date: string;
     scheduled_minutes: number;
@@ -137,6 +147,58 @@ export class ScheduleEntriesService {
             count: result.rowCount,
         };
     }
+
+
+  // Retrieve all scheduled FDD work for an organisation
+  // within a selected date range.
+  async listOrganisationScheduleEntries(
+    organisation: string,
+    from: string,
+    to: string,
+  ) {
+    const metadata =
+      await this.organisationService.queryOrganisationMetadata(
+        organisation,
+      );
+
+    const result =
+      await this.database.query<OrganisationScheduleEntryRecord>(
+        `SELECT
+            s.id,
+            s.fdd_assignment_id,
+            s.scheduled_date::text AS scheduled_date,
+            s.scheduled_minutes,
+            s.status,
+            s.is_locked,
+            s.created_at,
+            s.updated_at,
+            a.firebase_user_id,
+            a.fdd_history_id,
+            h.rule_id,
+            h.room,
+            di.building,
+            di.level,
+            di.device_id
+         FROM public.schedule_entries s
+         JOIN public.sim_fdd_assignment a
+           ON s.fdd_assignment_id = a.id
+         JOIN public.sim_fdd_history h
+           ON a.fdd_history_id = h.id
+         JOIN public.sim_device_identifier di
+           ON h.device_ref_id = di.id
+         WHERE di.org_ref_id = $1
+           AND s.scheduled_date >= $2::date
+           AND s.scheduled_date <= $3::date
+         ORDER BY s.scheduled_date ASC, s.id ASC`,
+        [metadata.id, from, to],
+      );
+
+    return {
+      records: result.rows,
+      count: result.rowCount,
+    };
+  }
+
 
     // Change an existing booking.
     async updateScheduleEntry(
