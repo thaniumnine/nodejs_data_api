@@ -53,7 +53,7 @@ export class FddHistoryService {
     const identifierTableName = IDENTIFIER_TABLE_NAME
     const historyTableName = FDD_HISTORY_TABLE_NAME
     const result = await this.database.query(
-      `SELECT dh.id AS fdd_out_id, di.id AS device_ref_id, dh.rule_id, dh.closed, di.building,di.level,di.device_id, dh.room, dh.timestamp,dh.created_at
+      `SELECT dh.id AS fdd_history_id, di.id AS device_ref_id, dh.rule_id, dh.closed, di.building,di.level,di.device_id, dh.room, dh.timestamp,dh.created_at
     FROM ${historyTableName} dh JOIN ${identifierTableName} di 
       ON dh.device_ref_id = di.id
       WHERE  di.org_ref_id = $1
