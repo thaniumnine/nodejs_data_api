@@ -179,8 +179,6 @@ POST /organisations/:organisation/fdd/:fdd_history_id/assignments
 
 GET /organisations/:organisation/fdd/assignments/:fdd_assignment_id/comments
 POST /organisations/:organisation/fdd/assignments/:fdd_assignment_id/comments
-GET /api/v1/organisations/simmtronic/tasks/1/schedule-entries
-POST /organisations/:organisation/fdd/assignments/:fdd_assignment_id/schedule-entries
 PATCH /organisations/:organisation/fdd/assignments/:fdd_assignment_id/schedule-entries/:entry_id
 GET /organisations/:organisation/schedule-entries?from=YYYY-MM-DD&to=YYYY-MM-DD
 
