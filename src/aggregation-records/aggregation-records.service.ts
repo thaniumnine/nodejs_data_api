@@ -1,7 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { AggregationDeviceTypeColumnRecord, AggregationService } from "../aggregation-type/aggregation.service";
 import { DatabaseService } from "../database/database.service";
-import z from "zod";
 import { quoteIdentifier, quoteQualifiedIdentifier } from "../common/sql/identifiers";
 import { OrganisationService } from "../organisations/organisations.service";
 import { DeviceIdentifierService } from "../deviceIdentifier/device-identifier.service";
@@ -54,6 +53,48 @@ export class AggregationRecordsService {
       )
       .execute();
   }
+
+
+
+  async queryAggregationRecordsFromAllLevels(organisation: string, building: string,  deviceType: string, query: QueryAggregationRecords){
+
+  const { safeTableName, columns } = await this.getDynamicTableMetadata(organisation, deviceType);
+    
+    function createSafeColumnNames(columns: AggregationDeviceTypeColumnRecord[]) {
+      return columns.map((column) => {
+        const safeColumnName = quoteIdentifier(column.name)
+        return `${safeColumnName}::double precision AS ${safeColumnName}`
+      }).join(', ');
+    }
+
+    const column_names = createSafeColumnNames(columns);
+
+    const result = await this.database.query(
+      `SELECT 
+            di.device_id,
+            da.event_timestamp,
+            ${column_names}
+            FROM ${safeTableName} da JOIN sim_device_identifier di 
+             ON da.device_ref_id = di.id
+            WHERE event_timestamp >= $1
+            AND event_timestamp < $2
+            AND agg_type = $3
+            AND di.building = $4
+            ORDER BY device_id ASC,event_timestamp ASC
+            `,
+      [query.from, query.to, query.aggType, building]
+    );
+
+    return {
+      records: result.rows.map(({ device_id, event_timestamp, ...payload }) => ({
+        payload,
+        device_id,
+        event_timestamp
+
+      }))
+    }
+  };
+  
 
   async queryAggregationRecords(organisation: string, building: string, level: string, deviceType: string, query: QueryAggregationRecords) {
     const { safeTableName, columns } = await this.getDynamicTableMetadata(organisation, deviceType);
