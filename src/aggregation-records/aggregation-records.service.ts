@@ -73,6 +73,7 @@ export class AggregationRecordsService {
       `SELECT 
             di.device_id,
             da.event_timestamp,
+            di.level,
             ${column_names}
             FROM ${safeTableName} da JOIN sim_device_identifier di 
              ON da.device_ref_id = di.id
@@ -86,10 +87,11 @@ export class AggregationRecordsService {
     );
 
     return {
-      records: result.rows.map(({ device_id, event_timestamp, ...payload }) => ({
+      records: result.rows.map(({ device_id, event_timestamp,level, ...payload }) => ({
         payload,
         device_id,
-        event_timestamp
+        event_timestamp,
+        level
 
       }))
     }
