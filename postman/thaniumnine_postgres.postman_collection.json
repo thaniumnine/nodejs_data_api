@@ -1260,7 +1260,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\"items\":[{\r\n\r\n\"timestamp\": \"1924-03-25T16:16:31+00:00\",\r\n\r\n  \"room\": \"games room\",\r\n  \"ruleId\": \"rule 1\"\r\n}\r\n      \r\n    \r\n]\r\n}",
+              "raw": "{\r\n  \"items\": [\r\n    {\r\n      \"timestamp\": \"2026-11-18T09:10:00Z\",\r\n      \"room\": \"Heat Pump Plant Room\",\r\n      \"ruleId\": \"FDD_WSHP_TEMPERATURE_SENSOR_DRIFT_028\"\r\n    }\r\n  ]\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1268,7 +1268,7 @@
               }
             },
             "url": {
-              "raw": "{{base_url}}/api/v1/organisations/simmtronic/buildings/GB-LON-9213/levels/level-02/devices/QSE-999999/fdd",
+              "raw": "{{base_url}}/api/v1/organisations/simmtronic/buildings/GB-LON-9213/levels/level-02/devices/QSE-13/fdd",
               "host": [
                 "{{base_url}}"
               ],
@@ -1282,7 +1282,7 @@
                 "levels",
                 "level-02",
                 "devices",
-                "QSE-999999",
+                "QSE-13",
                 "fdd"
               ]
             }
@@ -1350,7 +1350,7 @@
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/api/v1/organisations/simmtronic/fdd/1/assignments",
+              "raw": "{{base_url}}/api/v1/organisations/simmtronic/fdd/6/assignments",
               "host": [
                 "{{base_url}}"
               ],
@@ -1360,7 +1360,7 @@
                 "organisations",
                 "simmtronic",
                 "fdd",
-                "1",
+                "6",
                 "assignments"
               ]
             }
@@ -1423,7 +1423,12 @@
             }
           },
           "response": []
-        },
+        }
+      ]
+    },
+    {
+      "name": "Fdd Scheduling",
+      "item": [
         {
           "name": "post_schedule_entry",
           "request": {
@@ -1457,7 +1462,7 @@
           "response": []
         },
         {
-          "name": "get_schedue_entries",
+          "name": "get_schedule_entries",
           "request": {
             "method": "GET",
             "header": [],
@@ -1644,6 +1649,34 @@
                 "tasks",
                 "1",
                 "assignments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get_unscheduled",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/organisations/simmtronic/fdd/unscheduled?firebase_user_id=4D7Pegur09VJyLUpjvGg0HdoWN13",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organisations",
+                "simmtronic",
+                "fdd",
+                "unscheduled"
+              ],
+              "query": [
+                {
+                  "key": "firebase_user_id",
+                  "value": "4D7Pegur09VJyLUpjvGg0HdoWN13"
+                }
               ]
             }
           },
