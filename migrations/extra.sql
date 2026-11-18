@@ -43,4 +43,4 @@
 
 -- ALTER TABLE sim_aggregations_acu
 -- ADD CONSTRAINT device_simmtronics_acu_agg_ev_device_ref_id_agg_type_event_time_key
--- UNIQUE (device_ref_id, agg_type, event_timestamp); 
+-- UNIQUE (device_ref_id, device_id,agg_type, event_timestamp); 

@@ -10,13 +10,15 @@ type AggregationDeviceParams = {
   level: string,
   deviceType: string,
 }
+type AggregationDeviceParamsNoLevels = Omit<AggregationDeviceParams, 'level'>;
+
 
 @UseGuards(JwtAuthGuard)
-@Controller('organisations/:organisation/buildings/:building/levels/:level/devices/types/:deviceType/aggregations')
+@Controller('organisations/:organisation/buildings/:building/')
 export class AggregationRecordsController {
   constructor(private readonly aggregationService: AggregationRecordsService) { }
 
-  @Get()
+  @Get('levels/:level/devices/types/:deviceType/aggregations')
   queryAggregationData(
     @Param() params: AggregationDeviceParams,
     @Query(new ZodValidationPipe(QueryAggregationRecordsSchema)) query: QueryAggregationRecords
@@ -30,7 +32,24 @@ export class AggregationRecordsController {
     );
   }
 
-  @Post()
+
+
+  @Get('devices/types/:deviceType/aggregations')
+  queryAggregationDataFromAllLevels(
+    @Param() params: AggregationDeviceParamsNoLevels,
+    @Query(new ZodValidationPipe(QueryAggregationRecordsSchema)) query: QueryAggregationRecords
+  ) {
+    return this.aggregationService.queryAggregationRecordsFromAllLevels(
+      params.organisation,
+      params.building,
+      params.deviceType,
+      query
+    );
+  }
+
+
+
+  @Post('/levels/:level/devices/types/:deviceType/aggregations')
   createAggregationData(
     @Param() params: AggregationDeviceParams,
     @Body() aggregationData: AggregationData,
@@ -44,7 +63,7 @@ export class AggregationRecordsController {
     )
   }
 
-  @Delete()
+  @Delete('/levels/:level/devices/types/:deviceType/aggregations')
   @HttpCode(204)
   deleteAggregationData(
     @Param() params: AggregationDeviceParams,

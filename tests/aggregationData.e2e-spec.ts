@@ -66,6 +66,7 @@ type AggregationPayload = {
 
 
 const makeBaseUrl = (prefix: string) => `/organisations/simmtronic/buildings/Waterside/levels/Level-00/devices/types/${prefix}/aggregations`;
+const makeBaseUrl2 = (prefix: string) => `/organisations/simmtronic/buildings/Waterside/devices/types/${prefix}/aggregations`;
 const extraGetUrlParameters = '?from=1920-04-24T00:00:00.000Z&to=1920-04-25T00:00:00.000Z&aggType=max'
 
 describe('aggregation E2E', () => {
@@ -130,6 +131,22 @@ describe('aggregation E2E', () => {
       expect(body?.records[0]).toEqual(ExpectedaggregationData)
 
     });
+
+
+  // it.each(testCases)(
+  //   `GET $type aggregation record from database`,
+  //   async ({ type, data }) => {
+  //     const result = await app.inject({
+  //       method: 'GET',
+  //       url: `${makeBaseUrl2(type)}${extraGetUrlParameters}`,
+  //     });
+
+  //     expect(result.statusCode).toEqual(200);
+  //     const body = JSON.parse(result.payload);
+  //     const { agg_type, ...ExpectedaggregationData } = data[0]
+  //     expect(body?.records[0]).toEqual(ExpectedaggregationData)
+
+  //   });
 
 
   it.each(testCases)(
