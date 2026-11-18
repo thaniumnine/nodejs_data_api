@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { z } from 'zod';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
@@ -46,4 +46,27 @@ export class FddAssignmentController {
     );
   }
 
+}
+
+@UseGuards(JwtAuthGuard)
+@Controller('organisations/:organisation/fdd')
+export class FddUnscheduledController {
+    constructor(
+        private readonly assignmentService: FddAssignmentService,
+    ) {}
+
+    @Get('unscheduled')
+    listUnscheduled(
+        @Param('organisation') organisation: string,
+        @Query(
+            'firebase_user_id',
+            new ZodValidationPipe(z.string().trim().min(1)),
+        )
+        firebaseUserId: string,
+    ) {
+        return this.assignmentService.listUnscheduledAssignments(
+            organisation,
+            firebaseUserId,
+        );
+    }
 }
