@@ -402,6 +402,71 @@ export class ScheduleEntriesService {
 
                 const nextWorkingDay = this.getNextWorkingDay(delayedTime);
 
+
+                let candidateTime = nextWorkingDay;
+                let attempts = 0;
+
+                let nextConflict = await this.findScheduleConflict(
+                    organisation,
+                    delayedTaskId,
+                    delayedEntryId,
+                    candidateTime
+                );
+
+                // loop until found another free space (or tries over 20 times)
+                while (nextConflict && attempts < 20) {
+                    // Move forward another working day.
+                    candidateTime = this.getNextWorkingDay(candidateTime);
+
+                    // Check whether this new day is occupied.
+                    nextConflict = await this.findScheduleConflict(
+                        organisation,
+                        delayedTaskId,
+                        delayedEntryId,
+                        candidateTime
+                    );
+
+                    attempts++;
+                }
+
+                if (nextConflict) {
+                    throw new ConflictException(
+                        "Unable to find a free working day."
+                    );
+                }
+
+                console.log("Next available day:", candidateTime);
+
+
+                const proposedMoves =
+                    olderTaskId === taskId
+                        ? [
+                            // Incoming task is older: it takes the requested day.
+                            {
+                                entryId,
+                                taskId,
+                                scheduledTime,
+                            },
+                            // Existing newer task gets delayed.
+                            {
+                                entryId: conflict.id,
+                                taskId: conflict.task_id,
+                                scheduledTime: candidateTime,
+                            },
+                        ]
+                        : [
+                            // Existing task is older: incoming task gets delayed.
+                            {
+                                entryId,
+                                taskId,
+                                scheduledTime: candidateTime,
+                            },
+                        ];
+
+                console.log("Proposed schedule changes:", proposedMoves);
+
+
+
                 console.log({
                     olderTaskId,
                     delayedTaskId,
