@@ -9,6 +9,7 @@ type AggregationPayload = {
   event_timestamp: string;
   agg_type: string;
   payload: Record<string, number>;
+  level:string;
 };
 
   const aggregationMtsData:AggregationPayload[]  = [
@@ -16,6 +17,7 @@ type AggregationPayload = {
       "device_id": "MTS-9999999",
       "event_timestamp": "1920-04-24T12:34:00.000Z",
       "agg_type": "max",
+             "level": "Level-00",
       "payload": {
         "illuminance_sensor": 23,
         "last_week_total_occupancy": 301,
@@ -28,6 +30,7 @@ type AggregationPayload = {
     "device_id": "QSE-9999999",
     "event_timestamp": "1920-04-24T12:34:00.000Z",
     "agg_type": "max",
+           "level": "Level-00",
     "payload": {
       "co2_level": 300,
       "humidity": 400,
@@ -43,6 +46,7 @@ type AggregationPayload = {
     "device_id": "LT-9999999",
     "event_timestamp": "1920-04-24T12:34:00.000Z",
     "agg_type": "max",
+           "level": "Level-00",
     "payload": {
       "brightness_percentage_command": 88,
       "electrical_power_sensor": 202,
@@ -55,6 +59,7 @@ type AggregationPayload = {
     "device_id": "acu-9999999",
     "event_timestamp": "1920-04-24T12:34:00.000Z",
     "agg_type": "max",
+    "level": "Level-00",
     "payload": {
       "room_temperature": 88,
       "room_temperature_setpoint": 202,
@@ -73,9 +78,9 @@ describe('aggregation E2E', () => {
   let app: NestFastifyApplication;
  
   const testCases = [
-    // { type: "mts", data: aggregationMtsData},
-    // { type: "lt", data: aggregationLtData},
-    // { type: "qse", data: aggregationQseData},
+    { type: "mts", data: aggregationMtsData},
+    { type: "lt", data: aggregationLtData},
+    { type: "qse", data: aggregationQseData},
     { type: "acu", data: aggregationAcuData}
   ];
 
@@ -117,28 +122,12 @@ describe('aggregation E2E', () => {
     }
   );
 
-  it.each(testCases)(
-    `GET $type aggregation record from database`,
-    async ({ type, data }) => {
-      const result = await app.inject({
-        method: 'GET',
-        url: `${makeBaseUrl(type)}${extraGetUrlParameters}`,
-      });
-
-      expect(result.statusCode).toEqual(200);
-      const body = JSON.parse(result.payload);
-      const { agg_type, ...ExpectedaggregationData } = data[0]
-      expect(body?.records[0]).toEqual(ExpectedaggregationData)
-
-    });
-
-
   // it.each(testCases)(
   //   `GET $type aggregation record from database`,
   //   async ({ type, data }) => {
   //     const result = await app.inject({
   //       method: 'GET',
-  //       url: `${makeBaseUrl2(type)}${extraGetUrlParameters}`,
+  //       url: `${makeBaseUrl(type)}${extraGetUrlParameters}`,
   //     });
 
   //     expect(result.statusCode).toEqual(200);
@@ -147,6 +136,22 @@ describe('aggregation E2E', () => {
   //     expect(body?.records[0]).toEqual(ExpectedaggregationData)
 
   //   });
+
+
+  it.each(testCases)(
+    `GET $type aggregation record from database`,
+    async ({ type, data }) => {
+      const result = await app.inject({
+        method: 'GET',
+        url: `${makeBaseUrl2(type)}${extraGetUrlParameters}`,
+      });
+
+      expect(result.statusCode).toEqual(200);
+      const body = JSON.parse(result.payload);
+      const { agg_type, ...ExpectedaggregationData } = data[0]
+      expect(body?.records[0]).toEqual(ExpectedaggregationData)
+
+    });
 
 
   it.each(testCases)(
