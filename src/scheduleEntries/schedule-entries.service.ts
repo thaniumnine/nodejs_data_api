@@ -373,122 +373,113 @@ export class ScheduleEntriesService {
                 scheduledTime,
             );
 
+
             if (conflict) {
+                type ProposedMove = {
+                    entryId: string;
+                    taskId: string;
+                    scheduledTime: string;
+                };
+
+                const proposedMoves: ProposedMove[] = [];
+
                 const olderTaskId = await this.getOlderTaskId(
                     taskId,
                     conflict.task_id
                 );
 
-                if (olderTaskId === null) {
-                    throw new ConflictException(
-                        "Unable to determine task priority."
-                    );
+                if (!olderTaskId) {
+                    throw new ConflictException("Unable to determine task priority.");
                 }
 
-                const delayedTaskId =
-                    olderTaskId === taskId
-                        ? conflict.task_id
-                        : taskId;
+                let moving: ProposedMove;
 
-                const delayedEntryId =
-                    delayedTaskId === taskId
-                        ? entryId
-                        : conflict.id;
+                if (olderTaskId === taskId) {
+                    // Incoming task is older, so it takes the requested day.
+                    if (conflict.is_locked || conflict.status !== "Planned") {
+                        throw new ConflictException("Cannot displace a locked or completed booking.");
+                    }
 
-                const delayedTime =
-                    delayedEntryId === entryId
-                        ? scheduledTime
-                        : new Date(conflict.scheduled_time).toISOString();
+                    proposedMoves.push({
+                        entryId,
+                        taskId,
+                        scheduledTime,
+                    });
 
-                const nextWorkingDay = this.getNextWorkingDay(delayedTime);
+                    // The existing newer task must move forward.
+                    moving = {
+                        entryId: conflict.id,
+                        taskId: conflict.task_id,
+                        scheduledTime: this.getNextWorkingDay(
+                            new Date(conflict.scheduled_time).toISOString()
+                        ),
+                    };
+                } else {
+                    // Existing task is older, so delay the incoming task.
+                    moving = {
+                        entryId,
+                        taskId,
+                        scheduledTime: this.getNextWorkingDay(scheduledTime),
+                    };
+                }
 
+                let placed = false;
 
-                let candidateTime = nextWorkingDay;
-                let attempts = 0;
-
-                let nextConflict = await this.findScheduleConflict(
-                    organisation,
-                    delayedTaskId,
-                    delayedEntryId,
-                    candidateTime
-                );
-
-                // loop until found another free space (or tries over 20 times)
-                while (nextConflict && attempts < 20) {
-                    // Move forward another working day.
-                    candidateTime = this.getNextWorkingDay(candidateTime);
-
-                    // Check whether this new day is occupied.
-                    nextConflict = await this.findScheduleConflict(
+                for (let attempts = 0; attempts < 20; attempts++) {
+                    const nextConflict = await this.findScheduleConflict(
                         organisation,
-                        delayedTaskId,
-                        delayedEntryId,
-                        candidateTime
+                        moving.taskId,
+                        moving.entryId,
+                        moving.scheduledTime
                     );
 
-                    attempts++;
-                }
+                    if (!nextConflict) {
+                        proposedMoves.push({ ...moving });
+                        placed = true;
+                        break;
+                    }
 
-                if (nextConflict) {
-                    throw new ConflictException(
-                        "Unable to find a free working day."
+                    const older = await this.getOlderTaskId(
+                        moving.taskId,
+                        nextConflict.task_id
                     );
+
+                    if (older === moving.taskId) {
+                        // Moving task is older and takes this day.
+                        if (nextConflict.is_locked || nextConflict.status !== "Planned") {
+                            throw new ConflictException("Cannot displace a locked or completed booking.");
+                        }
+
+                        proposedMoves.push({ ...moving });
+
+                        // Now move the displaced newer task.
+                        moving = {
+                            entryId: nextConflict.id,
+                            taskId: nextConflict.task_id,
+                            scheduledTime: this.getNextWorkingDay(
+                                new Date(nextConflict.scheduled_time).toISOString()
+                            ),
+                        };
+                    } else if (older === nextConflict.task_id) {
+                        // Existing task is older, so keep searching.
+                        moving.scheduledTime = this.getNextWorkingDay(
+                            moving.scheduledTime
+                        );
+                    } else {
+                        throw new ConflictException("Unable to determine task priority.");
+                    }
                 }
 
-                console.log("Next available day:", candidateTime);
-
-
-                const proposedMoves =
-                    olderTaskId === taskId
-                        ? [
-                            // Incoming task is older: it takes the requested day.
-                            {
-                                entryId,
-                                taskId,
-                                scheduledTime,
-                            },
-                            // Existing newer task gets delayed.
-                            {
-                                entryId: conflict.id,
-                                taskId: conflict.task_id,
-                                scheduledTime: candidateTime,
-                            },
-                        ]
-                        : [
-                            // Existing task is older: incoming task gets delayed.
-                            {
-                                entryId,
-                                taskId,
-                                scheduledTime: candidateTime,
-                            },
-                        ];
+                if (!placed) {
+                    throw new ConflictException("Unable to find an available working day.");
+                }
 
                 console.log("Proposed schedule changes:", proposedMoves);
 
-
-
-                console.log({
-                    olderTaskId,
-                    delayedTaskId,
-                    delayedEntryId,
-                    nextWorkingDay,
-                });
-
-
-                console.log({
-                    olderTaskId,
-                    delayedTaskId,
-                    delayedEntryId
-                });
-
-                console.log("Current task:", taskId);
-                console.log("Conflicting task:", conflict.task_id);
-                console.log("Older task:", olderTaskId);
-
-                throw new ConflictException(
-                    `Conflict detected. Older task: ${olderTaskId ?? "Undetermined"}`
-                );
+                // Preview only: do not update PostgreSQL yet.
+                throw new ConflictException("Preview completed. Check backend logs.");
             }
+
         }
 
         const updated = await this.database.db
