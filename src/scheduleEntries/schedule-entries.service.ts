@@ -238,6 +238,8 @@ export class ScheduleEntriesService {
             .set(input)
             .where('id', '=', entryId)
             .where('task_id', '=', taskId)
+            .where('is_locked', '=', false)
+            .where('status', '=', 'Planned')
             .returning('id')
             .executeTakeFirst();
 
