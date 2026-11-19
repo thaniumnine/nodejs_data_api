@@ -117,6 +117,30 @@ export class ScheduleEntriesService {
     }
 
 
+    private async getOlderTaskId(
+        taskId: string,
+        conflictingTaskId: string,
+    ): Promise<string | null> {
+
+        // Get the original dates of both tasks.
+        const currentTaskTime = await this.getTaskOriginalTime(taskId);
+        const conflictingTaskTime = await this.getTaskOriginalTime(conflictingTaskId);
+
+        // Compare which task was created earlier.
+        if (currentTaskTime.getTime() < conflictingTaskTime.getTime()) {
+            return taskId;
+        }
+
+        if (conflictingTaskTime.getTime() < currentTaskTime.getTime()) {
+            return conflictingTaskId;
+        }
+
+        // Both tasks have the same original timestamp.
+        return null;
+    }
+
+
+
     // retrieve a specific schedule entry
     private async getScheduleEntry(
         taskId: string,
@@ -246,7 +270,7 @@ export class ScheduleEntriesService {
         };
     }
 
-
+    // this is the loop to check if there is a conflict with 2 schedules
     private async findScheduleConflict(
         organisation: string,
         taskId: string,
@@ -333,8 +357,17 @@ export class ScheduleEntriesService {
             );
 
             if (conflict) {
+                const olderTaskId = await this.getOlderTaskId(
+                    taskId,
+                    conflict.task_id
+                );
+
+                console.log("Current task:", taskId);
+                console.log("Conflicting task:", conflict.task_id);
+                console.log("Older task:", olderTaskId);
+
                 throw new ConflictException(
-                    `Another booking exists at this time: ${conflict.id}`
+                    `Conflict detected. Older task: ${olderTaskId ?? "Undetermined"}`
                 );
             }
         }
