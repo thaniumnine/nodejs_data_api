@@ -9,10 +9,12 @@ const FDD_COMMENT_TABLE_NAME = 'sim_fdd_comment';
 
 export type FddCommentRecord = {
   id: string;
-  ticket_ref_id: string;
+  fdd_assignment_id: string;
   timestamp: Date;
   comment: string;
   firebase_user_id: string | null;
+  remaining_minutes: number | null;
+  minutes_worked: number | null;
 };
 
 @Injectable()
@@ -20,58 +22,113 @@ export class FddCommentService {
   constructor(
     private readonly database: DatabaseService,
     private readonly organisationService: OrganisationService,
-  ) {}
+  ) { }
 
-  async createComment(organisation: string, ticketRefId: string, comment: string, firebaseUserId: string) {
-    const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
-    const assignmentTableName = FDD_ASSIGNMENT_TABLE_NAME
-    const commentTableName = FDD_COMMENT_TABLE_NAME
 
-    await this.requireAssignment(assignmentTableName, ticketRefId,metadata.id);
+  async createComment(
+    organisation: string,
+    assignmentId: string,
+    comment: string,
+    firebaseUserId: string,
+    remainingMinutes?: number,
+    minutesWorked?: number
+  ) {
+    const metadata =
+      await this.organisationService.queryOrganisationMetadata(organisation);
 
-    return this.database.db
-      .insertInto(commentTableName)
-      .values({ ticket_ref_id: ticketRefId, comment, firebase_user_id: firebaseUserId })
-      .returning(['id', 'ticket_ref_id', 'timestamp', 'comment', 'firebase_user_id'])
-      .executeTakeFirstOrThrow();
-  }
+    const assignmentTableName = FDD_ASSIGNMENT_TABLE_NAME;
+    const commentTableName = FDD_COMMENT_TABLE_NAME;
 
-  async listComments(organisation: string, ticketRefId: string) {
-    const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
-    const assignmentTableName =FDD_ASSIGNMENT_TABLE_NAME
-    const commentTableName = FDD_COMMENT_TABLE_NAME
-
-    await this.requireAssignment(assignmentTableName, ticketRefId,metadata.id);
-
-    const result = await this.database.query<FddCommentRecord>(
-      `SELECT id, ticket_ref_id, timestamp, comment, firebase_user_id
-   FROM ${quoteIdentifier(commentTableName)}
-   WHERE ticket_ref_id = $1
-   ORDER BY timestamp ASC, id ASC`,
-      [ticketRefId],
+    // Ensure the assignment belongs to the organisation
+    await this.requireAssignment(
+      assignmentTableName,
+      assignmentId,
+      metadata.id
     );
 
-    return { records: result.rows, count: result.rowCount };
+    // Create comment linked to the assignment
+    return this.database.db
+      .insertInto(commentTableName)
+      .values({
+        fdd_assignment_id: assignmentId,
+        comment,
+        firebase_user_id: firebaseUserId,
+        remaining_minutes: remainingMinutes ?? null,
+        minutes_worked: minutesWorked ?? null,
+      })
+      .returning([
+        'id',
+        'fdd_assignment_id',
+        'timestamp',
+        'comment',
+        'firebase_user_id',
+        'remaining_minutes',
+    'minutes_worked',
+      ])
+      .executeTakeFirstOrThrow();
 
   }
 
-  private async requireAssignment(assignmentTableName: FddAssignmentName, ticketRefId: string, metadataId: number) {
+
+
+  async listComments(
+    organisation: string,
+    assignmentId: string
+  ) {
+    const metadata =
+      await this.organisationService.queryOrganisationMetadata(organisation);
+
+    const assignmentTableName = FDD_ASSIGNMENT_TABLE_NAME;
+    const commentTableName = FDD_COMMENT_TABLE_NAME;
+
+    // Confirm the assignment belongs to the organisation
+    await this.requireAssignment(
+      assignmentTableName,
+      assignmentId,
+      metadata.id
+    );
+
+    // Fetch comments for this assignment
+    const result = await this.database.query<FddCommentRecord>(
+      `SELECT id, fdd_assignment_id, timestamp, comment, firebase_user_id, remaining_minutes, minutes_worked
+     FROM ${quoteIdentifier(commentTableName)}
+     WHERE fdd_assignment_id = $1
+     ORDER BY timestamp ASC, id ASC`,
+      [assignmentId],
+    );
+
+    return {
+      records: result.rows,
+      count: result.rowCount
+    };
+  }
+
+
+
+  private async requireAssignment(
+    assignmentTableName: FddAssignmentName,
+    assignmentId: string,
+    metadataId: number
+  ) {
     const result = await this.database.query<{ id: string }>(
       `SELECT a.id
      FROM ${quoteIdentifier(assignmentTableName)} a
      JOIN sim_fdd_history h
-       ON a.fdd_out_id = h.id
+       ON a.fdd_history_id = h.id
      JOIN sim_device_identifier di
        ON h.device_ref_id = di.id
      WHERE a.id = $1
        AND di.org_ref_id = $2`,
-      [ticketRefId, metadataId],
+      [assignmentId, metadataId],
     );
 
     if (!result.rows[0]) {
-      throw new NotFoundException(`Assignment '${ticketRefId}' not found`);
+      throw new NotFoundException(
+        `Assignment '${assignmentId}' not found`
+      );
     }
   }
+
 
 
 }

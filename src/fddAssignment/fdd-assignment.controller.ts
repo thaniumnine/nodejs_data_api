@@ -4,7 +4,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
 import { FddAssignmentService } from './fdd-assignment.service';
 
-const fddOutIdSchema = z.string().refine(
+const fddHistoryIdSchema = z.string().refine(
   (id) => /^[1-9]\d*$/.test(id) && BigInt(id) <= 9223372036854775807n,
   'FDD record ID must be a positive BIGINT',
 );
@@ -15,24 +15,35 @@ const createAssignmentSchema = z.object({
 type CreateAssignmentBody = z.infer<typeof createAssignmentSchema>;
 
 @UseGuards(JwtAuthGuard)
-@Controller('organisations/:organisation/fdd/:fdd_out_id/assignments')
+@Controller('organisations/:organisation/fdd/:fdd_history_id/assignments')
 export class FddAssignmentController {
-  constructor(private readonly assignmentService: FddAssignmentService) {}
+  constructor(private readonly assignmentService: FddAssignmentService) { }
 
   @Post()
   createAssignment(
     @Param('organisation') organisation: string,
-    @Param('fdd_out_id', new ZodValidationPipe(fddOutIdSchema)) fddOutId: string,
-    @Body(new ZodValidationPipe(createAssignmentSchema)) body: CreateAssignmentBody,
+    @Param('fdd_history_id', new ZodValidationPipe(fddHistoryIdSchema))
+    fddHistoryId: string,
+    @Body(new ZodValidationPipe(createAssignmentSchema))
+    body: CreateAssignmentBody,
   ) {
-    return this.assignmentService.createAssignment(organisation, fddOutId, body.firebase_user_id);
+    return this.assignmentService.createAssignment(
+      organisation,
+      fddHistoryId,
+      body.firebase_user_id
+    );
   }
 
   @Get()
   listAssignments(
     @Param('organisation') organisation: string,
-    @Param('fdd_out_id', new ZodValidationPipe(fddOutIdSchema)) fddOutId: string,
+    @Param('fdd_history_id', new ZodValidationPipe(fddHistoryIdSchema))
+    fddHistoryId: string,
   ) {
-    return this.assignmentService.listAssignments(organisation, fddOutId);
+    return this.assignmentService.listAssignments(
+      organisation,
+      fddHistoryId
+    );
   }
+
 }

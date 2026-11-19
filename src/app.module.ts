@@ -11,9 +11,11 @@ import { DeviceMetadataModule } from './deviceMetadata/deviceMetadata.module';
 import { FddHistoryModule } from './fddHistory/fdd-history.module';
 import { FddAssignmentModule } from './fddAssignment/fdd-assignment.module';
 import { FddCommentModule } from './fddComment/fdd-comment.module';
+import { ScheduleEntriesModule } from './scheduleEntries/schedule-entries.module';
+import { TaskEntriesModule } from './task-entries/task-entries.module';
 
 @Module({
-  imports: [DatabaseModule, UsersModule, AuthModule, AggregationRecordsModule, AggregationModule, HistoryModule, DeviceMetadataModule, FddHistoryModule, FddAssignmentModule, FddCommentModule],
+  imports: [DatabaseModule, UsersModule, AuthModule, AggregationRecordsModule, AggregationModule, HistoryModule, DeviceMetadataModule, FddHistoryModule, FddAssignmentModule, FddCommentModule, ScheduleEntriesModule, TaskEntriesModule,],
   controllers: [HealthController, HomeController]
 })
 export class AppModule { }
