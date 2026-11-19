@@ -48,13 +48,21 @@ export class DeviceIdentifierService {
             .where("building", "=", building)
             .where("level", "=", level)
             .where("device_id", "=", deviceId)
-            .where("org_ref_id","=",metadata.id)
+            .where("org_ref_id", "=", metadata.id)
             .executeTakeFirst();
 
         return result
     }
 
 
+    async getDeviceIndentifier(organisation: string, building: string, level: string, deviceId: string) {
+        let deviceIdentifier = await this.createDeviceIdentifier(organisation, building, level, deviceId);
+        if (!deviceIdentifier) {
+            deviceIdentifier = await this.findDeviceIdentifier(organisation, building, level, deviceId)
+            if (!deviceIdentifier) return;
+        }
+        return deviceIdentifier
+    }
 
   
 }

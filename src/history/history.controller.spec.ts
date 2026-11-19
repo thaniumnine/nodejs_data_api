@@ -10,8 +10,12 @@ describe('History Controller', () => {
     const DEVICE = "acu-999999"
     const FROM = '2026-06-08T00:00:00.000Z';
     const TO = '2026-06-09T00:00:00.000Z';
-        
+    const PARAMS = {
+        organisation: ORGANISATION,
+        building: BUILDING,
+        level: LEVEL,
 
+    };
     let controller: HistoryController;
     let mockHistoryService = {
         queryDeviceHistory: jest.fn(),
@@ -49,14 +53,14 @@ describe('History Controller', () => {
             from: FROM,
             to: TO,
         }
-        const result = await controller.queryHistoryData(ORGANISATION, BUILDING,LEVEL,DEVICE,mockQueryData);
+        const result = await controller.queryHistoryData(PARAMS, DEVICE, mockQueryData);
 
         expect(mockHistoryService.queryDeviceHistory).toHaveBeenCalledWith(
             ORGANISATION,
             BUILDING,
             LEVEL,
             DEVICE,
-    mockQueryData
+            mockQueryData
         );
         expect(result).toEqual({ records: [], count: 0 })
 
@@ -69,23 +73,23 @@ describe('History Controller', () => {
             to: TO,
             devicePrefix: DEVICE
         }
-        const result = await controller.queryHistoryDataPrefix(ORGANISATION,BUILDING,LEVEL,mockQueryData);
+           const result = await controller.queryHistoryDataPrefix(PARAMS, mockQueryData);
 
-        expect(mockHistoryService.queryDeviceHistoryWithPrefix).toHaveBeenCalledWith(
-            ORGANISATION,
-            BUILDING,
-            LEVEL,
-            mockQueryData,
-        );
-        expect(result).toEqual({ records: [], count: 0 })
+           expect(mockHistoryService.queryDeviceHistoryWithPrefix).toHaveBeenCalledWith(
+               ORGANISATION,
+               BUILDING,
+               LEVEL,
+               mockQueryData,
+           );
+           expect(result).toEqual({ records: [], count: 0 })
 
-    })
+       })
 
 
     
        test('getDeviceNames', async () => {
-        mockHistoryService.getDeviceNames.mockResolvedValue({ records: [], count: 0 });
-        const result = await controller.getDeviceNames(ORGANISATION,BUILDING, LEVEL,DEVICE);
+           mockHistoryService.getDeviceNames.mockResolvedValue({ records: [], count: 0 });
+           const result = await controller.getDeviceNames(PARAMS, DEVICE);
 
            expect(mockHistoryService.getDeviceNames).toHaveBeenCalledWith(
                ORGANISATION,
@@ -93,7 +97,7 @@ describe('History Controller', () => {
                LEVEL,
                DEVICE
            );
-        expect(result).toEqual({ records: [], count: 0 })
+           expect(result).toEqual({ records: [], count: 0 })
 
     })
 
@@ -116,7 +120,7 @@ describe('History Controller', () => {
     }
         mockHistoryService.createDeviceHistoryDataEvent.mockResolvedValue({ event: { mockPostData } });
 
-        const result = await controller.createHistoryData(ORGANISATION,BUILDING,LEVEL,DEVICE,mockPostData,);
+        const result = await controller.createHistoryData(PARAMS,DEVICE,mockPostData,);
 
         expect(mockHistoryService.createDeviceHistoryDataEvent).toHaveBeenCalledWith(
             mockPostData,
@@ -135,14 +139,18 @@ describe('History Controller', () => {
 
     test('deleteDeviceHistoryDataEvent', async () => {
         const idsToDelete = ['QSE-9999'];
-           let mockQueryData = {
+        let mockQueryData = {
             from: FROM,
             to: TO,
         }
 
-        const result = await controller.deleteHistoryData(ORGANISATION,BUILDING,LEVEL,idsToDelete,mockQueryData);
+        const result = await controller.deleteHistoryData(PARAMS, idsToDelete, mockQueryData);
         expect(mockHistoryService.deleteDeviceHistoryDataEvent).toHaveBeenCalledWith(
-            ORGANISATION,BUILDING,LEVEL,idsToDelete,mockQueryData
+            ORGANISATION,
+            BUILDING,
+            LEVEL, 
+            idsToDelete, 
+            mockQueryData
         );
         expect(result).toBeUndefined();
 
