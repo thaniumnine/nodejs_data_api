@@ -3,17 +3,21 @@ import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify
 import { JwtAuthGuard } from '../src/auth/jwt-auth.guard';
 import { AppModule } from '../src/app.module';
 
-//todo - do one for each device type
 
-describe('aggregation E2E', () => {
-  let app: NestFastifyApplication;
-  
+type AggregationPayload = {
+  device_id: string;
+  event_timestamp: string;
+  agg_type: string;
+  payload: Record<string, number>;
+  level:string;
+};
 
-  const aggregationMtsData = [
+  const aggregationMtsData:AggregationPayload[]  = [
     {
       "device_id": "MTS-9999999",
       "event_timestamp": "1920-04-24T12:34:00.000Z",
       "agg_type": "max",
+             "level": "Level-00",
       "payload": {
         "illuminance_sensor": 23,
         "last_week_total_occupancy": 301,
@@ -22,10 +26,11 @@ describe('aggregation E2E', () => {
       }
     }]
 
-  const aggregationQseData = [{
+  const aggregationQseData:AggregationPayload[] = [{
     "device_id": "QSE-9999999",
     "event_timestamp": "1920-04-24T12:34:00.000Z",
     "agg_type": "max",
+           "level": "Level-00",
     "payload": {
       "co2_level": 300,
       "humidity": 400,
@@ -37,10 +42,11 @@ describe('aggregation E2E', () => {
     }
   }]
 
-  const aggregationLtData = [{
+  const aggregationLtData :AggregationPayload[] = [{
     "device_id": "LT-9999999",
     "event_timestamp": "1920-04-24T12:34:00.000Z",
     "agg_type": "max",
+           "level": "Level-00",
     "payload": {
       "brightness_percentage_command": 88,
       "electrical_power_sensor": 202,
@@ -49,8 +55,35 @@ describe('aggregation E2E', () => {
     }
   }]
 
+  const aggregationAcuData :AggregationPayload[] = [{
+    "device_id": "acu-9999999",
+    "event_timestamp": "1920-04-24T12:34:00.000Z",
+    "agg_type": "max",
+    "level": "Level-00",
+    "payload": {
+      "room_temperature": 88,
+      "room_temperature_setpoint": 202,
+    }
+  }]
+
 
   
+
+
+const makeBaseUrl = (prefix: string) => `/organisations/simmtronic/buildings/Waterside/levels/Level-00/devices/types/${prefix}/aggregations`;
+const makeBaseUrl2 = (prefix: string) => `/organisations/simmtronic/buildings/Waterside/devices/types/${prefix}/aggregations`;
+const extraGetUrlParameters = '?from=1920-04-24T00:00:00.000Z&to=1920-04-25T00:00:00.000Z&aggType=max'
+
+describe('aggregation E2E', () => {
+  let app: NestFastifyApplication;
+ 
+  const testCases = [
+    { type: "mts", data: aggregationMtsData},
+    { type: "lt", data: aggregationLtData},
+    { type: "qse", data: aggregationQseData},
+    { type: "acu", data: aggregationAcuData}
+  ];
+
   beforeAll(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
@@ -75,132 +108,64 @@ describe('aggregation E2E', () => {
     }
   });
 
-  it('POST /aggregation/organisations/:organisation/device_types/mts/records', async () => {
-    const result = await app.inject({
-      method: 'POST',
-      url: ' /aggregation/organisations/Simtronics/device_types/mts/records',
-      payload:     {"items":aggregationMtsData},
-    
-    });
-    expect(result.statusCode).toEqual(201);
-  });
+
+  it.each(testCases)(
+    'POST $type aggregation record to database successfully',
+    async ({ type, data }) => {
+      const result = await app.inject({
+        method: 'POST',
+        url: makeBaseUrl(type),
+        payload: { items: data },
+      });
+
+      expect(result.statusCode).toEqual(201);
+    }
+  );
+
+  // it.each(testCases)(
+  //   `GET $type aggregation record from database`,
+  //   async ({ type, data }) => {
+  //     const result = await app.inject({
+  //       method: 'GET',
+  //       url: `${makeBaseUrl(type)}${extraGetUrlParameters}`,
+  //     });
+
+  //     expect(result.statusCode).toEqual(200);
+  //     const body = JSON.parse(result.payload);
+  //     const { agg_type, ...ExpectedaggregationData } = data[0]
+  //     expect(body?.records[0]).toEqual(ExpectedaggregationData)
+
+  //   });
 
 
-  it('GET  /aggregation/organisations/:organisation/device_types/mts/records', async () => {
-    const result = await app.inject({
-      method: 'GET',
-      url: ' /aggregation/organisations/Simtronics/device_types/mts/records?from=1920-04-24T00:00:00.000Z&to=1920-04-25T00:00:00.000Z&aggType=max',
-    });
+  it.each(testCases)(
+    `GET $type aggregation record from database`,
+    async ({ type, data }) => {
+      const result = await app.inject({
+        method: 'GET',
+        url: `${makeBaseUrl2(type)}${extraGetUrlParameters}`,
+      });
 
-    expect(result.statusCode).toEqual(200);
-    const body = JSON.parse(result.payload);
-    const { agg_type, ...ExpectedaggregationData } = aggregationMtsData[0]
-    expect(body?.records[0]).toEqual(ExpectedaggregationData)
-
-  });
-
-  
-
-  it('DELETE  /aggregation/organisations/:organisation/device_types/mts/records', async () => {
-    const result = await app.inject({
-      method: 'DELETE',
-      url: ' /aggregation/organisations/Simtronics/device_types/mts/records',
-      payload: {
-        "ids": ["MTS-9999999"]
-      }
-
-    });
-    expect(result.statusCode).toEqual(204);
-  })
-
-
-
-   it('POST /aggregation/organisations/:organisation/device_types/lt/records', async () => {
-    const result = await app.inject({
-      method: 'POST',
-      url: '/aggregation/organisations/Simtronics/device_types/lt/records',
-      payload:     {"items":aggregationLtData},
-    
-    });
-    expect(result.statusCode).toEqual(201);
-  });
-
-
-  it('GET /aggregation/organisations/:organisation/device_types/lt/records', async () => {
-    const result = await app.inject({
-      method: 'GET',
-      url: '/aggregation/organisations/Simtronics/device_types/lt/records?from=1920-04-24T00:00:00.000Z&to=1920-04-25T00:00:00.000Z&aggType=max',
-    });
-
-    expect(result.statusCode).toEqual(200);
-    const body = JSON.parse(result.payload);
-    const { agg_type, ...ExpectedaggregationData } = aggregationLtData[0]
-    expect(body?.records[0]).toEqual(ExpectedaggregationData)
-
-  });
-
-  
-
-  it('DELETE /aggregation/organisations/:organisation/device_types/lt/records', async () => {
-    const result = await app.inject({
-      method: 'DELETE',
-      url: '/aggregation/organisations/Simtronics/device_types/lt/records',
-      payload: {
-        "ids": ["LT-9999999"]
-      }
+      expect(result.statusCode).toEqual(200);
+      const body = JSON.parse(result.payload);
+      const { agg_type, ...ExpectedaggregationData } = data[0]
+      expect(body?.records[0]).toEqual(ExpectedaggregationData)
 
     });
-    expect(result.statusCode).toEqual(204);
-  })
 
 
-
-     it('POST /aggregation/organisations/:organisation/device_types/qse/records', async () => {
-    const result = await app.inject({
-      method: 'POST',
-      url: '/aggregation/organisations/Simtronics/device_types/qse/records',
-      payload:     {"items":aggregationQseData},
-    
-    });
-    expect(result.statusCode).toEqual(201);
-  });
-
-
-  it('GET /aggregation/organisations/:organisations/device_types/qse/records', async () => {
-    const result = await app.inject({
-      method: 'GET',
-      url: '/aggregation/organisations/Simtronics/device_types/qse/records?from=1920-04-24T00:00:00.000Z&to=1920-04-25T00:00:00.000Z&aggType=max',
-    });
-
-    expect(result.statusCode).toEqual(200);
-    const body = JSON.parse(result.payload);
-    const { agg_type, ...ExpectedaggregationData } = aggregationQseData[0]
-    expect(body?.records[0]).toEqual(ExpectedaggregationData)
-
-  });
-
-  
-
-  it('DELETE /aggregation/organisations/:organisation/device_types/qse/records', async () => {
-    const result = await app.inject({
-      method: 'DELETE',
-      url: '/aggregation/organisations/Simtronics/device_types/qse/records',
-      payload: {
-        "ids": ["QSE-9999999"]
-      }
-
-    });
-    expect(result.statusCode).toEqual(204);
-  })
-
-
-
-
-
-
-
-
-
+  it.each(testCases)(
+    'DELETE $type  aggregation record of type $type from database',
+    async ({ type,data }) => {
+      const result = await app.inject({
+        method: 'DELETE',
+        url: makeBaseUrl(type),
+        payload: {
+          "ids": [data[0].device_id]
+        }
+      });
+      expect(result.statusCode).toEqual(204);
+    })
 });
 
 
