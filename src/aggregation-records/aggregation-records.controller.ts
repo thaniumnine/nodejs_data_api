@@ -1,81 +1,46 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
-import { AggregationRecordsService } from './aggregation-records.service'
+import { number, string } from 'zod';
+import {AggregationData, AggregationRecordsService, QueryAggregationRecords, QueryAggregationRecordsSchema} from './aggregation-records.service'
 import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
-import { AggregationData, QueryAggregationRecords, QueryAggregationRecordsSchema } from './aggregation-records.dto';
-
-type AggregationDeviceParams = {
-  organisation: string,
-  building: string,
-  level: string,
-  deviceType: string,
-}
-type AggregationDeviceParamsNoLevels = Omit<AggregationDeviceParams, 'level'>;
-
 
 @UseGuards(JwtAuthGuard)
-@Controller('organisations/:organisation/buildings/:building/')
+@Controller('aggregation/organisations/:organisation/device_types/:device_type')
 export class AggregationRecordsController {
-  constructor(private readonly aggregationService: AggregationRecordsService) { }
+  constructor(   private readonly aggregationService: AggregationRecordsService) {}
 
-  @Get('levels/:level/devices/types/:deviceType/aggregations')
-  queryAggregationData(
-    @Param() params: AggregationDeviceParams,
-    @Query(new ZodValidationPipe(QueryAggregationRecordsSchema)) query: QueryAggregationRecords
-  ) {
-    return this.aggregationService.queryAggregationRecords(
-      params.organisation,
-      params.building,
-      params.level,
-      params.deviceType,
-      query
-    );
-  }
+@Get('records')
+queryAggregationData(
+   @Param('organisation') organisation: string,
+  @Param('device_type') deviceType: string,
+  @Query(new ZodValidationPipe(QueryAggregationRecordsSchema)) query: QueryAggregationRecords
+ // @Query("from") from:string , @Query("to") to:string
+) {
+
+   return this.aggregationService.queryAggregationRecords(organisation,deviceType,query);
+}
 
 
 
-  @Get('devices/types/:deviceType/aggregations')
-  queryAggregationDataFromAllLevels(
-    @Param() params: AggregationDeviceParamsNoLevels,
-    @Query(new ZodValidationPipe(QueryAggregationRecordsSchema)) query: QueryAggregationRecords
-  ) {
-    return this.aggregationService.queryAggregationRecordsFromAllLevels(
-      params.organisation,
-      params.building,
-      params.deviceType,
-      query
-    );
-  }
-
-
-
-  @Post('/levels/:level/devices/types/:deviceType/aggregations')
-  createAggregationData(
-    @Param() params: AggregationDeviceParams,
-    @Body() aggregationData: AggregationData,
-  ) {
-    return this.aggregationService.createAggregationDataEvent(
-      params.organisation,
-      params.building,
-      params.level,
-      params.deviceType,
-      aggregationData
-    )
-  }
-
-  @Delete('/levels/:level/devices/types/:deviceType/aggregations')
+@Post('records')
+createAggregationData(
+   @Param('organisation') organisation: string,
+  @Param('device_type') deviceType: string,
+  @Body() aggregationData: AggregationData,
+) {
+    return this.aggregationService.createAggregationDataEvent(organisation,deviceType,aggregationData)
+    }  
+    
+    
+  @Delete("records")
   @HttpCode(204)
   deleteAggregationData(
-    @Param() params: AggregationDeviceParams,
+    @Param('organisation') organisation: string,
+   @Param('device_type') deviceType: string,
     @Body('ids') ids: string[]) {
-    return this.aggregationService.deleteAggregationDataEvent(
-      params.organisation,
-      params.building,
-      params.level,
-      params.deviceType,
-      ids
-    );
+    return this.aggregationService.deleteAggregationDataEvent(organisation,deviceType,ids);
   }
+
 
 }
 

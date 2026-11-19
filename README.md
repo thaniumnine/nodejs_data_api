@@ -157,9 +157,10 @@ POST /api/v1/device_metadata/data
 GET /api/v1/device_metadata/data
 DELETE /api/v1//device_metadata/data
 
-POST /api/v1/organisations/:organisation/buildings/:building/levels/:level/devices/types/:deviceType/aggregations
-GET /api/v1/organisations/:organisation/buildings/:building/levels/:level/devices/types/:deviceType/aggregations
-DELETE /api/v1/organisations/:organisation/buildings/:building/levels/:level/devices/types/:deviceType/aggregations
+POST /api/v1/aggregation/organisations/:organisation/device_types
+GET /api/v1/aggregation/organisations/:organisation/device_types
+GET /api/v1/aggregation/organisations/:organisation/device_types/:device_type
+DELETE /api/v1/aggregation/organisations/:organisation/device_types
 
 POST /api/v1/aggregation/organisations/:organisation/device_types/:device_type/records
 GET /api/v1/aggregation/organisations/:organisation/device_types/:device_type/records

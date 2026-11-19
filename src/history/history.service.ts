@@ -1,11 +1,43 @@
 import {  Injectable, Logger } from "@nestjs/common";
 import { DatabaseService } from "../database/database.service";
-import { DeviceHistoryName} from "../database/db.types";
+import { DeviceHistoryName, DeviceIdentifierName, JsonValue } from "../database/db.types";
+import z, { string } from "zod";
 import { OrganisationService } from "../organisations/organisations.service";
 import { DeviceIdentifierService, IDENTIFIER_TABLE_NAME } from "../deviceIdentifier/device-identifier.service";
-import { DeviceHistoryData, QueryDeviceHistoryPrefixRecords, QueryDeviceHistoryRecords } from "./history.dto";
+
+
+export type DeviceHistoryRecord= {
+    timestamp: string;
+  //  json_type:string;
+  version: string;
+  points: {
+    [pointtype: string]: JsonValue
+  }
+}
+export type DeviceHistoryData = {
+  items:DeviceHistoryRecord[]
+}
+
+
+export const QueryDeviceHistorySchema = z.object({
+  from: z.string().datetime(),
+  to: z.string().datetime(),
+});
+
+export type QueryDeviceHistoryRecords = z.infer<typeof QueryDeviceHistorySchema>;
+
+
+export const QueryDeviceHistoryPrefixSchema = z.object({
+  from: z.string().datetime(),
+  to: z.string().datetime(),
+  devicePrefix:z.string()
+});
+
+export type QueryDeviceHistoryPrefixRecords = z.infer<typeof QueryDeviceHistoryPrefixSchema>;
 
 const HISTORY_TABLE_NAME  = "sim_device_history"
+
+
 
 @Injectable()
 export class HistoryService {
@@ -17,13 +49,17 @@ export class HistoryService {
 
   ) { }
   async createDeviceHistoryDataEvent(inputs: DeviceHistoryData,organisation:string,building: string, level: string, deviceId: string) {
-    // const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
-    let deviceIdentifier = await this.identifierService.getDeviceIndentifier(organisation,building, level,deviceId)
-    if (!deviceIdentifier) throw new Error("Error getting device identifier");
+    const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
+    const historyTableName =HISTORY_TABLE_NAME
+    
+    let deviceIdentifier = await this.identifierService.createDeviceIdentifier(organisation,building, level, deviceId);
+    if (!deviceIdentifier) {
+      deviceIdentifier = await this.identifierService.findDeviceIdentifier(organisation,building, level, deviceId)
+      if (!deviceIdentifier) return;
+    }
     if (!inputs.items.length) return;
-
     await this.database.db
-      .insertInto(HISTORY_TABLE_NAME)
+      .insertInto(historyTableName as DeviceHistoryName)
       .values(
         inputs.items.map((input) => ({
           device_ref_id: deviceIdentifier.id,
@@ -40,9 +76,11 @@ export class HistoryService {
 
 async getDeviceNames(organisation:string,building:string,level:string, prefix = ""){
   const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
+  const identifierTableName = IDENTIFIER_TABLE_NAME
+
   const result = await this.database.query(
      `  SELECT DISTINCT device_id
-        FROM ${IDENTIFIER_TABLE_NAME}
+        FROM ${identifierTableName}
         where 
         org_ref_id = $4
         and building = $1
@@ -55,9 +93,12 @@ async getDeviceNames(organisation:string,building:string,level:string, prefix = 
 
 async queryDeviceHistoryWithPrefix(organisation:string,building:string,level:string,query: QueryDeviceHistoryPrefixRecords){
   const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
+  const identifierTableName =IDENTIFIER_TABLE_NAME
+  const historyTableName = HISTORY_TABLE_NAME
+
   const result = await this.database.query(
     `SELECT di.device_id, dh.points, dh.timestamp, dh.version
-    FROM ${HISTORY_TABLE_NAME} dh JOIN ${IDENTIFIER_TABLE_NAME} di
+    FROM ${historyTableName} dh JOIN ${identifierTableName} di
     ON dh.device_ref_id = di.id
       WHERE dh.timestamp >= $1
       AND dh.timestamp < $2
@@ -76,9 +117,11 @@ async queryDeviceHistoryWithPrefix(organisation:string,building:string,level:str
 
 async queryDeviceHistory(organisation:string,building:string,level:string,deviceId:string,query: QueryDeviceHistoryRecords) {
   const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
+  const identifierTableName = IDENTIFIER_TABLE_NAME
+  const historyTableName = HISTORY_TABLE_NAME
   const result = await this.database.query(
       `SELECT dh.points, dh.timestamp
-    FROM ${HISTORY_TABLE_NAME} dh JOIN ${IDENTIFIER_TABLE_NAME} di 
+    FROM ${historyTableName} dh JOIN ${identifierTableName} di 
       ON dh.device_ref_id = di.id
     WHERE dh.timestamp >= $1
       AND dh.timestamp < $2
@@ -97,10 +140,12 @@ async queryDeviceHistory(organisation:string,building:string,level:string,device
 
 async deleteDeviceHistoryDataEvent(organisation:string,building:string,level:string,ids: string[],query:QueryDeviceHistoryRecords) {
   const metadata = await this.organisationService.queryOrganisationMetadata(organisation);
+  const historyTableName = HISTORY_TABLE_NAME
+  const identifierTableName =IDENTIFIER_TABLE_NAME
   const result = await this.database.query(
     `
-    DELETE FROM ${HISTORY_TABLE_NAME} dh
-    USING ${IDENTIFIER_TABLE_NAME} di
+    DELETE FROM ${historyTableName} dh
+    USING ${identifierTableName} di
     WHERE dh.device_ref_id = di.id
       AND di.device_id = ANY($1)
       AND dh.timestamp >= $2
