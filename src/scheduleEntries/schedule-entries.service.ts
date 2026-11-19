@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import { OrganisationService } from '../organisations/organisations.service';
 import type { ScheduleEntryStatus } from '../database/db.types';
@@ -220,6 +220,67 @@ export class ScheduleEntriesService {
     }
 
 
+    private async findScheduleConflict(
+        organisation: string,
+        taskId: string,
+        entryId: string,
+        scheduledTime: string,
+    ): Promise<ScheduleEntryRecord | null> {
+
+        const metadata = await this.organisationService.queryOrganisationMetadata(organisation,);
+
+        const result = await this.database.query<ScheduleEntryRecord>(
+            `
+        SELECT DISTINCT
+            s.id,
+            s.task_id::text AS task_id,
+            s.scheduled_time,
+            s.status,
+            s.is_locked,
+            s.created_at,
+            s.updated_at
+
+        FROM public.schedule_entries s
+
+        JOIN public.task_entries te
+            ON te.task_id = s.task_id
+
+        JOIN public.sim_fdd_assignment a
+            ON a.id = te.assignment_id
+
+        JOIN public.sim_fdd_history h
+            ON h.id = a.fdd_history_id
+
+        JOIN public.sim_device_identifier di
+            ON di.id = h.device_ref_id
+
+        
+        WHERE (s.scheduled_time AT TIME ZONE 'Europe/London')::date =
+            ($3::timestamptz AT TIME ZONE 'Europe/London')::date
+            AND s.id <> $2::uuid
+            AND s.status <> 'Cancelled'
+            AND di.org_ref_id = $4
+
+            AND a.firebase_user_id IN (
+                SELECT current_a.firebase_user_id
+
+                FROM public.task_entries current_te
+
+                JOIN public.sim_fdd_assignment current_a
+                    ON current_a.id = current_te.assignment_id
+
+                WHERE current_te.task_id = $1
+            )
+
+        ORDER BY s.created_at ASC, s.id ASC
+        LIMIT 1
+        `,
+            [taskId, entryId, scheduledTime, metadata.id],
+        );
+
+        return result.rows[0] ?? null;
+
+    }
 
     // Change an existing booking.
     async updateScheduleEntry(
@@ -232,6 +293,24 @@ export class ScheduleEntriesService {
             organisation,
             taskId,
         );
+
+        const scheduledTime = input.scheduled_time;
+
+        if (scheduledTime !== undefined) {
+
+            const conflict = await this.findScheduleConflict(
+                organisation,
+                taskId,
+                entryId,
+                scheduledTime,
+            );
+
+            if (conflict) {
+                throw new ConflictException(
+                    `Another booking exists at this time: ${conflict.id}`
+                );
+            }
+        }
 
         const updated = await this.database.db
             .updateTable(SCHEDULE_ENTRIES_TABLE_NAME)
