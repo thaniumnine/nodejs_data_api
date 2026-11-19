@@ -16,6 +16,14 @@ describe('History Controller', () => {
     const AGG_TYPE = 'mean';
     const ORGANISATION = "Simtronics";
     const DEVICE_TYPE = "mts";
+    const BUILDING = "Waterside"
+    const LEVEL = "level-00"
+    const PARAMS = {
+        organisation: ORGANISATION,
+        building: BUILDING,
+        level: LEVEL,
+        deviceType: DEVICE_TYPE,
+    };
 
     beforeEach(async () => {
         jest.clearAllMocks();
@@ -61,11 +69,17 @@ describe('History Controller', () => {
 
 
         mockAggregationService.queryAggregationRecords.mockResolvedValue(mockAggregationQueryResults);
-        const result = await controller.queryAggregationData(ORGANISATION,DEVICE_TYPE,  query);
+        const result = await controller.queryAggregationData(PARAMS,  query);
 
-        expect(mockAggregationService.queryAggregationRecords).toHaveBeenCalledWith(ORGANISATION,DEVICE_TYPE, query);
+        expect(mockAggregationService.queryAggregationRecords).toHaveBeenCalledWith(
+            ORGANISATION,
+            BUILDING,
+            LEVEL,
+            DEVICE_TYPE, 
+            query
+        );
 
-        expect(result).toEqual( mockAggregationQueryResults )
+        expect(result).toEqual(mockAggregationQueryResults)
 
     })
 
@@ -83,25 +97,36 @@ describe('History Controller', () => {
                 "this_week_cumulative_occupancy": 211
             }
         }]
-    }
-    
+        }
+
 
         mockAggregationService.createAggregationDataEvent.mockResolvedValue(CreateMockCreateQueryResult);
-        const result = await controller.createAggregationData(ORGANISATION,DEVICE_TYPE,CreateMockCreateQueryResult);
+        const result = await controller.createAggregationData(PARAMS, CreateMockCreateQueryResult);
 
-        expect(mockAggregationService.createAggregationDataEvent).toHaveBeenCalledWith(ORGANISATION,DEVICE_TYPE,CreateMockCreateQueryResult);
+        expect(mockAggregationService.createAggregationDataEvent).toHaveBeenCalledWith(
+            ORGANISATION,
+            BUILDING,
+            LEVEL,
+            DEVICE_TYPE,
+            CreateMockCreateQueryResult);
         expect(result).toEqual(CreateMockCreateQueryResult)
 
     });
 
 
-    
 
-    
+
+
     test('deleteDeviceHistoryDataEvent', async () => {
-        const idsToDelete = ['ACU-9999'];
-        const result = await controller.deleteAggregationData(ORGANISATION,"acu",idsToDelete);
-        expect(mockAggregationService.deleteAggregationDataEvent).toHaveBeenCalledWith(ORGANISATION,"acu",idsToDelete);
+        const idsToDelete = ['MTS-9999'];
+        const result = await controller.deleteAggregationData(PARAMS, idsToDelete);
+        expect(mockAggregationService.deleteAggregationDataEvent).toHaveBeenCalledWith(
+            ORGANISATION,
+            BUILDING,
+            LEVEL,
+            DEVICE_TYPE,
+            idsToDelete
+        );
         expect(result).toBeUndefined();
 
     })
