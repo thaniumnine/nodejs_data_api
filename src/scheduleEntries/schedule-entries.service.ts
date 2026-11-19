@@ -140,6 +140,23 @@ export class ScheduleEntriesService {
     }
 
 
+    private getNextWorkingDay(scheduledTime: string): string {
+        const nextDate = new Date(scheduledTime);
+
+        do {
+            // Move forward one day.
+            nextDate.setUTCDate(nextDate.getUTCDate() + 1);
+
+        } while (
+            nextDate.getUTCDay() === 0 ||
+            nextDate.getUTCDay() === 6
+        );
+
+        return nextDate.toISOString();
+    }
+
+
+
 
     // retrieve a specific schedule entry
     private async getScheduleEntry(
@@ -270,7 +287,7 @@ export class ScheduleEntriesService {
         };
     }
 
-    // this is the loop to check if there is a conflict with 2 schedules
+    // check if there is a conflict with 2 schedules
     private async findScheduleConflict(
         organisation: string,
         taskId: string,
@@ -361,6 +378,43 @@ export class ScheduleEntriesService {
                     taskId,
                     conflict.task_id
                 );
+
+                if (olderTaskId === null) {
+                    throw new ConflictException(
+                        "Unable to determine task priority."
+                    );
+                }
+
+                const delayedTaskId =
+                    olderTaskId === taskId
+                        ? conflict.task_id
+                        : taskId;
+
+                const delayedEntryId =
+                    delayedTaskId === taskId
+                        ? entryId
+                        : conflict.id;
+
+                const delayedTime =
+                    delayedEntryId === entryId
+                        ? scheduledTime
+                        : new Date(conflict.scheduled_time).toISOString();
+
+                const nextWorkingDay = this.getNextWorkingDay(delayedTime);
+
+                console.log({
+                    olderTaskId,
+                    delayedTaskId,
+                    delayedEntryId,
+                    nextWorkingDay,
+                });
+
+
+                console.log({
+                    olderTaskId,
+                    delayedTaskId,
+                    delayedEntryId
+                });
 
                 console.log("Current task:", taskId);
                 console.log("Conflicting task:", conflict.task_id);
