@@ -1485,7 +1485,7 @@
           "response": []
         },
         {
-          "name": "update_schedule",
+          "name": "update_schedule_minutes",
           "request": {
             "method": "PATCH",
             "header": [],
@@ -1519,12 +1519,45 @@
           "response": []
         },
         {
+          "name": "update_schedule_entry_time",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "\r\n{\r\n  \"scheduled_time\": \"2026-11-10T09:00:00.000Z\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/organisations/simmtronic/tasks/3/schedule-entries/f7f43735-043c-4ddb-8968-b7e5a8c357a2",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "organisations",
+                "simmtronic",
+                "tasks",
+                "3",
+                "schedule-entries",
+                "f7f43735-043c-4ddb-8968-b7e5a8c357a2"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "get_organisation-schedule",
           "request": {
             "method": "GET",
             "header": [],
             "url": {
-              "raw": "{{base_url}}/api/v1/organisations/simmtronic/schedule-entries?from=2026-11-16&to=2026-11-20",
+              "raw": "{{base_url}}/api/v1/organisations/simmtronic/schedule-entries?from=2026-11-09&to=2026-11-13",
               "host": [
                 "{{base_url}}"
               ],
@@ -1538,11 +1571,11 @@
               "query": [
                 {
                   "key": "from",
-                  "value": "2026-11-16"
+                  "value": "2026-11-09"
                 },
                 {
                   "key": "to",
-                  "value": "2026-11-20"
+                  "value": "2026-11-13"
                 }
               ]
             }
