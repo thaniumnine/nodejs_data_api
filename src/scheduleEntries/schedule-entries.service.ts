@@ -89,6 +89,33 @@ export class ScheduleEntriesService {
         }
     }
 
+    private async getTaskOriginalTime(
+        taskId: string,
+    ): Promise<Date> {
+        const result = await this.database.query<{ original_time: Date | string | null }>(
+
+            `SELECT MIN(h.timestamp) AS original_time
+                FROM public.task_entries te
+                JOIN public.sim_fdd_assignment a
+                    ON a.id = te.assignment_id
+                JOIN public.sim_fdd_history h
+                    ON h.id = a.fdd_history_id
+                WHERE te.task_id = $1`,
+            [taskId]
+
+        );
+
+        const originalTime = result.rows[0]?.original_time;
+
+        if (originalTime == null) {
+            throw new NotFoundException(
+                `No FDD timestamp found for task '${taskId}'`
+            );
+        }
+
+        return new Date(originalTime);
+    }
+
 
     // retrieve a specific schedule entry
     private async getScheduleEntry(
