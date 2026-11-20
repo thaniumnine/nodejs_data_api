@@ -181,6 +181,43 @@ describe('Schedule Entries E2E', () => {
     });
 
 
+    // -----------------------------------------
+    // PATCH VALIDATION TESTS
+    // -----------------------------------------
+
+    it('PATCH - invalid entry UUID', async () => {
+        const result = await app.inject({
+            method: 'PATCH',
+            url: `${baseUrl}/tasks/1/schedule-entries/invalid`,
+            payload: {
+                is_locked: true,
+            },
+        });
+
+        expect(result.statusCode).toBe(400);
+    });
+
+    it('PATCH - empty update body', async () => {
+        const result = await app.inject({
+            method: 'PATCH',
+            url: `${baseUrl}/tasks/1/schedule-entries/00000000-0000-4000-8000-000000000000`,
+            payload: {},
+        });
+
+        expect(result.statusCode).toBe(400);
+    });
+
+    it('PATCH - unknown field', async () => {
+        const result = await app.inject({
+            method: 'PATCH',
+            url: `${baseUrl}/tasks/1/schedule-entries/00000000-0000-4000-8000-000000000000`,
+            payload: {
+                scheduled_minutes: 60,
+            },
+        });
+
+        expect(result.statusCode).toBe(400);
+    });
 
 
 });
