@@ -68,7 +68,7 @@ describe('aggregation metadata E2E', () => {
   it('POST /aggregation/organisations/:organisation/device_types/', async () => {
     const result = await app.inject({
       method: 'POST',
-      url: '/aggregation/organisations/Simtronics/device_types',
+      url: '/aggregation/organisations/simmtronic/device_types',
       payload:    {items: aggregationTypedata},
     
     });
@@ -79,7 +79,7 @@ describe('aggregation metadata E2E', () => {
   it('GET aggregation/organisations/:organisation/device_types/:device_type', async () => {
     const result = await app.inject({
       method: 'GET',
-      url: 'aggregation/organisations/Simtronics/device_types/ZXY',
+      url: 'aggregation/organisations/simmtronic/device_types/ZXY',
     });
 
     expect(result.statusCode).toEqual(200);
@@ -93,7 +93,7 @@ describe('aggregation metadata E2E', () => {
   it('DELETE aggregation/organisations/:organisation/device_types', async () => {
     const result = await app.inject({
       method: 'DELETE',
-      url: 'aggregation/organisations/Simtronics/device_types',
+      url: 'aggregation/organisations/simmtronic/device_types',
       payload: {
         "ids": ["ZXY"]
       }
