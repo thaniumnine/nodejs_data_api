@@ -9,7 +9,7 @@ describe('History E2E', () => {
 
   const historyData =  [{
       "version": "1.4.2",
-      "timestamp": "1923-03-25T16:16:31.000Z",
+      "timestamp": "1973-03-25T16:16:31.000Z",
       "points": {
         "co2_level": {
           "present_value": 551
@@ -76,7 +76,7 @@ describe('History E2E', () => {
   it('GET organisations/:organisation/buildings/:building/levels/:level/devices/history', async () => {
     const result = await app.inject({
       method: 'GET',
-      url: '/organisations/simmtronic/buildings/GB-LON-9212/levels/level-01/devices/QSE-999996/history?from=1923-03-25T00:00:00.000Z&to=1923-03-26T00:00:00.000Z',
+      url: '/organisations/simmtronic/buildings/GB-LON-9212/levels/level-01/devices/QSE-999996/history?from=1973-03-25T00:00:00.000Z&to=1973-03-26T00:00:00.000Z',
     });
 
     expect(result.statusCode).toEqual(200);
@@ -91,7 +91,7 @@ describe('History E2E', () => {
   it('DELETE organisations/:organisation/buildings/:building/levels/:level/devices/:device_id/history', async () => {
     const result = await app.inject({
       method: 'DELETE',
-      url: '/organisations/simmtronic/buildings/GB-LON-9212/levels/level-01/history?from=1920-03-25T16:16:31.000Z&to=1923-03-26T00:00:00.000Z',
+      url: '/organisations/simmtronic/buildings/GB-LON-9212/levels/level-01/history?from=1970-03-25T16:16:31.000Z&to=1973-03-26T00:00:00.000Z',
       payload: {
         "ids": ["QSE-999996"]
       }
