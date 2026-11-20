@@ -12,7 +12,7 @@ describe('aggregation E2E', () => {
   const aggregationMtsData = [
     {
       "device_id": "MTS-9999999",
-      "event_timestamp": "1920-04-24T12:34:00.000Z",
+      "event_timestamp": "1970-04-24T12:34:00.000Z",
       "agg_type": "max",
       "payload": {
         "illuminance_sensor": 23,
@@ -24,7 +24,7 @@ describe('aggregation E2E', () => {
 
   const aggregationQseData = [{
     "device_id": "QSE-9999999",
-    "event_timestamp": "1920-04-24T12:34:00.000Z",
+    "event_timestamp": "1970-04-24T12:34:00.000Z",
     "agg_type": "max",
     "payload": {
       "co2_level": 300,
@@ -39,7 +39,7 @@ describe('aggregation E2E', () => {
 
   const aggregationLtData = [{
     "device_id": "LT-9999999",
-    "event_timestamp": "1920-04-24T12:34:00.000Z",
+    "event_timestamp": "1970-04-24T12:34:00.000Z",
     "agg_type": "max",
     "payload": {
       "brightness_percentage_command": 88,
@@ -89,7 +89,7 @@ describe('aggregation E2E', () => {
   it('GET  /aggregation/organisations/:organisation/device_types/mts/records', async () => {
     const result = await app.inject({
       method: 'GET',
-      url: ' /aggregation/organisations/Simtronics/device_types/mts/records?from=1920-04-24T00:00:00.000Z&to=1920-04-25T00:00:00.000Z&aggType=max',
+      url: ' /aggregation/organisations/Simtronics/device_types/mts/records?from=1970-04-24T00:00:00.000Z&to=1970-04-25T00:00:00.000Z&aggType=max',
     });
 
     expect(result.statusCode).toEqual(200);
@@ -129,7 +129,7 @@ describe('aggregation E2E', () => {
   it('GET /aggregation/organisations/:organisation/device_types/lt/records', async () => {
     const result = await app.inject({
       method: 'GET',
-      url: '/aggregation/organisations/Simtronics/device_types/lt/records?from=1920-04-24T00:00:00.000Z&to=1920-04-25T00:00:00.000Z&aggType=max',
+      url: '/aggregation/organisations/Simtronics/device_types/lt/records?from=1970-04-24T00:00:00.000Z&to=1970-04-25T00:00:00.000Z&aggType=max',
     });
 
     expect(result.statusCode).toEqual(200);
@@ -169,7 +169,7 @@ describe('aggregation E2E', () => {
   it('GET /aggregation/organisations/:organisations/device_types/qse/records', async () => {
     const result = await app.inject({
       method: 'GET',
-      url: '/aggregation/organisations/Simtronics/device_types/qse/records?from=1920-04-24T00:00:00.000Z&to=1920-04-25T00:00:00.000Z&aggType=max',
+      url: '/aggregation/organisations/Simtronics/device_types/qse/records?from=1970-04-24T00:00:00.000Z&to=1970-04-25T00:00:00.000Z&aggType=max',
     });
 
     expect(result.statusCode).toEqual(200);
