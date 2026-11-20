@@ -146,15 +146,41 @@ describe('Schedule Entries E2E', () => {
             url: `${baseUrl}/tasks/1/schedule-entries`,
             payload: {
                 scheduled_time: '1970-01-05',
+            }
+        });
+
+        expect(result.statusCode).toBe(400);
+    });
+
+
+
+    it('POST - invalid status', async () => {
+        const result = await app.inject({
+            method: 'POST',
+            url: `${baseUrl}/tasks/1/schedule-entries`,
+            payload: {
+                scheduled_time: '1970-01-05T09:00:00.000Z',
+                status: 'Pending',
             },
         });
 
         expect(result.statusCode).toBe(400);
-
-
-
-
     });
 
-});
+    it('POST - invalid is_locked value', async () => {
+        const result = await app.inject({
+            method: 'POST',
+            url: `${baseUrl}/tasks/1/schedule-entries`,
+            payload: {
+                scheduled_time: '1970-01-05T09:00:00.000Z',
+                is_locked: 'yes',
+            },
+        });
 
+        expect(result.statusCode).toBe(400);
+    });
+
+
+
+
+});
