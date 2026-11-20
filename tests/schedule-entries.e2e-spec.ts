@@ -114,8 +114,47 @@ describe('Schedule Entries E2E', () => {
     });
 
 
+    // -----------------------------------------
+    // POST VALIDATION TESTS
+    // -----------------------------------------
+
+    it('POST - invalid task ID', async () => {
+        const result = await app.inject({
+            method: 'POST',
+            url: `${baseUrl}/tasks/invalid/schedule-entries`,
+            payload: {
+                scheduled_time: '1970-01-05T09:00:00.000Z',
+            },
+        });
+
+        expect(result.statusCode).toBe(400);
+    });
+
+    it('POST - missing scheduled time', async () => {
+        const result = await app.inject({
+            method: 'POST',
+            url: `${baseUrl}/tasks/1/schedule-entries`,
+            payload: {},
+        });
+
+        expect(result.statusCode).toBe(400);
+    });
+
+    it('POST - invalid timestamp', async () => {
+        const result = await app.inject({
+            method: 'POST',
+            url: `${baseUrl}/tasks/1/schedule-entries`,
+            payload: {
+                scheduled_time: '1970-01-05',
+            },
+        });
+
+        expect(result.statusCode).toBe(400);
 
 
+
+
+    });
 
 });
 
