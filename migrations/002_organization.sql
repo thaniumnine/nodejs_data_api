@@ -14,6 +14,6 @@ INSERT INTO organisations (
     prefix
 )
 VALUES (
-    'Simtronics',
+    'simmtronic',
     'SIM'
 );
