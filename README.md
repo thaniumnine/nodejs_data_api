@@ -23,6 +23,7 @@ npm install
 
 ```bash
 ########## FRESH DATABASE SETUP
+!!! Make sure your .env is using the localhost 127.0.0.1 database !!!
 npm run db:migrate
 npm run insert-new:organisation -- simmtronic SIM
 npm run iterate:deviceType
@@ -36,6 +37,13 @@ npm run iterate:deviceType
 npm run seed:admin
 #############################
 ```
+```bash
+#### INTEGRATION TESTING
+
+npm run test:all:cov
+```
+
+
 ```bash
 #### RUNTIME
 
