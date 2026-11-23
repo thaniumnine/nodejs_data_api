@@ -10,7 +10,7 @@ describe('History metadata E2E', () => {
         records: [
             {
                 version: "1.4.2",
-                timestamp: "1920-03-20T00:54:38.000Z",
+                timestamp: "1970-03-20T00:54:38.000Z",
                 system: {
                     location: {
                         site: "GB-LON-9212",
@@ -113,7 +113,7 @@ describe('History metadata E2E', () => {
     };
     const historyMetadata =  [{
     "version": "1.4.2",
-    "timestamp": "1920-03-20T00:54:38+00:00",
+    "timestamp": "1970-03-20T00:54:38+00:00",
     "system": {
         "location": {
             "site": "GB-LON-9212",
@@ -251,7 +251,7 @@ describe('History metadata E2E', () => {
   it('GET /device_metadata/data', async () => {
     const result = await app.inject({
       method: 'GET',
-      url: '/device_metadata/data?from=1920-03-20T00:00:00.000Z&to=1920-03-22T00:00:00.000Z',
+      url: '/device_metadata/data?from=1970-03-20T00:00:00.000Z&to=1970-03-22T00:00:00.000Z',
     });
 
     expect(result.statusCode).toEqual(200);

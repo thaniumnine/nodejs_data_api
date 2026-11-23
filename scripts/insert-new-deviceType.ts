@@ -3,8 +3,6 @@ import 'dotenv/config';
 import { withClient } from './util';
 import { assertSafeIdentifier } from 'src/common/sql/identifiers';
 
-
-
 async function main() {
     const orgPrefix = process.argv[2]
     const deviceType = process.argv[3]
