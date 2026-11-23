@@ -6,7 +6,6 @@ import { AppModule } from '../src/app.module';
   const aggregationTypedata = {
 
       "device_type": "ZXY",
-      "table_name":"test",
       "columns": [
         {
           "name": "room_temperature",

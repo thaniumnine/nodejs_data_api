@@ -1,3 +1,4 @@
+--deprecated need to come back and update action issue raise
 -- DROP TABLE IF EXISTS device_metadata;
 
 CREATE TABLE device_metadata (

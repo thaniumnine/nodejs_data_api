@@ -1,0 +1,30 @@
+[
+  {
+    "name": "co2_level",
+    "type": "numeric"
+  },
+  {
+    "name": "humidity",
+    "type": "numeric"
+  },
+  {
+    "name": "illuminance_sensor",
+    "type": "numeric"
+  },
+  {
+    "name": "minute_sound_level",
+    "type": "numeric"
+  },
+  {
+    "name": "pressure",
+    "type": "numeric"
+  },
+  {
+    "name": "temperature",
+    "type": "numeric"
+  },
+  {
+    "name": "total_volatile_organic_compounds",
+    "type": "numeric"
+  }
+]

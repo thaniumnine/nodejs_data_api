@@ -15,7 +15,7 @@ type AggregationPayload = {
   const aggregationMtsData:AggregationPayload[]  = [
     {
       "device_id": "MTS-9999999",
-      "event_timestamp": "1920-04-24T12:34:00.000Z",
+      "event_timestamp": "1970-04-24T12:34:00.000Z",
       "agg_type": "max",
              "level": "Level-00",
       "payload": {
@@ -28,7 +28,7 @@ type AggregationPayload = {
 
   const aggregationQseData:AggregationPayload[] = [{
     "device_id": "QSE-9999999",
-    "event_timestamp": "1920-04-24T12:34:00.000Z",
+    "event_timestamp": "1970-04-24T12:34:00.000Z",
     "agg_type": "max",
            "level": "Level-00",
     "payload": {
@@ -44,7 +44,7 @@ type AggregationPayload = {
 
   const aggregationLtData :AggregationPayload[] = [{
     "device_id": "LT-9999999",
-    "event_timestamp": "1920-04-24T12:34:00.000Z",
+    "event_timestamp": "1970-04-24T12:34:00.000Z",
     "agg_type": "max",
            "level": "Level-00",
     "payload": {
@@ -57,7 +57,7 @@ type AggregationPayload = {
 
   const aggregationAcuData :AggregationPayload[] = [{
     "device_id": "acu-9999999",
-    "event_timestamp": "1920-04-24T12:34:00.000Z",
+    "event_timestamp": "1970-04-24T12:34:00.000Z",
     "agg_type": "max",
     "level": "Level-00",
     "payload": {
@@ -72,7 +72,7 @@ type AggregationPayload = {
 
 const makeBaseUrl = (prefix: string) => `/organisations/simmtronic/buildings/Waterside/levels/Level-00/devices/types/${prefix}/aggregations`;
 const makeBaseUrl2 = (prefix: string) => `/organisations/simmtronic/buildings/Waterside/devices/types/${prefix}/aggregations`;
-const extraGetUrlParameters = '?from=1920-04-24T00:00:00.000Z&to=1920-04-25T00:00:00.000Z&aggType=max'
+const extraGetUrlParameters = '?from=1970-03-25T16:16:31.000Z&to=1973-03-26T00:00:00.000Z&aggType=max'
 
 describe('aggregation E2E', () => {
   let app: NestFastifyApplication;

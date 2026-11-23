@@ -153,7 +153,6 @@ export interface AggregationDeviceTypeTable {
     id: Generated<number>;
     device_type:string;
     columns:JSONColumnType<AggregationDeviceTypeColumnRecord[]>;
-    table_name:string;
     created_at: Generated<Date>;
 }
 
