@@ -1,17 +1,41 @@
 
-name: PR Tests
+name: PR Integration Tests
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
+    branches: [main]
 
 permissions:
   contents: read
 
 jobs:
-  tests:
-    name: Run Tests
+  e2e-tests:
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: ci_user
+          POSTGRES_PASSWORD: ci_only_password
+          POSTGRES_DB: ci_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ci_user -d ci_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      NODE_ENV: test
+      PORT: '3500'
+      DATABASE_URL: postgresql://ci_user:ci_only_password@127.0.0.1:5432/ci_test
+      JWT_ACCESS_SECRET: ci-only-dummy-jwt-secret
+      ACCESS_TOKEN_TTL_SECONDS: '900'
+      REFRESH_TOKEN_TTL_DAYS: '30'
+      AUTH_ALLOW_REGISTRATION: 'true'
+      CORS_ORIGIN: http://localhost:5173
 
     steps:
       - name: Checkout repository
@@ -19,32 +43,32 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Set up Node.js
+      - name: Setup Node.js 24
         uses: actions/setup-node@v7
         with:
-          node-version: '22'
+          node-version: '24'
           package-manager-cache: false
 
       - name: Install dependencies
         run: npm ci
 
-      - name: Run tests without credentials
-        run: npm test
+      - name: Initialise PostgreSQL tables
+        run: npm run db:migrate
 
-      - name: Run credential-dependent tests
-        if: ${{ github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
-        shell: bash
-        env:
-          CI_CREDENTIALS_ENV: ${{ secrets.CI_CREDENTIALS_ENV }}
-        run: |
-          set -euo pipefail
-          umask 077
+      - name: Create organisation
+        run: npm run insert-new:organisation -- simmtronic SIM
 
-          # Create credentials.env temporarily
-          printf '%s\n' "$CI_CREDENTIALS_ENV" > credentials.env
+      - name: Initialise device types
+        run: npm run iterate:deviceType -- SIM
 
-          # Remove the file when this step exits
-          trap 'rm -f credentials.env' EXIT
+      - name: Create aggregation record tables
+        run: npm run create_new_aggregation_record_tables -- SIM
 
-          # Replace with your integration test command
-          npm run test:integration
+      - name: Seed admin account
+        run: npm run seed:admin   
+      
+      - name: Run E2E COV tests
+        run: npm run test:all:cov
+
+      - name: Build application
+        run: npm run build

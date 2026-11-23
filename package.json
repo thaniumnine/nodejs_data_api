@@ -24,7 +24,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:e2e:cov": "jest --config ./tests/jest-e2e.config.json --coverage",
-    "test:all:cov": "jest --coverage && jest --config ./tests/jest-e2e.config.json --coverage",
+    "test:all:cov": "jest --coverage --runInBand && jest --config ./tests/jest-e2e.config.json --coverage  --runInBand",
     "test:schedules": "jest --config ./tests/jest-e2e.config.json --runInBand scheduleEntries",
     "test:schedules:cov": "jest --config ./tests/jest-e2e.config.json --coverage --runInBand scheduleEntries",
 
