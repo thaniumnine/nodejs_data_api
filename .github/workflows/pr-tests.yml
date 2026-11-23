@@ -38,6 +38,8 @@ jobs:
       CORS_ORIGIN: http://localhost:5173
       ADMIN_EMAIL: admin@thaniumnine.com
       ADMIN_PASSWORD: ci-email-secret
+      CI: "true"
+      ALLOW_SCHEDULING_TEST_SEED: "true"
 
     steps:
       - name: Checkout repository

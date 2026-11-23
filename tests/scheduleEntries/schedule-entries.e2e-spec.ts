@@ -1,5 +1,5 @@
 import type { NestFastifyApplication } from '@nestjs/platform-fastify';
-import { baseUrl, createScheduleTestApp } from './schedule-test.helper';
+import { baseUrl, cleanupScheduleTestData, createScheduleTestApp } from './schedule-test.helper';
 
 describe('Schedule Entries E2E', () => {
     let app: NestFastifyApplication;
@@ -9,8 +9,15 @@ describe('Schedule Entries E2E', () => {
     });
 
     afterAll(async () => {
-        if (app) await app.close();
+        if (!app) return;
+
+        try {
+            await cleanupScheduleTestData(app);
+        } finally {
+            await app.close();
+        }
     });
+
 
     // -------------------------------
     // GET TESTS

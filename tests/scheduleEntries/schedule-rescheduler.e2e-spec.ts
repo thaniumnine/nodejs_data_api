@@ -9,6 +9,7 @@ import {
     baseUrl,
     testTaskId,
     createScheduleTestApp,
+    cleanupScheduleTestData,
 } from './schedule-test.helper';
 
 const requestedTime = '1970-01-05T09:00:00.000Z';
@@ -93,6 +94,7 @@ describe('Schedule Rescheduler E2E', () => {
         createdIds.push(entryId);
     });
 
+
     afterAll(async () => {
         if (!app) return;
 
@@ -106,9 +108,14 @@ describe('Schedule Rescheduler E2E', () => {
                     .execute();
             }
         } finally {
-            await app.close();
+            try {
+                await cleanupScheduleTestData(app);
+            } finally {
+                await app.close();
+            }
         }
     });
+
 
     // -----------------------------------------
     // RESCHEDULING TESTS

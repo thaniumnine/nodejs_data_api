@@ -39,12 +39,18 @@ async function seedScheduleTestData(app: NestFastifyApplication) {
 
     const isLocal = ['localhost', '127.0.0.1', '::1'].includes(hostname);
 
+    const isLocalTest =
+        databaseName === 'postgres' &&
+        isLocal &&
+        process.env.CI !== 'true';
+
     const isCiTest =
         databaseName === 'ci_test' &&
+        isLocal &&
         process.env.CI === 'true' &&
         process.env.ALLOW_SCHEDULING_TEST_SEED === 'true';
 
-    if (databaseName !== 'postgres' || (!isLocal && !isCiTest)) {
+    if (!isLocalTest && !isCiTest) {
         throw new Error(
             `Refusing to seed database ${databaseName} on ${hostname}`,
         );
@@ -241,4 +247,106 @@ export async function createScheduleTestApp(): Promise<NestFastifyApplication> {
         await app.close();
         throw error;
     }
+}
+
+
+export async function cleanupScheduleTestData(
+    app: NestFastifyApplication,
+): Promise<void> {
+    const database = app.get(DatabaseService);
+    const organisationService = app.get(OrganisationService);
+
+    const metadata =
+        await organisationService.queryOrganisationMetadata(organisation);
+
+    await database.db.transaction().execute(async trx => {
+        // Use the same lock as the seed function.
+        await sql`
+            SELECT pg_advisory_xact_lock(
+                hashtext('schedule-e2e-fixtures'),
+                1970
+            )
+        `.execute(trx);
+
+        // Find the exact records belonging to our test task.
+        const fixture = await sql<{
+            assignment_id: string;
+            finding_id: string;
+            device_ref_id: string;
+            device_id: string;
+            rule_id: string;
+            firebase_user_id: string;
+            org_ref_id: string;
+        }>`
+            SELECT
+                te.assignment_id::text AS assignment_id,
+                h.id::text AS finding_id,
+                di.id::text AS device_ref_id,
+                di.device_id,
+                h.rule_id,
+                a.firebase_user_id,
+                di.org_ref_id::text AS org_ref_id
+            FROM public.task_entries te
+            JOIN public.sim_fdd_assignment a
+                ON a.id = te.assignment_id
+            JOIN public.sim_fdd_history h
+                ON h.id = a.fdd_history_id
+            JOIN public.sim_device_identifier di
+                ON di.id = h.device_ref_id
+            WHERE te.task_id = ${testTaskId}
+        `.execute(trx);
+
+        // Nothing to clean up.
+        if (fixture.rows.length === 0) {
+            return;
+        }
+
+        // Never delete a task unless it is exactly our fixture.
+        if (
+            fixture.rows.length !== 1 ||
+            fixture.rows[0].device_id !== testDeviceId ||
+            fixture.rows[0].rule_id !== testRuleId ||
+            fixture.rows[0].firebase_user_id !== testEngineerId ||
+            fixture.rows[0].org_ref_id !== String(metadata.id)
+        ) {
+            throw new Error(
+                'Refusing cleanup: Task contains non-test data.',
+            );
+        }
+
+        const record = fixture.rows[0];
+
+        // 1. Remove test bookings.
+        await sql`
+            DELETE FROM public.schedule_entries
+            WHERE task_id = ${testTaskId}
+        `.execute(trx);
+
+        // 2. Remove the task assignment link.
+        await sql`
+            DELETE FROM public.task_entries
+            WHERE task_id = ${testTaskId}
+              AND assignment_id = ${record.assignment_id}::bigint
+        `.execute(trx);
+
+        // 3. Remove the test FDD assignment.
+        await sql`
+            DELETE FROM public.sim_fdd_assignment
+            WHERE id = ${record.assignment_id}::bigint
+        `.execute(trx);
+
+        // 4. Remove the test FDD finding.
+        await sql`
+            DELETE FROM public.sim_fdd_history
+            WHERE id = ${record.finding_id}::bigint
+        `.execute(trx);
+
+        // 5. Remove the test device.
+        await sql`
+            DELETE FROM public.sim_device_identifier
+            WHERE id = ${record.device_ref_id}::bigint
+        `.execute(trx);
+    });
+
+    console.log('Scheduling test fixtures cleaned up.');
 }
