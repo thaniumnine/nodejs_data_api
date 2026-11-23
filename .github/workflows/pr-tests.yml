@@ -31,7 +31,7 @@ jobs:
       NODE_ENV: test
       PORT: '3500'
       DATABASE_URL: postgresql://ci_user:ci_only_password@127.0.0.1:5432/ci_test
-      JWT_ACCESS_SECRET: ci-only-dummy-jwt-secret
+      JWT_ACCESS_SECRET: ci-only-dummy-jwt-secret-needs-to-be-32-characters
       ACCESS_TOKEN_TTL_SECONDS: '900'
       REFRESH_TOKEN_TTL_DAYS: '30'
       AUTH_ALLOW_REGISTRATION: 'true'
