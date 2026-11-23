@@ -42,7 +42,6 @@ describe('History Controller', () => {
 
         const CreateMockCreateQueryResult = {
             "device_type": "qse",
-            "table_name": "device_simmtronics_qse_agg_events",
             "columns": [
                 {
                     "name": "co2_level",
@@ -68,7 +67,6 @@ describe('History Controller', () => {
             {
                 "id": "54a1b2f2-0e74-45cb-a164-c24dc302b5e5",
                 "device_type": "acu",
-                "table_name": "device_simmtronics_acu_agg_events",
                 "columns": [
                     {
                         "name": "room_temperature",
@@ -96,7 +94,6 @@ describe('History Controller', () => {
             {
                 "id": "54a1b2f2-0e74-45cb-a164-c24dc302b5e5",
                 "device_type": "acu",
-                "table_name": "device_simmtronics_acu_agg_events",
                 "columns": [
                     {
                         "name": "room_temperature",
