@@ -26,7 +26,8 @@ npm install
 !!! Make sure your .env is using the localhost 127.0.0.1 database !!!
 npm run db:migrate
 npm run insert-new:organisation -- simmtronic SIM
-npm run iterate:deviceType
+npm run iterate:deviceType -- SIM
+npm run create_new_aggregation_record_tables -- SIM
 
 # linux
     ADMIN_EMAIL=admin@thaniumnine.com ADMIN_PASSWORD='Exp0ls1ve123435' 

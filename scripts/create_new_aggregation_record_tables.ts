@@ -59,7 +59,7 @@ async function createAggregationRecordDatabase(client: Client, orgPrefix: string
         CREATE TABLE ${newTableName} (
             id BIGSERIAL PRIMARY KEY,
 
-            device_id TEXT NOT NULL,
+            device_id BIGINT NOT NULL,
             event_timestamp TIMESTAMPTZ NOT NULL,
             agg_type TEXT NOT NULL,
 
