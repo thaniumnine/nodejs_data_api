@@ -57,7 +57,7 @@ type AggregationPayload = {
 
   const aggregationAcuData :AggregationPayload[] = [{
     "device_id": "acu-9999999",
-    "event_timestamp": "1920-04-24T12:34:00.000Z",
+    "event_timestamp": "1970-04-24T12:34:00.000Z",
     "agg_type": "max",
     "level": "Level-00",
     "payload": {
