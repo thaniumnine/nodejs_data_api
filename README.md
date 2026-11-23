@@ -19,8 +19,15 @@ A NestJS + TypeScript starter API for PostgreSQL data access with both:
 ```bash
 cp .env.example .env
 npm install
+```
+
+```bash
 ########## FRESH DATABASE SETUP
+!!! Make sure your .env is using the localhost 127.0.0.1 database !!!
 npm run db:migrate
+npm run insert-new:organisation -- simmtronic SIM
+npm run iterate:deviceType -- SIM
+npm run create_new_aggregation_record_tables -- SIM
 
 # linux
     ADMIN_EMAIL=admin@thaniumnine.com ADMIN_PASSWORD='Exp0ls1ve123435' 
@@ -30,11 +37,16 @@ npm run db:migrate
 
 npm run seed:admin
 #############################
+```
+```bash
+#### INTEGRATION TESTING
+
+npm run test:all:cov
+```
 
 
+```bash
 #### RUNTIME
-
-
 
 npm run start:dev
 ```
@@ -107,7 +119,7 @@ To create a new organisation
 Usage: node insert-new-organisation.js <orgName> <orgPrefix>
 
 ```
-npm run insert-new:organisation -- Simtronics sim
+npm run insert-new:organisation -- Simmtronic SIM
 
 
 

@@ -83,7 +83,6 @@ describe('AggregationService', () => {
 
     expect((mockDatabaseService.db.insertInto as jest.Mock).mock.results[0].value.values).toHaveBeenCalledWith({
       device_type: "qse",
-      table_name: "",
       columns: JSON.stringify([
         {
           "name": "co2_level",

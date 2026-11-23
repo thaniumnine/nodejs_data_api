@@ -1,0 +1,50 @@
+
+name: PR Tests
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: '22'
+          package-manager-cache: false
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests without credentials
+        run: npm test
+
+      - name: Run credential-dependent tests
+        if: ${{ github.event.pull_request.head.repo.full_name == github.repository && github.actor != 'dependabot[bot]' }}
+        shell: bash
+        env:
+          CI_CREDENTIALS_ENV: ${{ secrets.CI_CREDENTIALS_ENV }}
+        run: |
+          set -euo pipefail
+          umask 077
+
+          # Create credentials.env temporarily
+          printf '%s\n' "$CI_CREDENTIALS_ENV" > credentials.env
+
+          # Remove the file when this step exits
+          trap 'rm -f credentials.env' EXIT
+
+          # Replace with your integration test command
+          npm run test:integration
