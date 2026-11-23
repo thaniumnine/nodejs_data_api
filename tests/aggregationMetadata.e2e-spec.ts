@@ -3,10 +3,6 @@ import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify
 import { JwtAuthGuard } from '../src/auth/jwt-auth.guard';
 import { AppModule } from '../src/app.module';
 
-describe('aggregation metadata E2E', () => {
-  let app: NestFastifyApplication;
-  
-
   const aggregationTypedata = {
 
       "device_type": "ZXY",
@@ -40,6 +36,10 @@ describe('aggregation metadata E2E', () => {
   
   }
 
+
+describe('aggregation metadata E2E', () => {
+  let app: NestFastifyApplication;
+  
   
   beforeAll(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
