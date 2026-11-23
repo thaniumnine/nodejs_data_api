@@ -1,6 +1,6 @@
 import type { NestFastifyApplication } from '@nestjs/platform-fastify';
 import { DatabaseService } from '../../src/database/database.service';
-import { baseUrl, testTaskId, createScheduleTestApp } from './schedule-test.helper';
+import { baseUrl, testTaskId, createScheduleTestApp, cleanupScheduleTestData } from './schedule-test.helper';
 
 describe('Schedule Entries Database E2E', () => {
     let app: NestFastifyApplication;
@@ -10,22 +10,28 @@ describe('Schedule Entries Database E2E', () => {
         app = await createScheduleTestApp();
     });
 
+
     afterAll(async () => {
         if (!app) return;
 
         try {
-            // Only remove records this test suite created. Leave existing data intact.
             if (createdIds.length > 0) {
                 const database = app.get(DatabaseService);
+
                 await database.db
                     .deleteFrom('schedule_entries')
                     .where('id', 'in', createdIds)
                     .execute();
             }
         } finally {
-            await app.close();
+            try {
+                await cleanupScheduleTestData(app);
+            } finally {
+                await app.close();
+            }
         }
     });
+
 
     describe('Schedule entry creation and updates', () => {
         const taskUrl = `${baseUrl}/tasks/${testTaskId}/schedule-entries`;
