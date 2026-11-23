@@ -3,6 +3,7 @@ import { Kysely, PostgresDialect } from 'kysely';
 import { Pool, QueryResult } from 'pg';
 import { env } from '../config/env';
 import { DB } from './db.types';
+const databaseUrl = process.env.DATABASE_URL;
 
 @Injectable()
 export class DatabaseService implements OnModuleDestroy {
@@ -10,10 +11,14 @@ export class DatabaseService implements OnModuleDestroy {
   readonly db: Kysely<DB>;
 
   constructor() {
+    if (!databaseUrl) {
+      throw new Error("DATABASE_URL env is not set");
+    }
+    const hostname = new URL(databaseUrl).hostname;
+    const isLocal = hostname === "127.0.0.1" || hostname === "localhost";
     this.pool = new Pool({
-      connectionString: env.DATABASE_URL, ssl: {
-        rejectUnauthorized: false,
-      }
+      connectionString: env.DATABASE_URL,
+      ssl: isLocal ? false : { rejectUnauthorized: false },
     });
     this.db = new Kysely<DB>({
       dialect: new PostgresDialect({ pool: this.pool })
