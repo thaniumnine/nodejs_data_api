@@ -3,6 +3,7 @@ CREATE TABLE sim_fdd_comment (
     ticket_ref_id BIGINT NOT NULL,
     timestamp TIMESTAMPTZ NOT NULL DEFAULT now(),
     comment TEXT NOT NULL,
+    firebase_user_id TEXT,
 
     CONSTRAINT fk_sim_fdd_comment_ticket
         FOREIGN KEY (ticket_ref_id)
