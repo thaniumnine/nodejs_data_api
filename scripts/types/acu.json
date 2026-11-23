@@ -1,0 +1,10 @@
+[
+  {
+    "name": "room_temperature",
+    "type": "numeric"
+  },
+  {
+    "name": "room_temperature_setpoint",
+    "type": "numeric"
+  }
+]

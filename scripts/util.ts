@@ -6,9 +6,12 @@ export async function withClient<T>(fn: (client: Client) => Promise<T>): Promise
     if (!databaseUrl) {
         throw new Error("DATABASE_URL env is not set");
     }
+
+    const hostname = new URL(databaseUrl).hostname;
+    const isLocal = hostname === "127.0.0.1" || hostname === "localhost";
     const client = new Client({
         connectionString: databaseUrl,
-        ssl: { rejectUnauthorized: false }
+        ssl: isLocal ? false : { rejectUnauthorized: false },
     });
 
     await client.connect();

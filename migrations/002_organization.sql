@@ -1,6 +1,3 @@
--- DROP TABLE IF EXISTS organisations;
-
-
 CREATE TABLE organisations (
     id BIGSERIAL PRIMARY KEY,
     name TEXT NOT NULL UNIQUE,
@@ -9,11 +6,9 @@ CREATE TABLE organisations (
     CHECK (prefix ~ '^[A-Z][A-Z0-9_]*$')
 );
 
-INSERT INTO organisations (
-    name,
-    prefix
-)
-VALUES (
-    'Simtronics',
-    'SIM'
-);
+-- TODO
+-- constraints
+-- organisations_name_key (1 == UNIQUE)
+-- organisations_pkey (primary key)
+-- organisations_prefix_check (green tick)
+-- organisations_prefix_key (1 == UNIQUE)

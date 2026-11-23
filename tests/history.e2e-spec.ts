@@ -3,11 +3,8 @@ import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify
 import { JwtAuthGuard } from '../src/auth/jwt-auth.guard';
 import { AppModule } from '../src/app.module';
 
-describe('History E2E', () => {
-  let app: NestFastifyApplication;
-  
 
-  const historyData =  [{
+ const historyData =  [{
       "version": "1.4.2",
       "timestamp": "1973-03-25T16:16:31.000Z",
       "points": {
@@ -38,6 +35,12 @@ describe('History E2E', () => {
       }
     }
     ]
+
+
+
+describe('History E2E', () => {
+  let app: NestFastifyApplication;
+  
 
   
   beforeAll(async () => {
