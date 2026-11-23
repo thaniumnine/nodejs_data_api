@@ -3,7 +3,6 @@ export const DB_SERVICE_RETURNED_RESULTS = {
         {
             "id": "54a1b2f2-0e74-45cb-a164-c24dc302b5e5",
             "device_type": "acu",
-            "table_name": "device_simmtronics_acu_agg_events",
             "columns": [
                 {
                     "name": "room_temperature",
@@ -19,7 +18,6 @@ export const DB_SERVICE_RETURNED_RESULTS = {
 
     createDeviceType: {
         "device_type": "qse",
-        "table_name": "device_simmtronics_qse_agg_events",
         "columns": [
             {
                 "name": "co2_level",
@@ -34,7 +32,6 @@ export const DB_SERVICE_RETURNED_RESULTS = {
     getRequiredType: {
         "id": "e0a73079-0845-4ad4-80f4-dd977ae22ede",
         "device_type": "qse",
-        "table_name": "device_simmtronics_qse_agg_events",
         "columns": [
             {
                 "name": "co2_level",

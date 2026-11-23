@@ -4,10 +4,11 @@ import { AggregationRecordsController } from './aggregation-records.controller';
 import { AggregationRecordsService } from './aggregation-records.service';
 import { AggregationModule } from '../aggregation-type/aggregation.module';
 import { OrganisationModule } from '../organisations/organisations.module';
+import { DeviceIdentifierModule } from '../deviceIdentifier/device-identifier.module';
 
 
 @Module({
-  imports: [AuthModule, AggregationModule,OrganisationModule],
+  imports: [AuthModule, AggregationModule,OrganisationModule,DeviceIdentifierModule],
   controllers: [AggregationRecordsController],
   providers: [AggregationRecordsService]
 })

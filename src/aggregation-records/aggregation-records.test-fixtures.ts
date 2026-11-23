@@ -32,7 +32,6 @@ export const DB_SERVICE_RETURNED_RESULTS = {
 export const AGGREGATION_SERVICE_RETURNED_RESULTS = {
     getRequiredByName: {
         "device_type": "acu",
-        "table_name": "device_simmtronics_acu_agg_events",
         "columns": [
             {
                 "name": "room_temperature",
