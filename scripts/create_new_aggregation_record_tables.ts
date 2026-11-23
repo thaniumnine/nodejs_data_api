@@ -66,7 +66,11 @@ async function createAggregationRecordDatabase(client: Client, orgPrefix: string
             ${columnQuery},
 
             UNIQUE (device_id,agg_type, event_timestamp),
-            created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+            created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+            device_ref_id BIGSERIAL NOT NULL,
+            CONSTRAINT fk_device_identity
+                FOREIGN KEY(device_id)
+                    REFERENCES sim_device_identifier(id)
         );
 
         CREATE INDEX idx_${newTableName}_device_id

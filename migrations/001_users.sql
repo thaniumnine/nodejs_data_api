@@ -9,8 +9,15 @@ create table if not exists users (
   roles jsonb not null default '[]'::jsonb,
   is_active boolean not null default true,
   created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
+  updated_at timestamptz not null default now(),
+  daily_capacity_minutes integer 
 );
+
+-- TODO
+-- constraints
+-- users_daily_capacity_minutes_check (green tick)
+-- users_email_key (1)
+-- user_pkey (primary key)
 
 create table if not exists user_sessions (
   id uuid primary key default gen_random_uuid(),
@@ -26,6 +33,12 @@ create table if not exists user_sessions (
   replaced_by_session_id uuid references user_sessions(id)
 );
 
+-- TODO
+-- constraints
+-- users_sessions_pkey (primary key)
+-- users_sessions_refresh_token_hash_key (1 == UNIQUE)
+-- users_sessions_replaced_by_session_id (foreign key)
+-- users_sessions_user_id_fkey (foreign key)
 
 create index if not exists idx_user_sessions_user_id on user_sessions(user_id);
 create index if not exists idx_user_sessions_family on user_sessions(refresh_token_family);
