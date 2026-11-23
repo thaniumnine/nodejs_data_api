@@ -15,7 +15,7 @@ type AggregationPayload = {
   const aggregationMtsData:AggregationPayload[]  = [
     {
       "device_id": "MTS-9999999",
-      "event_timestamp": "1920-04-24T12:34:00.000Z",
+      "event_timestamp": "1970-04-24T12:34:00.000Z",
       "agg_type": "max",
              "level": "Level-00",
       "payload": {
@@ -28,7 +28,7 @@ type AggregationPayload = {
 
   const aggregationQseData:AggregationPayload[] = [{
     "device_id": "QSE-9999999",
-    "event_timestamp": "1920-04-24T12:34:00.000Z",
+    "event_timestamp": "1970-04-24T12:34:00.000Z",
     "agg_type": "max",
            "level": "Level-00",
     "payload": {
@@ -44,7 +44,7 @@ type AggregationPayload = {
 
   const aggregationLtData :AggregationPayload[] = [{
     "device_id": "LT-9999999",
-    "event_timestamp": "1920-04-24T12:34:00.000Z",
+    "event_timestamp": "1970-04-24T12:34:00.000Z",
     "agg_type": "max",
            "level": "Level-00",
     "payload": {

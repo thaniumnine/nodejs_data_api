@@ -2,8 +2,6 @@ import 'dotenv/config';
 
 import { withClient } from './util';
 
-
-
 async function main() {
     const orgName = process.argv[2]
     const orgPrefix = process.argv[3]

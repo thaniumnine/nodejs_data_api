@@ -44,7 +44,7 @@ async function main() {
       console.log(`Applying ${file}`);
       await client.query('begin');
       try {
-        // await client.query(sql); don't want to execute them now as it will reset the database
+        await client.query(sql); //don't want to execute them now as it will reset the database
         await client.query('insert into _migrations(filename, checksum) values ($1, $2)', [
           file,
           checksum
