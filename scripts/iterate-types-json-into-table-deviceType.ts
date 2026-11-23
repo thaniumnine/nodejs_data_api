@@ -1,4 +1,21 @@
+import 'dotenv/config';
+import { readFileSync } from 'fs';
+import { execFileSync } from 'child_process';
 
-//TODO iterate types folder over all the json and post into sim_device_type_aggregation
+const orgPrefix = process.argv[2];
+const deviceTypes = ['acu', 'inv', 'lt', 'mts', 'qse'];
 
-// then insert-new-deviceType.ts
+for (const deviceType of deviceTypes) {
+    const columns = JSON.parse(
+        readFileSync(`${__dirname}/types/${deviceType}.json`, 'utf8')
+    );
+
+    execFileSync(process.execPath, [
+        '--import',
+        'tsx',
+        `${__dirname}/insert-new-deviceType.ts`,
+        orgPrefix,
+        deviceType,
+        JSON.stringify(columns),
+    ], { stdio: 'inherit' });
+}
