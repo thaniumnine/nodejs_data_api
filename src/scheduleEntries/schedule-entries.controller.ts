@@ -32,13 +32,24 @@ const createScheduleEntrySchema = z.object({
   scheduled_time: scheduleTimeSchema,
   status: z.enum(['Planned', 'Completed', 'Cancelled']).optional(),
   is_locked: z.boolean().optional(),
+  implementation_cost_gbp: z.union([
+    z.number(),
+    z.string().trim()
+      .regex(/^\d+(\.\d+)?$/)
+      .transform(Number),
+  ]).pipe(
+    z.number().finite().nonnegative()
+  ).optional(),
 }).strict();
 
 const updateScheduleEntrySchema =
-  createScheduleEntrySchema.partial().refine(
-    body => Object.keys(body).length > 0,
-    'At least one field must be provided',
-  );
+  createScheduleEntrySchema
+    .omit({ implementation_cost_gbp: true })
+    .partial()
+    .refine(
+      body => Object.keys(body).length > 0,
+      'At least one field must be provided',
+    );
 
 const transferScheduleEntrySchema = z.object({
   scheduled_time: scheduleTimeSchema,
