@@ -14,6 +14,7 @@ describe("Schedule Planner", () => {
         originalTime,
         status: "Planned",
         isLocked: false,
+        estimatedMinutes: 480,
         ...changes,
     });
 
@@ -31,7 +32,7 @@ describe("Schedule Planner", () => {
         const incoming = createMove('entry-2', '2', 200);
 
         const occupied = new Map([
-            ['1970-01-05', existing],
+            ['1970-01-05', [existing]],
         ]);
 
         const result = planScheduleMoves(incoming, occupied);
@@ -45,7 +46,7 @@ describe("Schedule Planner", () => {
         const incoming = createMove('entry-2', '2', 100);
 
         const occupied = new Map([
-            ['1970-01-05', existing],
+            ['1970-01-05', [existing]],
         ]);
 
         const result = planScheduleMoves(incoming, occupied);
@@ -67,7 +68,7 @@ describe("Schedule Planner", () => {
         const incoming = createMove('entry-2', '2', 100);
 
         const occupied = new Map([
-            ['1970-01-05', existing],
+            ['1970-01-05', [existing]],
         ]);
 
         expect(() => planScheduleMoves(incoming, occupied))
@@ -82,7 +83,7 @@ describe("Schedule Planner", () => {
         const incoming = createMove('entry-2', '2', 100);
 
         const occupied = new Map([
-            ['1970-01-05', existing],
+            ['1970-01-05', [existing]],
         ]);
 
         expect(() => planScheduleMoves(incoming, occupied))
@@ -94,7 +95,7 @@ describe("Schedule Planner", () => {
         const incoming = createMove('entry-2', '1', 200);
 
         const occupied = new Map([
-            ['1970-01-05', existing],
+            ['1970-01-05', [existing]],
         ]);
 
         expect(() => planScheduleMoves(incoming, occupied))
@@ -106,7 +107,7 @@ describe("Schedule Planner", () => {
         const incoming = createMove('entry-2', '2', 100);
 
         const occupied = new Map([
-            ['1970-01-05', existing],
+            ['1970-01-05', [existing]],
         ]);
 
         expect(() => planScheduleMoves(incoming, occupied))
@@ -122,8 +123,8 @@ describe("Schedule Planner", () => {
         const incoming = createMove('entry-3', '3', 100);
 
         const occupied = new Map([
-            ['1970-01-05', monday],
-            ['1970-01-06', tuesday],
+            ['1970-01-05', [monday]],
+            ['1970-01-06', [tuesday]],
         ]);
 
         const result = planScheduleMoves(incoming, occupied);
@@ -150,7 +151,7 @@ describe("Schedule Planner", () => {
         });
 
         const occupied = new Map([
-            ['1970-01-02', existing],
+            ['1970-01-02', [existing]],
         ]);
 
         const result = planScheduleMoves(incoming, occupied);
