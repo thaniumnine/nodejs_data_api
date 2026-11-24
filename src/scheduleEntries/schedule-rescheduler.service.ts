@@ -8,6 +8,7 @@ import type { UpdateScheduleEntryInput } from './schedule-entries.service';
 import { dayKey } from './schedule-date.utils';
 import { planScheduleMoves, type ScheduleMove } from './schedule-planner';
 import { ForbiddenException } from '@nestjs/common';
+import { calculateEstimatedMinutes } from './schedule-duration.utils';
 
 const SCHEDULE_ENTRIES_TABLE_NAME = 'schedule_entries';
 
@@ -45,18 +46,73 @@ export class ScheduleReschedulerService {
         input: RescheduleInput,
         transfer?: ScheduleTransfer,
     ): Promise<void> {
+        await this.schedule(
+            organisation,
+            taskId,
+            entryId,
+            input,
+            transfer,
+        );
+    }
+
+    async create(
+        organisation: string,
+        taskId: string,
+        input: RescheduleInput,
+        implementationCostGbp?: number,
+    ): Promise<string> {
+        return this.schedule(
+            organisation,
+            taskId,
+            null,
+            input,
+            undefined,
+            implementationCostGbp,
+        );
+    }
+
+    private async schedule(
+        organisation: string,
+        taskId: string,
+        existingEntryId: string | null,
+        input: RescheduleInput,
+        transfer?: ScheduleTransfer,
+        implementationCostGbp?: number,
+    ): Promise<string> {
         const scheduledTime = input.scheduled_time;
         const metadata =
             await this.organisationService.queryOrganisationMetadata(organisation);
 
         // Read, calculate and save all changes in one transaction. if 
-        await this.database.db.transaction().execute(async trx => {
+        return this.database.db.transaction().execute(async trx => {
             await sql`
                 SELECT pg_advisory_xact_lock(
                     hashtext('schedule-rescheduling'),
                     hashtext(${String(metadata.id)})
                 )
             `.execute(trx);
+            let entryId = existingEntryId;
+
+            if (entryId === null) {
+                const isCancelled = input.status === 'Cancelled';
+
+                const created = await trx
+                    .insertInto(SCHEDULE_ENTRIES_TABLE_NAME)
+                    .values({
+                        task_id: taskId,
+                        scheduled_time: input.scheduled_time,
+                        status: isCancelled ? 'Cancelled' : 'Planned',
+                        is_locked: isCancelled
+                            ? input.is_locked ?? false
+                            : false,
+                    })
+                    .returning('id')
+                    .executeTakeFirstOrThrow();
+
+                entryId = created.id;
+
+                if (isCancelled) return entryId;
+            }
             const source = await trx
                 .selectFrom(SCHEDULE_ENTRIES_TABLE_NAME)
                 .select(['id', 'status', 'is_locked'])
@@ -109,6 +165,42 @@ export class ScheduleReschedulerService {
             }
 
 
+            if (
+                existingEntryId === null &&
+                implementationCostGbp !== undefined
+            ) {
+                const estimatedMinutes =
+                    calculateEstimatedMinutes(implementationCostGbp);
+
+                const findings = await sql<{
+                    fdd_history_id: string;
+                }>`
+                    SELECT DISTINCT h.id::text AS fdd_history_id
+                    FROM public.task_entries te
+                    JOIN public.sim_fdd_assignment a
+                        ON a.id = te.assignment_id
+                    JOIN public.sim_fdd_history h
+                        ON h.id = a.fdd_history_id
+                    JOIN public.sim_device_identifier di
+                        ON di.id = h.device_ref_id
+                    WHERE te.task_id = ${taskId}
+                    AND di.org_ref_id = ${metadata.id}
+                `.execute(trx);
+
+                if (findings.rows.length !== 1) {
+                    throw new ConflictException(
+                        'Expected one FDD finding for this estimate.'
+                    );
+                }
+
+                // Save the original estimated duration.
+                await sql`
+                UPDATE public.sim_fdd_history
+                SET estimated_minutes = ${estimatedMinutes}
+                WHERE id = ${findings.rows[0].fdd_history_id}::bigint
+                AND estimated_minutes IS NULL
+            `.execute(trx);
+            }
             const currentEngineerId = owners.rows[0].firebase_user_id;
 
             let engineerId = currentEngineerId;
@@ -357,6 +449,7 @@ export class ScheduleReschedulerService {
                     );
                 }
             }
+            return entryId;
         });
     }
 }
