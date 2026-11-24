@@ -2,6 +2,8 @@ import { BadRequestException } from '@nestjs/common';
 
 const HOURLY_RATE_GBP = 100;
 
+export const DEFAULT_DAILY_CAPACITY_MINUTES = 480;
+
 export function calculateEstimatedMinutes(
     implementationCost: number,
 ): number {

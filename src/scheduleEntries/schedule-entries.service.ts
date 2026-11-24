@@ -4,6 +4,9 @@ import { DatabaseService } from '../database/database.service';
 import type { ScheduleEntryStatus } from '../database/db.types';
 import { OrganisationService } from '../organisations/organisations.service';
 import { ScheduleReschedulerService, type ScheduleTransfer } from './schedule-rescheduler.service';
+import {
+    DEFAULT_DAILY_CAPACITY_MINUTES
+} from './schedule-duration.utils';
 
 const SCHEDULE_ENTRIES_TABLE_NAME = 'schedule_entries';
 
@@ -28,7 +31,7 @@ export type OrganisationScheduleEntryRecord = ScheduleEntryRecord & {
         level: string;
         device_id: string;
         estimated_minutes: number | null;
-estimated_hours: number | null;
+        estimated_hours: number | null;
     }[];
 };
 
@@ -190,7 +193,11 @@ export class ScheduleEntriesService {
             [metadata.id, from, to],
         );
 
-        return { records: result.rows, count: result.rows.length };
+        return {
+            records: result.rows,
+            count: result.rows.length,
+            daily_capacity_minutes: DEFAULT_DAILY_CAPACITY_MINUTES,
+        };
     }
 
     // PATCH: Move a booking or update its other fields.

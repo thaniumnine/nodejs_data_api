@@ -21,6 +21,7 @@ type BookingRow = {
     original_time: Date | string | null;
     owner_count: number;
     in_organisation: boolean;
+    estimated_minutes: number | null;
 };
 
 type RescheduleInput = UpdateScheduleEntryInput & {
@@ -331,6 +332,30 @@ export class ScheduleReschedulerService {
             const originalTime =
                 new Date(owners.rows[0].original_time).getTime();
 
+            // Retrieve the total estimated duration of the task.
+            const duration = await sql<{
+                estimated_minutes: number | null;
+            }>`
+                SELECT
+                    CASE
+                        WHEN COUNT(*) = COUNT(h.estimated_minutes)
+                        THEN SUM(h.estimated_minutes)::double precision
+                        ELSE NULL
+                    END AS estimated_minutes
+                FROM public.sim_fdd_history h
+                WHERE EXISTS (
+                    SELECT 1
+                    FROM public.task_entries te
+                    JOIN public.sim_fdd_assignment a
+                        ON a.id = te.assignment_id
+                    WHERE te.task_id = ${taskId}
+                    AND a.fdd_history_id = h.id
+                )
+            `.execute(trx);
+
+            const estimatedMinutes =
+                duration.rows[0]?.estimated_minutes ?? null;
+
             // Serialise cooperating reschedules for this engineer.
             await sql`
                 SELECT pg_advisory_xact_lock(
@@ -348,6 +373,11 @@ export class ScheduleReschedulerService {
                     s.status,
                     s.is_locked,
                     MIN(h.timestamp) AS original_time,
+                    CASE
+                        WHEN COUNT(*) = COUNT(h.estimated_minutes)
+                        THEN SUM(h.estimated_minutes)::double precision
+                        ELSE NULL
+                    END AS estimated_minutes,
                     COUNT(DISTINCT a.firebase_user_id)::int AS owner_count,
                     BOOL_AND(di.org_ref_id = ${metadata.id}) AS in_organisation
                 FROM public.schedule_entries s
@@ -379,7 +409,7 @@ export class ScheduleReschedulerService {
             `.execute(trx);
 
             // Day -> booking, excluding the entry being dragged.
-            const occupied = new Map<string, ScheduleMove>();
+            const occupied = new Map<string, ScheduleMove[]>();
 
             for (const row of existing.rows) {
                 if (row.entry_id === entryId) continue;
@@ -401,17 +431,14 @@ export class ScheduleReschedulerService {
                     originalTime: new Date(row.original_time).getTime(),
                     status: row.status,
                     isLocked: row.is_locked,
+                    estimatedMinutes: row.estimated_minutes,
                 };
 
                 const day = dayKey(booking.scheduledTime);
 
-                if (occupied.has(day)) {
-                    throw new ConflictException(
-                        `Multiple bookings already occupy ${day}.`,
-                    );
-                }
+                const dayBookings = occupied.get(day) ?? [];
 
-                occupied.set(day, booking);
+                occupied.set(day, [...dayBookings, booking]);
             }
 
             // Calculate all moves before writing anything.
@@ -423,6 +450,7 @@ export class ScheduleReschedulerService {
                     originalTime,
                     status: 'Planned',
                     isLocked: false,
+                    estimatedMinutes,
                 },
                 occupied,
             );
