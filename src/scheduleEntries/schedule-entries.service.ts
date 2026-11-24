@@ -3,7 +3,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import type { ScheduleEntryStatus } from '../database/db.types';
 import { OrganisationService } from '../organisations/organisations.service';
-import { ScheduleReschedulerService } from './schedule-rescheduler.service';
+import { ScheduleReschedulerService, type ScheduleTransfer } from './schedule-rescheduler.service';
 
 const SCHEDULE_ENTRIES_TABLE_NAME = 'schedule_entries';
 
@@ -223,6 +223,28 @@ export class ScheduleEntriesService {
                 `Schedule entry '${entryId}' not found or cannot be updated`,
             );
         }
+
+        return this.getScheduleEntry(taskId, entryId);
+    }
+
+
+    async transferScheduleEntry(
+        organisation: string,
+        taskId: string,
+        entryId: string,
+        scheduledTime: string,
+        transfer: ScheduleTransfer,
+    ): Promise<ScheduleEntryRecord> {
+
+        await this.requireTask(organisation, taskId);
+
+        await this.rescheduler.reschedule(
+            organisation,
+            taskId,
+            entryId,
+            { scheduled_time: scheduledTime },
+            transfer,
+        );
 
         return this.getScheduleEntry(taskId, entryId);
     }
