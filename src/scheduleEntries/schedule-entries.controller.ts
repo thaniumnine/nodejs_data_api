@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  ForbiddenException,
   Get,
   Param,
   Patch,
@@ -38,6 +39,15 @@ const updateScheduleEntrySchema =
     body => Object.keys(body).length > 0,
     'At least one field must be provided',
   );
+
+const transferScheduleEntrySchema = z.object({
+  scheduled_time: scheduleTimeSchema,
+  source_firebase_user_id: z.string().trim().min(1),
+  target_firebase_user_id: z.string().trim().min(1),
+}).strict();
+
+type TransferScheduleEntryBody =
+  z.infer<typeof transferScheduleEntrySchema>;
 
 type CreateScheduleEntryBody =
   z.infer<typeof createScheduleEntrySchema>;
@@ -97,6 +107,38 @@ export class ScheduleEntriesController {
       taskId,
       entryId,
       body,
+    );
+  }
+
+  @Patch(':entry_id/transfer')
+  async transferScheduleEntry(
+    @Param('organisation') organisation: string,
+
+    @Param('task_id', new ZodValidationPipe(taskIdSchema))
+    taskId: string,
+
+    @Param('entry_id', new ZodValidationPipe(entryIdSchema))
+    entryId: string,
+
+    @Body(new ZodValidationPipe(transferScheduleEntrySchema))
+    body: TransferScheduleEntryBody,
+  ) {
+    if (
+      process.env.ENABLE_LOCAL_SCHEDULE_TRANSFERS !== 'true' ||
+      process.env.NODE_ENV === 'production'
+    ) {
+      throw new ForbiddenException('Transfers are disabled.');
+    }
+
+    return this.scheduleEntriesService.transferScheduleEntry(
+      organisation,
+      taskId,
+      entryId,
+      body.scheduled_time,
+      {
+        sourceUserId: body.source_firebase_user_id,
+        targetUserId: body.target_firebase_user_id,
+      },
     );
   }
 }
