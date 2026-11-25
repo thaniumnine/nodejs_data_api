@@ -32,6 +32,7 @@ type Booking = {
     original_time: string | null;
     owner_count: number;
     in_organisation: boolean;
+    estimated_minutes: number | null;
 };
 
 const makeBooking = (changes: Partial<Booking> = {}): Booking => ({
@@ -43,6 +44,7 @@ const makeBooking = (changes: Partial<Booking> = {}): Booking => ({
     original_time: '1970-01-02T09:00:00.000Z',
     owner_count: 1,
     in_organisation: true,
+    estimated_minutes: 480,
     ...changes,
 });
 
@@ -194,11 +196,14 @@ describe('Schedule Rescheduler - mocked tests', () => {
     const mockSqlResults = (
         owners: unknown[] = [validOwner],
         bookings: unknown[] = [],
+        estimatedMinutes = 480,
     ) => {
         sqlResults = [
-            { rows: owners },
-            { rows: [] },
-            { rows: bookings },
+            { rows: [] },       // Organisation advisory lock
+            { rows: owners },   // Current engineer
+            { rows: [{ estimated_minutes: estimatedMinutes }] },
+            { rows: [] },       // Engineer advisory lock
+            { rows: bookings }, // Existing bookings
         ];
     };
 
@@ -390,16 +395,35 @@ describe('Schedule Rescheduler - mocked tests', () => {
         );
     });
 
-    it('should reject two bookings on the same day', async () => {
-        mockSqlResults([validOwner], [
-            makeBooking({ entry_id: 'entry-2', task_id: '2' }),
-            makeBooking({ entry_id: 'entry-3', task_id: '3' }),
-        ]);
-
-        await expect(move()).rejects.toThrow(
-            'Multiple bookings already occupy 1970-01-05.',
+    it('should allow multiple bookings within daily capacity', async () => {
+        mockSqlResults(
+            [validOwner],
+            [
+                makeBooking({
+                    entry_id: 'entry-2',
+                    task_id: '2',
+                    estimated_minutes: 120,
+                    scheduled_time: '1970-01-05T13:00:00.000Z',
+                }),
+                makeBooking({
+                    entry_id: 'entry-3',
+                    task_id: '3',
+                    estimated_minutes: 120,
+                    scheduled_time: '1970-01-05T15:00:00.000Z',
+                }),
+            ],
+            240,
         );
-    });
+
+        await expect(move()).resolves.toBeUndefined();
+
+        expect(updateQuery.where)
+            .toHaveBeenCalledWith('id', '=', 'entry-1');
+
+        for (const [changes] of updateQuery.set.mock.calls) {
+            expect(changes.scheduled_time).toContain('1970-01-05');
+        }
+    })
 
     // -----------------------------------------
     // PRIORITY AND RESCHEDULING

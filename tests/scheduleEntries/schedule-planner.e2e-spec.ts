@@ -71,8 +71,14 @@ describe("Schedule Planner", () => {
             ['1970-01-05', [existing]],
         ]);
 
-        expect(() => planScheduleMoves(incoming, occupied))
-            .toThrow('Cannot displace a locked or completed booking.');
+        const result = planScheduleMoves(incoming, occupied);
+
+        expect(result).toEqual([
+            {
+                ...incoming,
+                scheduledTime: '1970-01-06T09:00:00.000Z',
+            },
+        ]);
     });
 
     it('should not displace a completed booking', () => {
@@ -86,8 +92,14 @@ describe("Schedule Planner", () => {
             ['1970-01-05', [existing]],
         ]);
 
-        expect(() => planScheduleMoves(incoming, occupied))
-            .toThrow('Cannot displace a locked or completed booking.');
+        const result = planScheduleMoves(incoming, occupied);
+
+        expect(result).toEqual([
+            {
+                ...incoming,
+                scheduledTime: '1970-01-06T09:00:00.000Z',
+            },
+        ]);
     });
 
     it('should reject conflicting bookings for the same task i', () => {
@@ -99,10 +111,10 @@ describe("Schedule Planner", () => {
         ]);
 
         expect(() => planScheduleMoves(incoming, occupied))
-            .toThrow('Unable to determine task priority.');
+            .toThrow('This task already has a booking on this day.');
     });
 
-    it('should reject tasks with identical priority', () => {
+    it('should preserve the existing booking when priorities are equal', () => {
         const existing = createMove('entry-1', '1', 100);
         const incoming = createMove('entry-2', '2', 100);
 
@@ -110,8 +122,14 @@ describe("Schedule Planner", () => {
             ['1970-01-05', [existing]],
         ]);
 
-        expect(() => planScheduleMoves(incoming, occupied))
-            .toThrow('Unable to determine task priority.');
+        const result = planScheduleMoves(incoming, occupied);
+
+        expect(result).toEqual([
+            {
+                ...incoming,
+                scheduledTime: '1970-01-06T09:00:00.000Z',
+            },
+        ]);
     });
 
     it('should cascade multiple conflicting bookings', () => {

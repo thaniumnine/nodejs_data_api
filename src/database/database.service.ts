@@ -3,7 +3,7 @@ import { Kysely, PostgresDialect } from 'kysely';
 import { Pool, QueryResult } from 'pg';
 import { env } from '../config/env';
 import { DB } from './db.types';
-const databaseUrl = process.env.DATABASE_URL;
+
 
 @Injectable()
 export class DatabaseService implements OnModuleDestroy {
@@ -11,6 +11,8 @@ export class DatabaseService implements OnModuleDestroy {
   readonly db: Kysely<DB>;
 
   constructor() {
+    const databaseUrl = process.env.DATABASE_URL;
+    
     if (!databaseUrl) {
       throw new Error("DATABASE_URL env is not set");
     }
