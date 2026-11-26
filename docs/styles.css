@@ -1,0 +1,52 @@
+/* Thanium Nine API Reference Theme */
+
+:root {
+    --scalar-font: "Inter", Arial, sans-serif;
+    --scalar-font-code: "JetBrains Mono", Consolas, monospace;
+}
+
+/* Light mode */
+.light-mode {
+    --scalar-color-1: #080b20;
+    --scalar-color-2: #475569;
+    --scalar-color-3: #64748b;
+    --scalar-color-accent: #6d28d9;
+
+    --scalar-background-1: #ffffff;
+    --scalar-background-2: #f5f6fb;
+    --scalar-background-3: #e8eaf3;
+    --scalar-background-accent: #ede9fe;
+
+    --scalar-border-color: #e0e3ed;
+}
+
+/* Dark mode */
+.dark-mode {
+    --scalar-color-1: #f8fafc;
+    --scalar-color-2: #b8bfd4;
+    --scalar-color-3: #929bb5;
+    --scalar-color-accent: #a78bfa;
+
+    --scalar-background-1: #080b20;
+    --scalar-background-2: #131831;
+    --scalar-background-3: #1d2340;
+    --scalar-background-accent: #25214a;
+
+    --scalar-border-color: #292f4b;
+}
+
+/* Sidebar - light mode */
+.light-mode .sidebar {
+    --scalar-sidebar-background-1: #f5f6fb;
+    --scalar-sidebar-item-hover-background: #e8eaf3;
+    --scalar-sidebar-item-active-background: #ede9fe;
+    --scalar-sidebar-color-active: #6d28d9;
+}
+
+/* Sidebar - dark mode */
+.dark-mode .sidebar {
+    --scalar-sidebar-background-1: #10142b;
+    --scalar-sidebar-item-hover-background: #1d2340;
+    --scalar-sidebar-item-active-background: #25214a;
+    --scalar-sidebar-color-active: #c4b5fd;
+}
