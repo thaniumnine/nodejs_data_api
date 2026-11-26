@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Thaniumnine Data API reference for device data, FDD, tasks and scheduling.">
+  <title>Thaniumnine Data API | API Reference</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, sans-serif; }
+    #notice {
+      padding: 10px 20px; font-size: 13px; line-height: 1.5;
+      color: #19384a; background: #eef5f8; border-bottom: 1px solid #dce8ee;
+    }
+    #notice strong { font-weight: 650; }
+    #load-status { max-width: 760px; margin: 48px auto; padding: 20px; }
+    @media (prefers-color-scheme: dark) {
+      #notice { background: #172a36; color: #d5e5ec; border-color: #31424d; }
+    }
+  </style>
+</head>
+<body>
+  <div id="notice" role="status">
+    <strong>Draft API reference.</strong> Sanitised examples only. Live requests are disabled.
+  </div>
+  <div id="app">
+    <p id="load-status">Loading API reference…</p>
+  </div>
+  <noscript>JavaScript is required to render the API reference. You can read the <a href="./openapi.json">OpenAPI JSON</a> directly.</noscript>
+  <script type="module">
+    const isLoopback = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
+    const testMode = isLoopback && new URLSearchParams(location.search).get('test') === '1';
+
+    if (testMode) {
+      document.querySelector('#notice').textContent =
+        'Local test mode — requests may write or delete data. Use a disposable test database only. Never use production credentials.';
+    }
+
+    try {
+      // Open-source MIT-licensed renderer, pinned for reproducible deployment.
+      const { createApiReference } = await import(
+        'https://cdn.jsdelivr.net/npm/@scalar/api-reference@1.83.0/esm.js'
+      );
+      createApiReference('#app', {
+        url: './openapi.json',
+        theme: 'default',
+        layout: 'modern',
+        hideTestRequestButton: !testMode,
+        hideClientButton: !testMode,
+        persistAuth: false,
+        telemetry: false,
+        agent: { disabled: true },
+        showDeveloperTools: 'never',
+        withDefaultFonts: false,
+        defaultOpenAllTags: false,
+        defaultOpenFirstTag: true
+        // No external request proxy. Local testing requires API CORS support.
+      });
+    } catch (error) {
+      document.querySelector('#app').textContent =
+        'The API reference could not load. Serve the docs folder over HTTP and check your connection to the Scalar CDN. The openapi.json file is still available.';
+      console.error('Unable to load API reference:', error);
+    }
+  </script>
+</body>
+</html>

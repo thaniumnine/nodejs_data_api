@@ -28,6 +28,8 @@
     "test:schedules": "jest --config ./tests/jest-e2e.config.json --runInBand scheduleEntries",
     "test:schedules:cov": "jest --config ./tests/jest-e2e.config.json --coverage --runInBand scheduleEntries",
 
+    "docs:dev": "npx http-server docs -a 127.0.0.1 -p 8080",
+
     "lint": "eslint \"src/**/*.ts\" \"scripts/**/*.ts\" --fix",
     "format": "prettier --write \"src/**/*.ts\" \"scripts/**/*.ts\""
   },

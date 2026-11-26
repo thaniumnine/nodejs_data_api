@@ -1,0 +1,2377 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Thaniumnine Data API",
+    "version": "1.0.0-draft",
+    "description": "API reference for device metadata, historical measurements, aggregation records, fault detection and diagnostics (FDD), tasks and scheduling.\n\n## Getting started\nAll paths in this reference are relative to `/api/v1`. The configured server is a local development instance. Replace example identifiers with values from an environment you are authorised to use.\n\n## Authentication\nUse `POST /auth/login` to obtain an access token. Send it as `Authorization: Bearer <access_token>` on protected operations. Use `POST /auth/refresh` to refresh the session and `POST /auth/logout` to revoke it. Authentication requirements are based on the Postman collection's bearer configuration; verify them against the API.\n\n## About this draft\nRequest examples are sanitised from the Postman collection; schema types are inferred from examples and are not a complete validation contract. All example identifiers and timestamps are illustrative. The collection does not contain matching saved responses, so response codes and payloads are not asserted as verified. The login example is inferred from the available authentication fields. Live requests are disabled by default. Do not use production credentials or customer data in examples."
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3500/api/v1",
+      "description": "Local development API"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "Obtain access tokens, refresh them and revoke sessions."
+    },
+    {
+      "name": "Aggregation records",
+      "description": "Read, ingest and delete aggregated device measurements."
+    },
+    {
+      "name": "Aggregation device types",
+      "description": "Read and manage device-type definitions and their measurement columns."
+    },
+    {
+      "name": "Device history",
+      "description": "Read device lists and historical point data, ingest records and delete history."
+    },
+    {
+      "name": "FDD findings",
+      "description": "Read and create fault detection and diagnostics findings."
+    },
+    {
+      "name": "FDD assignments",
+      "description": "Manage assignments for FDD findings."
+    },
+    {
+      "name": "FDD comments",
+      "description": "Read and add comments to FDD assignments."
+    },
+    {
+      "name": "Tasks",
+      "description": "Create tasks, retrieve tasks and associate assignments with them."
+    },
+    {
+      "name": "Schedule entries",
+      "description": "Read, create, update and transfer scheduled tasks."
+    },
+    {
+      "name": "Device metadata",
+      "description": "Read, create and delete device metadata."
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Enter a valid access token for your authorised test environment. Never commit tokens."
+      }
+    }
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Log in",
+        "description": "Obtain an access token and refresh token.",
+        "operationId": "log_in",
+        "responses": {
+          "default": {
+            "description": "Illustrative token fields referenced by Postman test scripts. HTTP status and full response contract are not verified.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "access_token": {
+                      "type": "string"
+                    },
+                    "refresh_token": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "access_token": "<access_token>",
+                  "refresh_token": "<refresh_token>"
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "description": "Illustrative email/password fields inferred from the removed login body and disabled query fields; verify the actual login DTO.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email"
+                  },
+                  "password": {
+                    "type": "string",
+                    "format": "password"
+                  }
+                }
+              },
+              "example": {
+                "email": "developer@example.com",
+                "password": "<password>"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Log out",
+        "description": "Revoke the current session using the bearer access token.",
+        "operationId": "log_out",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        }
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Refresh access token",
+        "description": "Submit the refresh token to obtain updated tokens.",
+        "operationId": "refresh_access_token",
+        "responses": {
+          "default": {
+            "description": "Illustrative token fields referenced by Postman test scripts. HTTP status and full response contract are not verified.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "access_token": {
+                      "type": "string"
+                    },
+                    "refresh_token": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "example": {
+                  "access_token": "<access_token>",
+                  "refresh_token": "<refresh_token>"
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "requestBody": {
+          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "refresh_token": {
+                    "type": "string",
+                    "format": "password"
+                  }
+                }
+              },
+              "example": {
+                "refresh_token": "<refresh_token>"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/aggregation/organisations/{organisation}/device_types/{device_type}/records": {
+      "get": {
+        "tags": [
+          "Aggregation records"
+        ],
+        "summary": "Get aggregation records",
+        "description": "Retrieve aggregated records for a device type and time range. The collection demonstrates MTS, ACU, QSE and LT queries.",
+        "operationId": "get_aggregation_records",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          },
+          {
+            "name": "device_type",
+            "in": "path",
+            "description": "Device type identifier, for example mts, qse, acu or lt.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "mts"
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "description": "Beginning of the requested time range. Requiredness not verified.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "example": "2026-01-01T00:00:00Z"
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "End of the requested time range. Requiredness not verified.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "example": "2026-01-02T00:00:00Z"
+          },
+          {
+            "name": "aggType",
+            "in": "query",
+            "description": "Aggregation type. The collection demonstrates mean and max; other supported values are not verified. Requiredness not verified.",
+            "schema": {
+              "type": "string"
+            },
+            "examples": {
+              "example1": {
+                "value": "max"
+              },
+              "example2": {
+                "value": "mean"
+              }
+            }
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Aggregation records"
+        ],
+        "summary": "Create aggregation records",
+        "description": "Submit a batch of aggregated measurements for a device type. Payload point names vary with the device type.",
+        "operationId": "create_aggregation_records",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          },
+          {
+            "name": "device_type",
+            "in": "path",
+            "description": "Device type identifier, for example mts, qse, acu or lt.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "mts"
+          }
+        ],
+        "requestBody": {
+          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "device_id": {
+                          "type": "string"
+                        },
+                        "event_timestamp": {
+                          "type": "string"
+                        },
+                        "agg_type": {
+                          "type": "string"
+                        },
+                        "payload": {
+                          "type": "object",
+                          "properties": {
+                            "illuminance_sensor": {
+                              "type": "integer"
+                            },
+                            "last_week_total_occupancy": {
+                              "type": "integer"
+                            },
+                            "motion_event": {
+                              "type": "integer"
+                            },
+                            "this_week_cumulative_occupancy": {
+                              "type": "integer"
+                            },
+                            "co2_level": {
+                              "type": "integer"
+                            },
+                            "humidity": {
+                              "type": "integer"
+                            },
+                            "minute_sound_level": {
+                              "type": "integer"
+                            },
+                            "pressure": {
+                              "type": "integer"
+                            },
+                            "temperature": {
+                              "type": "integer"
+                            },
+                            "total_volatile_organic_compounds": {
+                              "type": "integer"
+                            },
+                            "brightness_percentage_command": {
+                              "type": "integer"
+                            },
+                            "electrical_power_sensor": {
+                              "type": "integer"
+                            },
+                            "full_power_output": {
+                              "type": "integer"
+                            },
+                            "run_time_accumulator": {
+                              "type": "integer"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "examples": {
+                "post_mts_data": {
+                  "summary": "Post mts data",
+                  "value": {
+                    "items": [
+                      {
+                        "device_id": "MTS-000001",
+                        "event_timestamp": "2026-01-01T09:00:00Z",
+                        "agg_type": "max",
+                        "payload": {
+                          "illuminance_sensor": 23,
+                          "last_week_total_occupancy": 301,
+                          "motion_event": 201,
+                          "this_week_cumulative_occupancy": 211
+                        }
+                      }
+                    ]
+                  }
+                },
+                "post_qse_data": {
+                  "summary": "Post qse data",
+                  "value": {
+                    "items": [
+                      {
+                        "device_id": "QSE-000001",
+                        "event_timestamp": "2026-01-01T09:00:00Z",
+                        "agg_type": "mean",
+                        "payload": {
+                          "co2_level": 300,
+                          "humidity": 400,
+                          "illuminance_sensor": 101,
+                          "minute_sound_level": 301,
+                          "pressure": 101,
+                          "temperature": 391,
+                          "total_volatile_organic_compounds": 101
+                        }
+                      }
+                    ]
+                  }
+                },
+                "post_lt_data": {
+                  "summary": "Post lt data",
+                  "value": {
+                    "items": [
+                      {
+                        "device_id": "LT-000001",
+                        "event_timestamp": "2026-01-01T09:00:00Z",
+                        "agg_type": "max",
+                        "payload": {
+                          "brightness_percentage_command": 88,
+                          "electrical_power_sensor": 202,
+                          "full_power_output": 303,
+                          "run_time_accumulator": 100
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Aggregation records"
+        ],
+        "summary": "Delete aggregation records",
+        "description": "Submit device IDs to delete aggregation records. Confirm the deletion scope against the API implementation before use.",
+        "operationId": "delete_aggregation_records",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          },
+          {
+            "name": "device_type",
+            "in": "path",
+            "description": "Device type identifier, for example mts, qse, acu or lt.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "mts"
+          }
+        ],
+        "requestBody": {
+          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "examples": {
+                "delete_aggregation_lt_data": {
+                  "summary": "Delete aggregation lt data",
+                  "value": {
+                    "ids": [
+                      "LT-000001"
+                    ]
+                  }
+                },
+                "delete_aggregation_mts_data": {
+                  "summary": "Delete aggregation mts data",
+                  "value": {
+                    "ids": [
+                      "MTS-000001"
+                    ]
+                  }
+                },
+                "delete_aggregation_qse_data": {
+                  "summary": "Delete aggregation qse data",
+                  "value": {
+                    "ids": [
+                      "QSE-000001"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/aggregation/organisations/{organisation}/device_types": {
+      "get": {
+        "tags": [
+          "Aggregation device types"
+        ],
+        "summary": "List aggregation device types",
+        "description": "Retrieve the aggregation device types for an organisation.",
+        "operationId": "list_aggregation_device_types",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Aggregation device types"
+        ],
+        "summary": "Create an aggregation device type",
+        "description": "Submit a device type and its measurement column definitions.",
+        "operationId": "create_an_aggregation_device_type",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          }
+        ],
+        "requestBody": {
+          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "device_type": {
+                        "type": "string"
+                      },
+                      "columns": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "examples": {
+                "post_mts_device_type": {
+                  "summary": "Post mts device type",
+                  "value": {
+                    "items": {
+                      "device_type": "mts",
+                      "columns": [
+                        {
+                          "name": "illuminance_sensor",
+                          "type": "numeric"
+                        },
+                        {
+                          "name": "last_week_total_occupancy",
+                          "type": "numeric"
+                        },
+                        {
+                          "name": "motion_event",
+                          "type": "numeric"
+                        },
+                        {
+                          "name": "this_week_cumulative_occupancy",
+                          "type": "numeric"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "post_lt_device_type": {
+                  "summary": "Post lt device type",
+                  "value": {
+                    "items": {
+                      "device_type": "lt",
+                      "columns": [
+                        {
+                          "name": "brightness_percentage_command",
+                          "type": "numeric"
+                        },
+                        {
+                          "name": "electrical_power_sensor",
+                          "type": "numeric"
+                        },
+                        {
+                          "name": "full_power_output",
+                          "type": "numeric"
+                        },
+                        {
+                          "name": "run_time_accumulator",
+                          "type": "numeric"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "post_qse_device_type": {
+                  "summary": "Post qse device type",
+                  "value": {
+                    "items": {
+                      "device_type": "qse",
+                      "columns": [
+                        {
+                          "name": "co2_level",
+                          "type": "numeric"
+                        },
+                        {
+                          "name": "humidity",
+                          "type": "numeric"
+                        },
+                        {
+                          "name": "illuminance_sensor",
+                          "type": "numeric"
+                        },
+                        {
+                          "name": "minute_sound_level",
+                          "type": "numeric"
+                        },
+                        {
+                          "name": "pressure",
+                          "type": "numeric"
+                        },
+                        {
+                          "name": "temperature",
+                          "type": "numeric"
+                        },
+                        {
+                          "name": "total_volatile_organic_compounds",
+                          "type": "numeric"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "post_acu_device_type": {
+                  "summary": "Post acu device type",
+                  "value": {
+                    "items": {
+                      "device_type": "acu",
+                      "columns": [
+                        {
+                          "name": "room_temperature",
+                          "type": "numeric"
+                        },
+                        {
+                          "name": "room_temperature_setpoint",
+                          "type": "numeric"
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Aggregation device types"
+        ],
+        "summary": "Delete aggregation device types",
+        "description": "Submit IDs to delete device type definitions. Confirm the exact deletion scope before use.",
+        "operationId": "delete_aggregation_device_types",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          }
+        ],
+        "requestBody": {
+          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "example": {
+                "ids": [
+                  "example-device-type"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/aggregation/organisations/{organisation}/device_types/{device_type}": {
+      "get": {
+        "tags": [
+          "Aggregation device types"
+        ],
+        "summary": "Get an aggregation device type",
+        "description": "Retrieve the definition of a particular aggregation device type.",
+        "operationId": "get_an_aggregation_device_type",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          },
+          {
+            "name": "device_type",
+            "in": "path",
+            "description": "Device type identifier, for example mts, qse, acu or lt.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "mts"
+          }
+        ]
+      }
+    },
+    "/organisations/{organisation}/buildings/{building}/levels/{level}/history": {
+      "delete": {
+        "tags": [
+          "Device history"
+        ],
+        "summary": "Delete device history",
+        "description": "Submit device IDs and a time range to delete historical records. Confirm the deletion scope before use.",
+        "operationId": "delete_device_history",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          },
+          {
+            "name": "building",
+            "in": "path",
+            "description": "Building identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-building"
+          },
+          {
+            "name": "level",
+            "in": "path",
+            "description": "Building level identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "level-01"
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "description": "Beginning of the requested time range. Requiredness not verified.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "example": "2026-01-01T00:00:00Z"
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "End of the requested time range. Requiredness not verified.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "example": "2026-01-02T00:00:00Z"
+          }
+        ],
+        "requestBody": {
+          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "example": {
+                "ids": [
+                  "QSE-000001"
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/organisations/{organisation}/buildings/{building}/levels/{level}/devices/{device_id}/history": {
+      "post": {
+        "tags": [
+          "Device history"
+        ],
+        "summary": "Create device history",
+        "description": "Submit historical point observations for a single device.",
+        "operationId": "create_device_history",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          },
+          {
+            "name": "building",
+            "in": "path",
+            "description": "Building identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-building"
+          },
+          {
+            "name": "level",
+            "in": "path",
+            "description": "Building level identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "level-01"
+          },
+          {
+            "name": "device_id",
+            "in": "path",
+            "description": "Device identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "QSE-000001"
+          }
+        ],
+        "requestBody": {
+          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "version": {
+                          "type": "string"
+                        },
+                        "timestamp": {
+                          "type": "string"
+                        },
+                        "points": {
+                          "type": "object",
+                          "properties": {
+                            "co2_level": {
+                              "type": "object",
+                              "properties": {
+                                "present_value": {
+                                  "type": "integer"
+                                }
+                              }
+                            },
+                            "total_volatile_organic_compounds": {
+                              "type": "object",
+                              "properties": {
+                                "present_value": {
+                                  "type": "integer"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "example": {
+                "items": [
+                  {
+                    "version": "1.4.2",
+                    "timestamp": "2026-01-01T09:00:00Z",
+                    "points": {
+                      "co2_level": {
+                        "present_value": 460
+                      },
+                      "total_volatile_organic_compounds": {
+                        "present_value": 31
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Device history"
+        ],
+        "summary": "Get history for one device",
+        "description": "Retrieve historical records for a device over a specified time range.",
+        "operationId": "get_history_for_one_device",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          },
+          {
+            "name": "building",
+            "in": "path",
+            "description": "Building identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-building"
+          },
+          {
+            "name": "level",
+            "in": "path",
+            "description": "Building level identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "level-01"
+          },
+          {
+            "name": "device_id",
+            "in": "path",
+            "description": "Device identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "QSE-000001"
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "description": "Beginning of the requested time range. Requiredness not verified.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "example": "2026-01-01T00:00:00Z"
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "End of the requested time range. Requiredness not verified.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "example": "2026-01-02T00:00:00Z"
+          }
+        ]
+      }
+    },
+    "/organisations/{organisation}/buildings/{building}/levels/{level}/devices/history": {
+      "get": {
+        "tags": [
+          "Device history"
+        ],
+        "summary": "Get history for devices",
+        "description": "Retrieve historical device records. The collection demonstrates time-range and device-prefix filters.",
+        "operationId": "get_history_for_devices",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          },
+          {
+            "name": "building",
+            "in": "path",
+            "description": "Building identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-building"
+          },
+          {
+            "name": "level",
+            "in": "path",
+            "description": "Building level identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "level-01"
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "description": "Beginning of the requested time range. Requiredness not verified.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "example": "2026-01-01T00:00:00Z"
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "End of the requested time range. Requiredness not verified.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "example": "2026-01-02T00:00:00Z"
+          },
+          {
+            "name": "devicePrefix",
+            "in": "query",
+            "description": "Filter devices by their identifier prefix. Requiredness not verified.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "ACU-"
+          }
+        ]
+      }
+    },
+    "/organisations/{organisation}/buildings/{building}/levels/{level}/devices": {
+      "get": {
+        "tags": [
+          "Device history"
+        ],
+        "summary": "List device IDs",
+        "description": "Retrieve device IDs at a building level. The collection demonstrates filtering by device prefix.",
+        "operationId": "list_device_ids",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          },
+          {
+            "name": "building",
+            "in": "path",
+            "description": "Building identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-building"
+          },
+          {
+            "name": "level",
+            "in": "path",
+            "description": "Building level identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "level-01"
+          },
+          {
+            "name": "devicePrefix",
+            "in": "query",
+            "description": "Filter devices by their identifier prefix. Requiredness not verified.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "MTS-"
+          }
+        ]
+      }
+    },
+    "/organisations/{organisation}/buildings/{building}/levels/{level}/devices/{device_id}/fdd": {
+      "post": {
+        "tags": [
+          "FDD findings"
+        ],
+        "summary": "Create FDD findings",
+        "description": "Submit findings containing a timestamp, room and rule identifier for a device.",
+        "operationId": "create_fdd_findings",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          },
+          {
+            "name": "building",
+            "in": "path",
+            "description": "Building identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-building"
+          },
+          {
+            "name": "level",
+            "in": "path",
+            "description": "Building level identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "level-01"
+          },
+          {
+            "name": "device_id",
+            "in": "path",
+            "description": "Device identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "QSE-000001"
+          }
+        ],
+        "requestBody": {
+          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "timestamp": {
+                          "type": "string"
+                        },
+                        "room": {
+                          "type": "string"
+                        },
+                        "ruleId": {
+                          "type": "string"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "example": {
+                "items": [
+                  {
+                    "timestamp": "2026-01-01T09:00:00Z",
+                    "room": "Example room",
+                    "ruleId": "FDD_EXAMPLE_RULE_001"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/organisations/{organisation}/fdd": {
+      "get": {
+        "tags": [
+          "FDD findings"
+        ],
+        "summary": "List FDD findings",
+        "description": "Retrieve findings for an organisation.",
+        "operationId": "list_fdd_findings",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          }
+        ]
+      }
+    },
+    "/organisations/{organisation}/fdd/{fdd_history_id}/assignments": {
+      "post": {
+        "tags": [
+          "FDD assignments"
+        ],
+        "summary": "Assign a finding",
+        "description": "Submit a Firebase user ID for an assignment linked to a finding.",
+        "operationId": "assign_a_finding",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          },
+          {
+            "name": "fdd_history_id",
+            "in": "path",
+            "description": "FDD finding identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "1"
+          }
+        ],
+        "requestBody": {
+          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "firebase_user_id": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "firebase_user_id": "example-user-id"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "FDD assignments"
+        ],
+        "summary": "Get finding assignments",
+        "description": "Retrieve assignments linked to a finding.",
+        "operationId": "get_finding_assignments",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          },
+          {
+            "name": "fdd_history_id",
+            "in": "path",
+            "description": "FDD finding identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "1"
+          }
+        ]
+      }
+    },
+    "/organisations/{organisation}/fdd/assignments/{fdd_assignment_id}/comments": {
+      "post": {
+        "tags": [
+          "FDD comments"
+        ],
+        "summary": "Create a comment",
+        "description": "Add a comment to a finding assignment.",
+        "operationId": "create_a_comment",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          },
+          {
+            "name": "fdd_assignment_id",
+            "in": "path",
+            "description": "FDD assignment identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "2"
+          }
+        ],
+        "requestBody": {
+          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "comment": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "comment": "Example comment for a finding."
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "FDD comments"
+        ],
+        "summary": "Get assignment comments",
+        "description": "Retrieve comments linked to a finding assignment.",
+        "operationId": "get_assignment_comments",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          },
+          {
+            "name": "fdd_assignment_id",
+            "in": "path",
+            "description": "FDD assignment identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "2"
+          }
+        ]
+      }
+    },
+    "/organisations/{organisation}/tasks/{taskId}/schedule-entries": {
+      "post": {
+        "tags": [
+          "Schedule entries"
+        ],
+        "summary": "Create a schedule entry",
+        "description": "Create a booking for a task using a scheduled timestamp, status and lock flag in the example.",
+        "operationId": "create_a_schedule_entry",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          },
+          {
+            "name": "taskId",
+            "in": "path",
+            "description": "Task identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "1"
+          }
+        ],
+        "requestBody": {
+          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "scheduled_time": {
+                    "type": "string"
+                  },
+                  "status": {
+                    "type": "string"
+                  },
+                  "is_locked": {
+                    "type": "boolean"
+                  }
+                }
+              },
+              "example": {
+                "scheduled_time": "2026-01-01T09:00:00Z",
+                "status": "Planned",
+                "is_locked": false
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Schedule entries"
+        ],
+        "summary": "Get schedule entries for a task",
+        "description": "Retrieve bookings associated with a task.",
+        "operationId": "get_schedule_entries_for_a_task",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          },
+          {
+            "name": "taskId",
+            "in": "path",
+            "description": "Task identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "1"
+          }
+        ]
+      }
+    },
+    "/organisations/{organisation}/tasks/{taskId}/schedule-entries/{entryId}": {
+      "patch": {
+        "tags": [
+          "Schedule entries"
+        ],
+        "summary": "Update a schedule entry",
+        "description": "Update the scheduled timestamp of a task booking. The sample only demonstrates a time change.",
+        "operationId": "update_a_schedule_entry",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          },
+          {
+            "name": "taskId",
+            "in": "path",
+            "description": "Task identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "1"
+          },
+          {
+            "name": "entryId",
+            "in": "path",
+            "description": "Schedule entry identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "00000000-0000-4000-8000-000000000001"
+          }
+        ],
+        "requestBody": {
+          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "scheduled_time": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "scheduled_time": "2026-01-01T09:00:00Z"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/organisations/{organisation}/schedule-entries": {
+      "get": {
+        "tags": [
+          "Schedule entries"
+        ],
+        "summary": "Get organisation schedule",
+        "description": "Retrieve the organisation schedule for a date range.",
+        "operationId": "get_organisation_schedule",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          },
+          {
+            "name": "from",
+            "in": "query",
+            "description": "Beginning of the requested time range. Requiredness not verified.",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "example": "2026-01-01"
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "End of the requested time range. Requiredness not verified.",
+            "schema": {
+              "type": "string",
+              "format": "date"
+            },
+            "example": "2026-01-02"
+          }
+        ]
+      }
+    },
+    "/organisations/{organisation}/tasks": {
+      "post": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Create a task",
+        "description": "Submit assignment IDs to associate findings with a new task.",
+        "operationId": "create_a_task",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          }
+        ],
+        "requestBody": {
+          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "assignment_ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "example": {
+                "assignment_ids": [
+                  "2"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "List tasks",
+        "description": "Retrieve tasks for an organisation.",
+        "operationId": "list_tasks",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          }
+        ]
+      }
+    },
+    "/organisations/{organisation}/tasks/{taskId}": {
+      "get": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Get a task",
+        "description": "Retrieve a particular task by ID.",
+        "operationId": "get_a_task",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          },
+          {
+            "name": "taskId",
+            "in": "path",
+            "description": "Task identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "1"
+          }
+        ]
+      }
+    },
+    "/organisations/{organisation}/tasks/{taskId}/assignments": {
+      "post": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Add an assignment to a task",
+        "description": "Submit an assignment ID to associate with the specified task.",
+        "operationId": "add_an_assignment_to_a_task",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          },
+          {
+            "name": "taskId",
+            "in": "path",
+            "description": "Task identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "1"
+          }
+        ],
+        "requestBody": {
+          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "assignment_id": {
+                    "type": "string"
+                  }
+                }
+              },
+              "example": {
+                "assignment_id": "3"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/organisations/{organisation}/fdd/unscheduled": {
+      "get": {
+        "tags": [
+          "Schedule entries"
+        ],
+        "summary": "Get unscheduled findings",
+        "description": "Retrieve unscheduled findings. The collection demonstrates filtering by Firebase user ID.",
+        "operationId": "get_unscheduled_findings",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          },
+          {
+            "name": "firebase_user_id",
+            "in": "query",
+            "description": "Firebase user identifier for the requested filter. Requiredness not verified.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-user-id"
+          }
+        ]
+      }
+    },
+    "/organisations/{organisation}/tasks/{taskId}/schedule-entries/{entryId}/transfer": {
+      "patch": {
+        "tags": [
+          "Schedule entries"
+        ],
+        "summary": "Transfer a scheduled task",
+        "description": "Transfer a scheduled task between engineers. The collection does not contain a request body for this operation; confirm the required fields before use.",
+        "operationId": "transfer_a_scheduled_task",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          },
+          {
+            "name": "taskId",
+            "in": "path",
+            "description": "Task identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "1"
+          },
+          {
+            "name": "entryId",
+            "in": "path",
+            "description": "Schedule entry identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "00000000-0000-4000-8000-000000000001"
+          }
+        ]
+      }
+    },
+    "/device_metadata/data": {
+      "get": {
+        "tags": [
+          "Device metadata"
+        ],
+        "summary": "Get device metadata",
+        "description": "Retrieve device metadata for a time range.",
+        "operationId": "get_device_metadata",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        },
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "description": "Beginning of the requested time range. Requiredness not verified.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "example": "2026-01-01T00:00:00Z"
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "End of the requested time range. Requiredness not verified.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "example": "2026-01-02T00:00:00Z"
+          }
+        ]
+      },
+      "post": {
+        "tags": [
+          "Device metadata"
+        ],
+        "summary": "Create device metadata",
+        "description": "Submit metadata describing devices, their location, physical tags and point definitions.",
+        "operationId": "create_device_metadata",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        },
+        "requestBody": {
+          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "version": {
+                          "type": "string"
+                        },
+                        "timestamp": {
+                          "type": "string"
+                        },
+                        "system": {
+                          "type": "object",
+                          "properties": {
+                            "location": {
+                              "type": "object",
+                              "properties": {
+                                "site": {
+                                  "type": "string"
+                                },
+                                "section": {
+                                  "type": "string"
+                                },
+                                "room": {
+                                  "type": "string"
+                                },
+                                "floor": {
+                                  "type": "string"
+                                },
+                                "floor_seq": {
+                                  "type": "integer"
+                                },
+                                "position": {
+                                  "type": "object",
+                                  "properties": {
+                                    "x": {
+                                      "type": "number"
+                                    },
+                                    "y": {
+                                      "type": "number"
+                                    },
+                                    "z": {
+                                      "type": "number"
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "physical_tag": {
+                              "type": "object",
+                              "properties": {
+                                "asset": {
+                                  "type": "object",
+                                  "properties": {
+                                    "guid": {
+                                      "type": "string"
+                                    },
+                                    "site": {
+                                      "type": "string"
+                                    },
+                                    "name": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        },
+                        "pointset": {
+                          "type": "object",
+                          "properties": {
+                            "points": {
+                              "type": "object",
+                              "properties": {
+                                "co2_level": {
+                                  "type": "object",
+                                  "properties": {
+                                    "unit": {
+                                      "type": "string"
+                                    },
+                                    "tags": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                },
+                                "total_volatile_organic_compounds": {
+                                  "type": "object",
+                                  "properties": {
+                                    "unit": {
+                                      "type": "string"
+                                    },
+                                    "tags": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                },
+                                "air_quality_index": {
+                                  "type": "object",
+                                  "properties": {
+                                    "tags": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                },
+                                "temperature": {
+                                  "type": "object",
+                                  "properties": {
+                                    "unit": {
+                                      "type": "string"
+                                    },
+                                    "tags": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                },
+                                "pressure": {
+                                  "type": "object",
+                                  "properties": {
+                                    "unit": {
+                                      "type": "string"
+                                    },
+                                    "tags": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                },
+                                "humidity": {
+                                  "type": "object",
+                                  "properties": {
+                                    "unit": {
+                                      "type": "string"
+                                    },
+                                    "tags": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                },
+                                "minute_sound_level": {
+                                  "type": "object",
+                                  "properties": {
+                                    "unit": {
+                                      "type": "string"
+                                    },
+                                    "tags": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                },
+                                "illuminance_sensor": {
+                                  "type": "object",
+                                  "properties": {
+                                    "unit": {
+                                      "type": "string"
+                                    },
+                                    "tags": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "example": {
+                "items": [
+                  {
+                    "version": "1.4.2",
+                    "timestamp": "2026-01-01T09:00:00Z",
+                    "system": {
+                      "location": {
+                        "site": "example-building",
+                        "section": "example-zone",
+                        "room": "Example room",
+                        "floor": "level-01",
+                        "floor_seq": 1,
+                        "position": {
+                          "x": 10.0,
+                          "y": 20.0,
+                          "z": 3.0
+                        }
+                      },
+                      "physical_tag": {
+                        "asset": {
+                          "guid": "guid://example-asset-001",
+                          "site": "example-building",
+                          "name": "QSE-000001"
+                        }
+                      }
+                    },
+                    "pointset": {
+                      "points": {
+                        "co2_level": {
+                          "unit": "ppm",
+                          "tags": [
+                            "point",
+                            "sensor",
+                            "air",
+                            "co2",
+                            "concentration"
+                          ]
+                        },
+                        "total_volatile_organic_compounds": {
+                          "unit": "ppb",
+                          "tags": [
+                            "point",
+                            "sensor",
+                            "air",
+                            "tvoc",
+                            "concentration"
+                          ]
+                        },
+                        "air_quality_index": {
+                          "tags": [
+                            "point",
+                            "sensor",
+                            "air",
+                            "airQuality"
+                          ]
+                        },
+                        "temperature": {
+                          "unit": "°C",
+                          "tags": [
+                            "point",
+                            "sensor",
+                            "air",
+                            "temp"
+                          ]
+                        },
+                        "pressure": {
+                          "unit": "mbar",
+                          "tags": [
+                            "point",
+                            "sensor",
+                            "barometric",
+                            "pressure"
+                          ]
+                        },
+                        "humidity": {
+                          "unit": "%RH",
+                          "tags": [
+                            "point",
+                            "sensor",
+                            "air",
+                            "humidity"
+                          ]
+                        },
+                        "minute_sound_level": {
+                          "unit": "db",
+                          "tags": [
+                            "point",
+                            "sensor",
+                            "soundLevel"
+                          ]
+                        },
+                        "illuminance_sensor": {
+                          "unit": "lx",
+                          "tags": [
+                            "point",
+                            "sensor",
+                            "light",
+                            "illuminance"
+                          ]
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Device metadata"
+        ],
+        "summary": "Delete device metadata",
+        "description": "Submit IDs to delete device metadata. Confirm the deletion scope before use.",
+        "operationId": "delete_device_metadata",
+        "responses": {
+          "default": {
+            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          }
+        },
+        "requestBody": {
+          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ids": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "example": {
+                "ids": [
+                  "QSE-000001"
+                ]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
