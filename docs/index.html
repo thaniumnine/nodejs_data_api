@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Thaniumnine Data API reference for device data, FDD, tasks and scheduling.">
-  <link rel="stylesheet" href="./styles.css?v=2">
+  <link rel="stylesheet" href="./styles.css?v=3">
   <title>Thaniumnine Data API | API Reference</title>
   <style>
     * {
@@ -66,14 +66,12 @@
   <noscript>JavaScript is required to render the API reference. You can read the <a href="./openapi.json">OpenAPI
       JSON</a> directly.</noscript>
   <script type="module">
-    const isLoopback = ['localhost', '127.0.0.1', '[::1]'].includes(location.hostname);
-    const testMode = isLoopback && new URLSearchParams(location.search).get('test') === '1';
+    const testMode = true;
 
     if (testMode) {
       document.querySelector('#notice').textContent =
-        'Local test mode — requests may write or delete data. Use a disposable test database only. Never use production credentials.';
+        'Live API requests are enabled. Requests may modify or delete real data. Only access organisations you are authorised to use.';
     }
-
     try {
       // Open-source MIT-licensed renderer, pinned for reproducible deployment.
       const { createApiReference } = await import(

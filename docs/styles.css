@@ -199,3 +199,70 @@ p blockquote:has(a[href="#description/getting-started"]):has(a[href="#tag/fdd-fi
     border-color: #c4b5fd;
     color: #ffffff;
 }
+
+/* introduction api category cards */
+
+#app ul:has(> li a[href="#tag/authentication"]):has(> li a[href="#tag/fdd-findings"]):has(> li a[href="#tag/device-metadata"]) {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr));
+    gap: 12px;
+    list-style: none;
+    padding: 0;
+    margin: 16px 0 28px;
+}
+
+#app ul:has(> li a[href="#tag/authentication"]):has(> li a[href="#tag/fdd-findings"]):has(> li a[href="#tag/device-metadata"]) > li {
+    position: relative;
+    display: block;
+    list-style: none;
+    margin: 0;
+    padding: 16px;
+    border: 1px solid var(--scalar-border-color, #e0e3ed);
+    border-radius: 12px;
+    background: var(--scalar-background-2, #f5f6fb);
+    color: var(--scalar-color-2, #475569);
+    font-size: 13px;
+    line-height: 1.55;
+    transition: border-color 0.18s ease, background-color 0.18s ease;
+}
+
+#app ul:has(> li a[href="#tag/authentication"]):has(> li a[href="#tag/fdd-findings"]):has(> li a[href="#tag/device-metadata"]) > li:hover {
+    border-color: var(--scalar-color-accent, #8b5cf6);
+    background: var(--scalar-background-accent, #ede9fe);
+}
+
+#app ul:has(> li a[href="#tag/authentication"]):has(> li a[href="#tag/fdd-findings"]):has(> li a[href="#tag/device-metadata"]) > li strong {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 15px;
+    font-weight: 650;
+    line-height: 1.35;
+}
+
+#app ul:has(> li a[href="#tag/authentication"]):has(> li a[href="#tag/fdd-findings"]):has(> li a[href="#tag/device-metadata"]) > li a {
+    color: var(--scalar-color-accent, #6d28d9);
+    text-decoration: none;
+}
+
+/* Make the entire card clickable */
+
+#app ul:has(> li a[href="#tag/authentication"]):has(> li a[href="#tag/fdd-findings"]):has(> li a[href="#tag/device-metadata"]) > li a::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 12px;
+}
+
+#app ul:has(> li a[href="#tag/authentication"]):has(> li a[href="#tag/fdd-findings"]):has(> li a[href="#tag/device-metadata"]) > li:focus-within {
+    outline: 2px solid var(--scalar-color-accent, #6d28d9);
+    outline-offset: 3px;
+}
+
+/* Accessibility */
+
+@media (prefers-reduced-motion: reduce) {
+    #app blockquote:has(a[href="#description/getting-started"]) a,
+    #app ul:has(> li a[href="#tag/authentication"]):has(> li a[href="#tag/fdd-findings"]):has(> li a[href="#tag/device-metadata"]) > li {
+        transition: none;
+    }
+}
