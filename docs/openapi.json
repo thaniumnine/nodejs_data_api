@@ -2857,7 +2857,112 @@
                   "type": "object"
                 },
                 "example": {
-                  
+                  {
+                    "records": [
+                      {
+                        "version": "1.4.2",
+                        "timestamp": "2026-03-20T00:54:38.000Z",
+                        "system": {
+                          "location": {
+                            "site": "GB-LON-9212",
+                            "section": "TENANT-ZONE-1",
+                            "room": "Plant-Room",
+                            "floor": "FIRST-FLOOR",
+                            "floor_seq": "1",
+                            "position": {
+                              "x": "2010658",
+                              "y": "-283739",
+                              "z": "3"
+                            }
+                          },
+                          "physical_tag": {
+                            "asset": {
+                              "guid": "guid://c5A_Of5Kcn2bUJSkAlfUS5",
+                              "site": "GB-LON-9212",
+                              "name": "QSE-00002"
+                            }
+                          }
+                        },
+                        "pointset": {
+                          "points": {
+                            "humidity": {
+                              "tags": [
+                                "point",
+                                "sensor",
+                                "air",
+                                "humidity"
+                              ],
+                              "unit": "%RH"
+                            },
+                            "pressure": {
+                              "tags": [
+                                "point",
+                                "sensor",
+                                "barometric",
+                                "pressure"
+                              ],
+                              "unit": "mbar"
+                            },
+                            "co2_level": {
+                              "tags": [
+                                "point",
+                                "sensor",
+                                "air",
+                                "co2",
+                                "concentration"
+                              ],
+                              "unit": "ppm"
+                            },
+                            "temperature": {
+                              "tags": [
+                                "point",
+                                "sensor",
+                                "air",
+                                "temp"
+                              ],
+                              "unit": "°C"
+                            },
+                            "air_quality_index": {
+                              "tags": [
+                                "point",
+                                "sensor",
+                                "air",
+                                "airQuality"
+                              ]
+                            },
+                            "illuminance_sensor": {
+                              "tags": [
+                                "point",
+                                "sensor",
+                                "light",
+                                "illuminance"
+                              ],
+                              "unit": "lx"
+                            },
+                            "minute_sound_level": {
+                              "tags": [
+                                "point",
+                                "sensor",
+                                "soundLevel"
+                              ],
+                              "unit": "db"
+                            },
+                            "total_volatile_organic_compounds": {
+                              "tags": [
+                                "point",
+                                "sensor",
+                                "air",
+                                "tvoc",
+                                "concentration"
+                              ],
+                              "unit": "ppb"
+                            }
+                          }
+                        }
+                      }
+                    ],
+                    "count": 1
+                  }
                 }
               }
             }
