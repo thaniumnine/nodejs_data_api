@@ -1,14 +1,29 @@
-docker build -t europe-west1-docker.pkg.dev/dev-thaniumos/dev-thaniumos-repo/thaniumos-api:v1.0.0 .
+#old kube cluster
+gcloud container clusters get-credentials thaniumos-frontend --zone europe-west1-b
+
+gcloud config configurations activate thanium-config && kubectl config use-context thaniumos-frontend
+
+#new kube cluster
+gcloud container clusters get-credentials thanium-cluster-1 --zone europe-west4
+
+gcloud config configurations activate thanium-config && kubectl config use-context thanium-cluster-1
+
+gcloud auth configure-docker europe-west4-docker.pkg.dev
+
+docker push europe-west4-docker.pkg.dev/prod-thaniumos/thaniumos-prod/
+
+#########################
+
+
+docker build -t europe-west4-docker.pkg.dev/prod-thaniumos/thaniumos-prod/thaniumos-api:v1.0.12 .
 
 gcloud auth configure-docker europe-west1-docker.pkg.dev
 
-docker push europe-west1-docker.pkg.dev/dev-thaniumos/dev-thaniumos-repo/thaniumos-api:v1.0.0 .
+docker push europe-west4-docker.pkg.dev/prod-thaniumos/thaniumos-prod/thaniumos-api:v1.0.12 
 
-kubectl create deployment thaniumos-api --image=europe-west1-docker.pkg.dev/dev-thaniumos/dev-thaniumos-repo/thaniumos-api:v1.0.0
+kubectl create deployment thaniumos-api --image=europe-west4-docker.pkg.dev/prod-thaniumos/thaniumos-prod/thaniumos-api:v1.0.12
 
 kubectl scale deployment thaniumos-api --replicas=0
-
-kubectl expose deployment thaniumos-api --name=thaniumos-api-service --type=LoadBalancer --port 80 --target-port 3500
 
 kubectl apply -f env-secret.yaml    
 kubectl apply -f egress.yaml
@@ -21,8 +36,8 @@ kubectl apply -f deployment.yaml
 # tail -f /dev/null
 
 ## update existing deployment
-docker build -t europe-west1-docker.pkg.dev/dev-thaniumos/dev-thaniumos-repo/thaniumos-api:v1.0.11 .
-docker push europe-west1-docker.pkg.dev/dev-thaniumos/dev-thaniumos-repo/thaniumos-api:v1.0.11
+docker build -t europe-west4-docker.pkg.dev/prod-thaniumos/thaniumos-prod/thaniumos-api:v1.0.13 .
+docker push europe-west4-docker.pkg.dev/prod-thaniumos/thaniumos-prod/thaniumos-api:v1.0.13
 
 
 #kubectl set image deployment/thaniumos-api thaniumos-api=europe-west1-docker.pkg.dev/dev-thaniumos/dev-thaniumos-repo/thaniumos-api:v1.0.1
@@ -31,6 +46,9 @@ docker push europe-west1-docker.pkg.dev/dev-thaniumos/dev-thaniumos-repo/thanium
 # DEPLOY BASE64 ENCODED SECRETS
 # ENCODE BASE64
 printf %s 'postgres://postgres:R0ck3tSh!p0s@10.9.160.3:5432/thaniumnine' | base64 -w0
+
+
+printf %s 'postgres://postgres:R0ck3tSh!p0s@10.132.0.3:5432/thaniumnine' | base64 -w0
 
 # DECODE BASE64
 printf %s "MTExMTIz" | base64 -d
