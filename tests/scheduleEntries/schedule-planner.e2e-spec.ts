@@ -14,6 +14,7 @@ describe("Schedule Planner", () => {
         originalTime,
         status: "Planned",
         isLocked: false,
+        estimatedMinutes: 480,
         ...changes,
     });
 
@@ -31,7 +32,7 @@ describe("Schedule Planner", () => {
         const incoming = createMove('entry-2', '2', 200);
 
         const occupied = new Map([
-            ['1970-01-05', existing],
+            ['1970-01-05', [existing]],
         ]);
 
         const result = planScheduleMoves(incoming, occupied);
@@ -45,7 +46,7 @@ describe("Schedule Planner", () => {
         const incoming = createMove('entry-2', '2', 100);
 
         const occupied = new Map([
-            ['1970-01-05', existing],
+            ['1970-01-05', [existing]],
         ]);
 
         const result = planScheduleMoves(incoming, occupied);
@@ -67,11 +68,17 @@ describe("Schedule Planner", () => {
         const incoming = createMove('entry-2', '2', 100);
 
         const occupied = new Map([
-            ['1970-01-05', existing],
+            ['1970-01-05', [existing]],
         ]);
 
-        expect(() => planScheduleMoves(incoming, occupied))
-            .toThrow('Cannot displace a locked or completed booking.');
+        const result = planScheduleMoves(incoming, occupied);
+
+        expect(result).toEqual([
+            {
+                ...incoming,
+                scheduledTime: '1970-01-06T09:00:00.000Z',
+            },
+        ]);
     });
 
     it('should not displace a completed booking', () => {
@@ -82,11 +89,17 @@ describe("Schedule Planner", () => {
         const incoming = createMove('entry-2', '2', 100);
 
         const occupied = new Map([
-            ['1970-01-05', existing],
+            ['1970-01-05', [existing]],
         ]);
 
-        expect(() => planScheduleMoves(incoming, occupied))
-            .toThrow('Cannot displace a locked or completed booking.');
+        const result = planScheduleMoves(incoming, occupied);
+
+        expect(result).toEqual([
+            {
+                ...incoming,
+                scheduledTime: '1970-01-06T09:00:00.000Z',
+            },
+        ]);
     });
 
     it('should reject conflicting bookings for the same task i', () => {
@@ -94,23 +107,29 @@ describe("Schedule Planner", () => {
         const incoming = createMove('entry-2', '1', 200);
 
         const occupied = new Map([
-            ['1970-01-05', existing],
+            ['1970-01-05', [existing]],
         ]);
 
         expect(() => planScheduleMoves(incoming, occupied))
-            .toThrow('Unable to determine task priority.');
+            .toThrow('This task already has a booking on this day.');
     });
 
-    it('should reject tasks with identical priority', () => {
+    it('should preserve the existing booking when priorities are equal', () => {
         const existing = createMove('entry-1', '1', 100);
         const incoming = createMove('entry-2', '2', 100);
 
         const occupied = new Map([
-            ['1970-01-05', existing],
+            ['1970-01-05', [existing]],
         ]);
 
-        expect(() => planScheduleMoves(incoming, occupied))
-            .toThrow('Unable to determine task priority.');
+        const result = planScheduleMoves(incoming, occupied);
+
+        expect(result).toEqual([
+            {
+                ...incoming,
+                scheduledTime: '1970-01-06T09:00:00.000Z',
+            },
+        ]);
     });
 
     it('should cascade multiple conflicting bookings', () => {
@@ -122,8 +141,8 @@ describe("Schedule Planner", () => {
         const incoming = createMove('entry-3', '3', 100);
 
         const occupied = new Map([
-            ['1970-01-05', monday],
-            ['1970-01-06', tuesday],
+            ['1970-01-05', [monday]],
+            ['1970-01-06', [tuesday]],
         ]);
 
         const result = planScheduleMoves(incoming, occupied);
@@ -150,7 +169,7 @@ describe("Schedule Planner", () => {
         });
 
         const occupied = new Map([
-            ['1970-01-02', existing],
+            ['1970-01-02', [existing]],
         ]);
 
         const result = planScheduleMoves(incoming, occupied);
