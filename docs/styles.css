@@ -140,3 +140,62 @@
         display: none;
     }
 }
+
+/* introduction landing page */
+
+p blockquote:has(a[href="#description/getting-started"]):has(a[href="#tag/fdd-findings"]) {
+    margin: 20px 0 28px;
+    padding: clamp(20px, 4vw, 32px);
+    color: #e2e8f0;
+    background: radial-gradient(
+        ellipse at top right,
+        #352259 0%,
+        transparent 72%
+    ), #080b20;
+    border: 1px solid #393351;
+    border-top: 3px solid #a78bfa;
+    border-radius: 16px;
+    font-style: normal;
+    box-shadow: 0 8px 24px rgba(8,11 ,32 , 0.12);
+}
+
+#app blockquote:has(a[href="#description/getting-started"]):has(a[href="#tag/fdd-findings"]) p:first-child strong {
+    display: block;
+    color: #ffffff;
+    font-size: clamp(24px, 3vw, 34px);
+    font-weight: 700;
+    letter-spacing: -0.035em;
+    line-height: 1.2;
+}
+
+#app blockquote:has(a[href="#description/getting-started"]):has(a[href="#tag/fdd-findings"]) p:last-child {
+    margin-bottom: 0;
+}
+
+/* Welcome panel buttons */
+
+#app blockquote:has(a[href="#description/getting-started"]):has(a[href="#tag/fdd-findings"]) a {
+    display: inline-block;
+    margin: 4px 0;
+    padding: 8px 12px;
+    border: 1px solid #6d5a96;
+    border-radius: 8px;
+    background: #211c3d;
+    color: #ede9fe;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.18s ease, border-color 0.18s ease;
+}
+
+#app blockquote:has(a[href="#description/getting-started"]) a[href="#description/getting-started"] {
+    background: #6d28d9;
+    border-color: #8b5cf6;
+    color: #ffffff;
+}
+
+#app blockquote:has(a[href="#description/getting-started"]) a:hover {
+    background: #503381;
+    border-color: #c4b5fd;
+    color: #ffffff;
+}
