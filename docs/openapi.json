@@ -3,7 +3,7 @@
   "info": {
     "title": "Thaniumnine Data API",
     "version": "1.0.0-draft",
-    "description": "API reference for device metadata, historical measurements, aggregation records, fault detection and diagnostics (FDD), tasks and scheduling.\n\n## Getting started\nAll paths in this reference are relative to `/api/v1`. The configured server is a local development instance. Replace example identifiers with values from an environment you are authorised to use.\n\n## Authentication\nUse `POST /auth/login` to obtain an access token. Send it as `Authorization: Bearer <access_token>` on protected operations. Use `POST /auth/refresh` to refresh the session and `POST /auth/logout` to revoke it. Authentication requirements are based on the Postman collection's bearer configuration; verify them against the API.\n\n## About this draft\nRequest examples are sanitised from the Postman collection; schema types are inferred from examples and are not a complete validation contract. All example identifiers and timestamps are illustrative. The collection does not contain matching saved responses, so response codes and payloads are not asserted as verified. The login example is inferred from the available authentication fields. Live requests are disabled by default. Do not use production credentials or customer data in examples."
+    "description": "API reference for device metadata, historical measurements, aggregation records, fault detection and diagnostics (FDD), tasks and scheduling.\n\n## Getting started\nAll paths in this reference are relative to `/api/v1`. The configured server is a local development instance. Replace example identifiers with values from an environment you are authorised to use.\n\n## Authentication\nUse `POST /auth/login` to obtain an access token. Send it as `Authorization: Bearer <access_token>` on protected operations. Use `POST /auth/refresh` to refresh the session and `POST /auth/logout` to revoke it. Authentication requirements are based on the Postman collection's bearer configuration; verify them against the API.\n\n## About this draft\nRequest examples are sanitised from the Postman collection; schema types are inferred from examples and are not a complete validation contract. All example identifiers and timestamps are illustrative. Response examples include captured or illustrative payloads and placeholders for endpoints still awaiting verification. Status codes and response contracts should be checked against the running API. The login example is inferred from the available authentication fields. Live requests are disabled by default. Do not use production credentials or customer data in examples."
   },
   "servers": [
     {
@@ -90,6 +90,12 @@
                     },
                     "refresh_token": {
                       "type": "string"
+                    },
+                    "token_type": {
+                      "type": "string"
+                    },
+                    "expires_in": {
+                      "type": "integer"
                     }
                   }
                 },
@@ -174,6 +180,12 @@
                     },
                     "refresh_token": {
                       "type": "string"
+                    },
+                    "token_type": {
+                      "type": "string"
+                    },
+                    "expires_in": {
+                      "type": "integer"
                     }
                   }
                 },
@@ -219,7 +231,7 @@
         "operationId": "get_aggregation_records",
         "responses": {
           "200": {
-            "description": "Aggregation records retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "description": "Aggregation records retrieved successfully. (Example response; status and contract pending verification.)",
             "content": {
               "application/json": {
                 "schema": {
@@ -234,7 +246,7 @@
                         "motion_event": null,
                         "this_week_cumulative_occupancy": null
                       },
-                      "device_id": "MTS-00001",
+                      "device_id": "MTS-000001",
                       "event_timestamp": "2026-07-28T00:00:00.000Z"
                     },
                     {
@@ -244,7 +256,7 @@
                         "motion_event": null,
                         "this_week_cumulative_occupancy": null
                       },
-                      "device_id": "MTS-00001",
+                      "device_id": "MTS-000001",
                       "event_timestamp": "2026-07-28T01:00:00.000Z"
                     }
                   ]
@@ -272,10 +284,20 @@
             "schema": {
               "type": "string"
             },
-            "example": "mts",
-            "acu",
-            "qse",
-            "lt",
+            "examples": {
+              "mts": {
+                "value": "mts"
+              },
+              "acu": {
+                "value": "acu"
+              },
+              "qse": {
+                "value": "qse"
+              },
+              "lt": {
+                "value": "lt"
+              }
+            }
           },
           {
             "name": "from",
@@ -285,7 +307,7 @@
               "type": "string",
               "format": "date-time"
             },
-            "example": "2026-01-01T00:00:00Z"
+            "example": "2026-07-28T00:00:00Z"
           },
           {
             "name": "to",
@@ -295,7 +317,7 @@
               "type": "string",
               "format": "date-time"
             },
-            "example": "2026-01-02T00:00:00Z"
+            "example": "2026-07-29T00:00:00Z"
           },
           {
             "name": "aggType",
@@ -591,125 +613,145 @@
         "operationId": "list_aggregation_device_types",
         "responses": {
           "200": {
-            "description": "Aggregation device types retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "description": "Aggregation device types retrieved successfully. (Example response; status and contract pending verification.)",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object"
-                },
-                "example": {
-                  [
-                    {
-                      "device_type": "acu",
-                      "columns": [
-                        {
-                          "name": "room_temperature",
-                          "type": "numeric"
-                        },
-                        {
-                          "name": "room_temperature_setpoint",
-                          "type": "numeric"
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "device_type": {
+                        "type": "string"
+                      },
+                      "columns": {
+                        "type": "array",
+                        "items": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string"
+                            }
+                          }
                         }
-                      ]
-                    },
-                    {
-                      "device_type": "inv",
-                      "columns": [
-                        {
-                          "name": "grid_power",
-                          "type": "numeric"
-                        },
-                        {
-                          "name": "alternating_current_phase_1_power",
-                          "type": "numeric"
-                        },
-                        {
-                          "name": "alternating_current_phase_2_power",
-                          "type": "numeric"
-                        },
-                        {
-                          "name": "alternating_current_phase_3_power",
-                          "type": "numeric"
-                        }
-                      ]
-                    },
-                    {
-                      "device_type": "lt",
-                      "columns": [
-                        {
-                          "name": "brightness_percentage_command",
-                          "type": "numeric"
-                        },
-                        {
-                          "name": "electrical_power_sensor",
-                          "type": "numeric"
-                        },
-                        {
-                          "name": "full_power_output",
-                          "type": "numeric"
-                        },
-                        {
-                          "name": "run_time_accumulator",
-                          "type": "numeric"
-                        }
-                      ]
-                    },
-                    {
-                      "device_type": "mts",
-                      "columns": [
-                        {
-                          "name": "illuminance_sensor",
-                          "type": "numeric"
-                        },
-                        {
-                          "name": "last_week_total_occupancy",
-                          "type": "numeric"
-                        },
-                        {
-                          "name": "motion_event",
-                          "type": "numeric"
-                        },
-                        {
-                          "name": "this_week_cumulative_occupancy",
-                          "type": "numeric"
-                        }
-                      ]
-                    },
-                    {
-                      "device_type": "qse",
-                      "columns": [
-                        {
-                          "name": "co2_level",
-                          "type": "numeric"
-                        },
-                        {
-                          "name": "humidity",
-                          "type": "numeric"
-                        },
-                        {
-                          "name": "illuminance_sensor",
-                          "type": "numeric"
-                        },
-                        {
-                          "name": "minute_sound_level",
-                          "type": "numeric"
-                        },
-                        {
-                          "name": "pressure",
-                          "type": "numeric"
-                        },
-                        {
-                          "name": "temperature",
-                          "type": "numeric"
-                        },
-                        {
-                          "name": "total_volatile_organic_compounds",
-                          "type": "numeric"
-                        }
-                      ]
+                      }
                     }
-                  ]
-                }
+                  }
+                },
+                "example": [
+                  {
+                    "device_type": "acu",
+                    "columns": [
+                      {
+                        "name": "room_temperature",
+                        "type": "numeric"
+                      },
+                      {
+                        "name": "room_temperature_setpoint",
+                        "type": "numeric"
+                      }
+                    ]
+                  },
+                  {
+                    "device_type": "inv",
+                    "columns": [
+                      {
+                        "name": "grid_power",
+                        "type": "numeric"
+                      },
+                      {
+                        "name": "alternating_current_phase_1_power",
+                        "type": "numeric"
+                      },
+                      {
+                        "name": "alternating_current_phase_2_power",
+                        "type": "numeric"
+                      },
+                      {
+                        "name": "alternating_current_phase_3_power",
+                        "type": "numeric"
+                      }
+                    ]
+                  },
+                  {
+                    "device_type": "lt",
+                    "columns": [
+                      {
+                        "name": "brightness_percentage_command",
+                        "type": "numeric"
+                      },
+                      {
+                        "name": "electrical_power_sensor",
+                        "type": "numeric"
+                      },
+                      {
+                        "name": "full_power_output",
+                        "type": "numeric"
+                      },
+                      {
+                        "name": "run_time_accumulator",
+                        "type": "numeric"
+                      }
+                    ]
+                  },
+                  {
+                    "device_type": "mts",
+                    "columns": [
+                      {
+                        "name": "illuminance_sensor",
+                        "type": "numeric"
+                      },
+                      {
+                        "name": "last_week_total_occupancy",
+                        "type": "numeric"
+                      },
+                      {
+                        "name": "motion_event",
+                        "type": "numeric"
+                      },
+                      {
+                        "name": "this_week_cumulative_occupancy",
+                        "type": "numeric"
+                      }
+                    ]
+                  },
+                  {
+                    "device_type": "qse",
+                    "columns": [
+                      {
+                        "name": "co2_level",
+                        "type": "numeric"
+                      },
+                      {
+                        "name": "humidity",
+                        "type": "numeric"
+                      },
+                      {
+                        "name": "illuminance_sensor",
+                        "type": "numeric"
+                      },
+                      {
+                        "name": "minute_sound_level",
+                        "type": "numeric"
+                      },
+                      {
+                        "name": "pressure",
+                        "type": "numeric"
+                      },
+                      {
+                        "name": "temperature",
+                        "type": "numeric"
+                      },
+                      {
+                        "name": "total_volatile_organic_compounds",
+                        "type": "numeric"
+                      }
+                    ]
+                  }
+                ]
               }
             }
           }
@@ -1240,122 +1282,120 @@
         "operationId": "get_history_for_one_device",
         "responses": {
           "200": {
-            "description": "Device history retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "description": "Device history retrieved successfully. (Example response; status and contract pending verification.)",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object"
                 },
                 "example": {
-                  {
-                    "records": [
-                      {
-                        "points": {
-                          "remedy": {
-                            "present_value": ""
-                          },
-                          "is_consequence": {
-                            "present_value": "Not applicable"
-                          },
-                          "remedy_details": {
-                            "present_value": ""
-                          },
-                          "operational_status": {
-                            "present_value": "Normal"
-                          },
-                          "other_assets_affected": {
-                            "present_value": "0"
-                          },
-                          "operational_status_due_to": {
-                            "present_value": ""
-                          },
-                          "operational_status_details": {
-                            "present_value": ""
-                          }
+                  "records": [
+                    {
+                      "points": {
+                        "remedy": {
+                          "present_value": ""
                         },
-                        "timestamp": "2026-04-07T08:03:10.000Z"
+                        "is_consequence": {
+                          "present_value": "Not applicable"
+                        },
+                        "remedy_details": {
+                          "present_value": ""
+                        },
+                        "operational_status": {
+                          "present_value": "Normal"
+                        },
+                        "other_assets_affected": {
+                          "present_value": "0"
+                        },
+                        "operational_status_due_to": {
+                          "present_value": ""
+                        },
+                        "operational_status_details": {
+                          "present_value": ""
+                        }
                       },
-                      {
-                        "points": {
-                          "remedy": {
-                            "present_value": ""
-                          },
-                          "is_consequence": {
-                            "present_value": "Not applicable"
-                          },
-                          "remedy_details": {
-                            "present_value": ""
-                          },
-                          "operational_status": {
-                            "present_value": "Normal"
-                          },
-                          "other_assets_affected": {
-                            "present_value": "0"
-                          },
-                          "operational_status_due_to": {
-                            "present_value": ""
-                          },
-                          "operational_status_details": {
-                            "present_value": ""
-                          }
+                      "timestamp": "2026-04-07T08:03:10.000Z"
+                    },
+                    {
+                      "points": {
+                        "remedy": {
+                          "present_value": ""
                         },
-                        "timestamp": "2026-04-07T08:03:10.000Z"
+                        "is_consequence": {
+                          "present_value": "Not applicable"
+                        },
+                        "remedy_details": {
+                          "present_value": ""
+                        },
+                        "operational_status": {
+                          "present_value": "Normal"
+                        },
+                        "other_assets_affected": {
+                          "present_value": "0"
+                        },
+                        "operational_status_due_to": {
+                          "present_value": ""
+                        },
+                        "operational_status_details": {
+                          "present_value": ""
+                        }
                       },
-                      {
-                        "points": {
-                          "remedy": {
-                            "present_value": ""
-                          },
-                          "is_consequence": {
-                            "present_value": "Not applicable"
-                          },
-                          "remedy_details": {
-                            "present_value": ""
-                          },
-                          "operational_status": {
-                            "present_value": "Normal"
-                          },
-                          "other_assets_affected": {
-                            "present_value": "0"
-                          },
-                          "operational_status_due_to": {
-                            "present_value": ""
-                          },
-                          "operational_status_details": {
-                            "present_value": ""
-                          }
+                      "timestamp": "2026-04-07T08:03:10.000Z"
+                    },
+                    {
+                      "points": {
+                        "remedy": {
+                          "present_value": ""
                         },
-                        "timestamp": "2026-04-18T12:32:58.000Z"
+                        "is_consequence": {
+                          "present_value": "Not applicable"
+                        },
+                        "remedy_details": {
+                          "present_value": ""
+                        },
+                        "operational_status": {
+                          "present_value": "Normal"
+                        },
+                        "other_assets_affected": {
+                          "present_value": "0"
+                        },
+                        "operational_status_due_to": {
+                          "present_value": ""
+                        },
+                        "operational_status_details": {
+                          "present_value": ""
+                        }
                       },
-                      {
-                        "points": {
-                          "remedy": {
-                            "present_value": ""
-                          },
-                          "is_consequence": {
-                            "present_value": "Not applicable"
-                          },
-                          "remedy_details": {
-                            "present_value": ""
-                          },
-                          "operational_status": {
-                            "present_value": "Normal"
-                          },
-                          "other_assets_affected": {
-                            "present_value": "0"
-                          },
-                          "operational_status_due_to": {
-                            "present_value": ""
-                          },
-                          "operational_status_details": {
-                            "present_value": ""
-                          }
+                      "timestamp": "2026-04-18T12:32:58.000Z"
+                    },
+                    {
+                      "points": {
+                        "remedy": {
+                          "present_value": ""
                         },
-                        "timestamp": "2026-05-08T00:58:03.000Z"
-                      }
-                    ],
-                    "count": 4
-                  }
+                        "is_consequence": {
+                          "present_value": "Not applicable"
+                        },
+                        "remedy_details": {
+                          "present_value": ""
+                        },
+                        "operational_status": {
+                          "present_value": "Normal"
+                        },
+                        "other_assets_affected": {
+                          "present_value": "0"
+                        },
+                        "operational_status_due_to": {
+                          "present_value": ""
+                        },
+                        "operational_status_details": {
+                          "present_value": ""
+                        }
+                      },
+                      "timestamp": "2026-05-08T00:58:03.000Z"
+                    }
+                  ],
+                  "count": 4
                 }
               }
             }
@@ -1410,7 +1450,7 @@
               "type": "string",
               "format": "date-time"
             },
-            "example": "2026-01-01T00:00:00Z"
+            "example": "2026-04-07T00:00:00Z"
           },
           {
             "name": "to",
@@ -1420,7 +1460,7 @@
               "type": "string",
               "format": "date-time"
             },
-            "example": "2026-01-02T00:00:00Z"
+            "example": "2026-05-09T00:00:00Z"
           }
         ]
       }
@@ -1435,869 +1475,870 @@
         "operationId": "get_history_for_devices",
         "responses": {
           "200": {
-            "description": "Device histories retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "description": "Device histories retrieved successfully. (Example response; status and contract pending verification.)",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "object"
                 },
                 "example": {
-                  {
-                    "records": [
-                      {
-                        "points": {
-                          "remedy": {
-                            "present_value": ""
-                          },
-                          "is_consequence": {
-                            "present_value": "Not applicable"
-                          },
-                          "remedy_details": {
-                            "present_value": ""
-                          },
-                          "operational_status": {
-                            "present_value": "Normal"
-                          },
-                          "other_assets_affected": {
-                            "present_value": "0"
-                          },
-                          "operational_status_due_to": {
-                            "present_value": ""
-                          },
-                          "operational_status_details": {
-                            "present_value": ""
-                          }
+                  "records": [
+                    {
+                      "points": {
+                        "remedy": {
+                          "present_value": ""
                         },
-                        "timestamp": "2026-04-07T08:03:10.000Z"
+                        "is_consequence": {
+                          "present_value": "Not applicable"
+                        },
+                        "remedy_details": {
+                          "present_value": ""
+                        },
+                        "operational_status": {
+                          "present_value": "Normal"
+                        },
+                        "other_assets_affected": {
+                          "present_value": "0"
+                        },
+                        "operational_status_due_to": {
+                          "present_value": ""
+                        },
+                        "operational_status_details": {
+                          "present_value": ""
+                        }
                       },
-                      {
-                        "points": {
-                          "remedy": {
-                            "present_value": ""
-                          },
-                          "is_consequence": {
-                            "present_value": "Not applicable"
-                          },
-                          "remedy_details": {
-                            "present_value": ""
-                          },
-                          "operational_status": {
-                            "present_value": "Normal"
-                          },
-                          "other_assets_affected": {
-                            "present_value": "0"
-                          },
-                          "operational_status_due_to": {
-                            "present_value": ""
-                          },
-                          "operational_status_details": {
-                            "present_value": ""
-                          }
+                      "timestamp": "2026-04-07T08:03:10.000Z"
+                    },
+                    {
+                      "points": {
+                        "remedy": {
+                          "present_value": ""
                         },
-                        "timestamp": "2026-04-07T08:03:10.000Z"
+                        "is_consequence": {
+                          "present_value": "Not applicable"
+                        },
+                        "remedy_details": {
+                          "present_value": ""
+                        },
+                        "operational_status": {
+                          "present_value": "Normal"
+                        },
+                        "other_assets_affected": {
+                          "present_value": "0"
+                        },
+                        "operational_status_due_to": {
+                          "present_value": ""
+                        },
+                        "operational_status_details": {
+                          "present_value": ""
+                        }
                       },
-                      {
-                        "points": {
-                          "remedy": {
-                            "present_value": ""
-                          },
-                          "is_consequence": {
-                            "present_value": "Not applicable"
-                          },
-                          "remedy_details": {
-                            "present_value": ""
-                          },
-                          "operational_status": {
-                            "present_value": "Normal"
-                          },
-                          "other_assets_affected": {
-                            "present_value": "0"
-                          },
-                          "operational_status_due_to": {
-                            "present_value": ""
-                          },
-                          "operational_status_details": {
-                            "present_value": ""
-                          }
+                      "timestamp": "2026-04-07T08:03:10.000Z"
+                    },
+                    {
+                      "points": {
+                        "remedy": {
+                          "present_value": ""
                         },
-                        "timestamp": "2026-04-18T12:32:58.000Z"
+                        "is_consequence": {
+                          "present_value": "Not applicable"
+                        },
+                        "remedy_details": {
+                          "present_value": ""
+                        },
+                        "operational_status": {
+                          "present_value": "Normal"
+                        },
+                        "other_assets_affected": {
+                          "present_value": "0"
+                        },
+                        "operational_status_due_to": {
+                          "present_value": ""
+                        },
+                        "operational_status_details": {
+                          "present_value": ""
+                        }
                       },
-                      {
-                        "points": {
-                          "remedy": {
-                            "present_value": ""
-                          },
-                          "is_consequence": {
-                            "present_value": "Not applicable"
-                          },
-                          "remedy_details": {
-                            "present_value": ""
-                          },
-                          "operational_status": {
-                            "present_value": "Normal"
-                          },
-                          "other_assets_affected": {
-                            "present_value": "0"
-                          },
-                          "operational_status_due_to": {
-                            "present_value": ""
-                          },
-                          "operational_status_details": {
-                            "present_value": ""
-                          }
+                      "timestamp": "2026-04-18T12:32:58.000Z"
+                    },
+                    {
+                      "points": {
+                        "remedy": {
+                          "present_value": ""
                         },
-                        "timestamp": "2026-05-08T00:58:03.000Z"
-                      }
-                    ],
-                    "count": 4
-                  }
+                        "is_consequence": {
+                          "present_value": "Not applicable"
+                        },
+                        "remedy_details": {
+                          "present_value": ""
+                        },
+                        "operational_status": {
+                          "present_value": "Normal"
+                        },
+                        "other_assets_affected": {
+                          "present_value": "0"
+                        },
+                        "operational_status_due_to": {
+                          "present_value": ""
+                        },
+                        "operational_status_details": {
+                          "present_value": ""
+                        }
+                      },
+                      "timestamp": "2026-05-08T00:58:03.000Z"
+                    }
+                  ],
+                  "count": 4
                 }
               }
             }
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
           },
-          "parameters": [
-            {
-              "name": "organisation",
-              "in": "path",
-              "description": "Organisation identifier.",
-              "required": true,
-              "schema": {
-                "type": "string"
-              },
-              "example": "example-org"
+          {
+            "name": "building",
+            "in": "path",
+            "description": "Building identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
             },
-            {
-              "name": "building",
-              "in": "path",
-              "description": "Building identifier.",
-              "required": true,
-              "schema": {
-                "type": "string"
-              },
-              "example": "example-building"
-            },
-            {
-              "name": "level",
-              "in": "path",
-              "description": "Building level identifier.",
-              "required": true,
-              "schema": {
-                "type": "string"
-              },
-              "example": "level-01"
-            },
-            {
-              "name": "from",
-              "in": "query",
-              "description": "Beginning of the requested time range. Requiredness not verified.",
-              "schema": {
-                "type": "string",
-                "format": "date-time"
-              },
-              "example": "2026-01-01T00:00:00Z"
-            },
-            {
-              "name": "to",
-              "in": "query",
-              "description": "End of the requested time range. Requiredness not verified.",
-              "schema": {
-                "type": "string",
-                "format": "date-time"
-              },
-              "example": "2026-01-02T00:00:00Z"
-            },
-            {
-              "name": "devicePrefix",
-              "in": "query",
-              "description": "Filter devices by their identifier prefix. Requiredness not verified.",
-              "schema": {
-                "type": "string"
-              },
-              "example": "ACU-"
-            }
-          ]
-        }
-      },
-      "/organisations/{organisation}/buildings/{building}/levels/{level}/devices": {
-        "get": {
-          "tags": [
-            "Device history"
-          ],
-          "summary": "List device IDs",
-          "description": "Retrieve device IDs at a building level. The collection demonstrates filtering by device prefix.",
-          "operationId": "list_device_ids",
-          "responses": {
-            "200": {
-              "description": "Device IDs retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object"
-                  },
-                  "example": {}
-                }
-              }
-            }
+            "example": "example-building"
           },
-          "parameters": [
-            {
-              "name": "organisation",
-              "in": "path",
-              "description": "Organisation identifier.",
-              "required": true,
-              "schema": {
-                "type": "string"
-              },
-              "example": "example-org"
+          {
+            "name": "level",
+            "in": "path",
+            "description": "Building level identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
             },
-            {
-              "name": "building",
-              "in": "path",
-              "description": "Building identifier.",
-              "required": true,
-              "schema": {
-                "type": "string"
-              },
-              "example": "example-building"
-            },
-            {
-              "name": "level",
-              "in": "path",
-              "description": "Building level identifier.",
-              "required": true,
-              "schema": {
-                "type": "string"
-              },
-              "example": "level-01"
-            },
-            {
-              "name": "devicePrefix",
-              "in": "query",
-              "description": "Filter devices by their identifier prefix. Requiredness not verified.",
-              "schema": {
-                "type": "string"
-              },
-              "example": "MTS-"
-            }
-          ]
-        }
-      },
-      "/organisations/{organisation}/buildings/{building}/levels/{level}/devices/{device_id}/fdd": {
-        "post": {
-          "tags": [
-            "FDD findings"
-          ],
-          "summary": "Create FDD findings",
-          "description": "Submit findings containing a timestamp, room and rule identifier for a device.",
-          "operationId": "create_fdd_findings",
-          "responses": {
-            "201": {
-              "description": "FDD findings created successfully. (Provisional status and placeholder body; verify against the running API.)",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object"
-                  },
-                  "example": {}
-                }
-              }
-            }
+            "example": "level-01"
           },
-          "parameters": [
-            {
-              "name": "organisation",
-              "in": "path",
-              "description": "Organisation identifier.",
-              "required": true,
-              "schema": {
-                "type": "string"
-              },
-              "example": "example-org"
+          {
+            "name": "from",
+            "in": "query",
+            "description": "Beginning of the requested time range. Requiredness not verified.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
             },
-            {
-              "name": "building",
-              "in": "path",
-              "description": "Building identifier.",
-              "required": true,
-              "schema": {
-                "type": "string"
-              },
-              "example": "example-building"
+            "example": "2026-04-07T00:00:00Z"
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "description": "End of the requested time range. Requiredness not verified.",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
             },
-            {
-              "name": "level",
-              "in": "path",
-              "description": "Building level identifier.",
-              "required": true,
-              "schema": {
-                "type": "string"
-              },
-              "example": "level-01"
+            "example": "2026-05-09T00:00:00Z"
+          },
+          {
+            "name": "devicePrefix",
+            "in": "query",
+            "description": "Filter devices by their identifier prefix. Requiredness not verified.",
+            "schema": {
+              "type": "string"
             },
-            {
-              "name": "device_id",
-              "in": "path",
-              "description": "Device identifier.",
-              "required": true,
-              "schema": {
-                "type": "string"
-              },
-              "example": "QSE-000001"
-            }
-          ],
-          "requestBody": {
-            "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+            "example": "ACU-"
+          }
+        ]
+      }
+    },
+    "/organisations/{organisation}/buildings/{building}/levels/{level}/devices": {
+      "get": {
+        "tags": [
+          "Device history"
+        ],
+        "summary": "List device IDs",
+        "description": "Retrieve device IDs at a building level. The collection demonstrates filtering by device prefix.",
+        "operationId": "list_device_ids",
+        "responses": {
+          "200": {
+            "description": "Device IDs retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          },
+          {
+            "name": "building",
+            "in": "path",
+            "description": "Building identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-building"
+          },
+          {
+            "name": "level",
+            "in": "path",
+            "description": "Building level identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "level-01"
+          },
+          {
+            "name": "devicePrefix",
+            "in": "query",
+            "description": "Filter devices by their identifier prefix. Requiredness not verified.",
+            "schema": {
+              "type": "string"
+            },
+            "example": "MTS-"
+          }
+        ]
+      }
+    },
+    "/organisations/{organisation}/buildings/{building}/levels/{level}/devices/{device_id}/fdd": {
+      "post": {
+        "tags": [
+          "FDD findings"
+        ],
+        "summary": "Create FDD findings",
+        "description": "Submit findings containing a timestamp, room and rule identifier for a device.",
+        "operationId": "create_fdd_findings",
+        "responses": {
+          "201": {
+            "description": "FDD findings created successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          },
+          {
+            "name": "building",
+            "in": "path",
+            "description": "Building identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-building"
+          },
+          {
+            "name": "level",
+            "in": "path",
+            "description": "Building level identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "level-01"
+          },
+          {
+            "name": "device_id",
+            "in": "path",
+            "description": "Device identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "QSE-000001"
+          }
+        ],
+        "requestBody": {
+          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "items": {
+                    "type": "array",
                     "items": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "timestamp": {
-                            "type": "string"
-                          },
-                          "room": {
-                            "type": "string"
-                          },
-                          "ruleId": {
-                            "type": "string"
-                          }
+                      "type": "object",
+                      "properties": {
+                        "timestamp": {
+                          "type": "string"
+                        },
+                        "room": {
+                          "type": "string"
+                        },
+                        "ruleId": {
+                          "type": "string"
                         }
                       }
                     }
                   }
-                },
-                "example": {
-                  "items": [
-                    {
-                      "timestamp": "2026-01-01T09:00:00Z",
-                      "room": "Example room",
-                      "ruleId": "FDD_EXAMPLE_RULE_001"
-                    }
-                  ]
                 }
+              },
+              "example": {
+                "items": [
+                  {
+                    "timestamp": "2026-01-01T09:00:00Z",
+                    "room": "Example room",
+                    "ruleId": "FDD_EXAMPLE_RULE_001"
+                  }
+                ]
               }
             }
           }
         }
-      },
-      "/organisations/{organisation}/fdd": {
-        "get": {
-          "tags": [
-            "FDD findings"
-          ],
-          "summary": "List FDD findings",
-          "description": "Retrieve findings for an organisation.",
-          "operationId": "list_fdd_findings",
-          "responses": {
-            "200": {
-              "description": "FDD findings retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object"
-                  },
-                  "example": {}
-                }
-              }
-            }
-          },
-          "parameters": [
-            {
-              "name": "organisation",
-              "in": "path",
-              "description": "Organisation identifier.",
-              "required": true,
-              "schema": {
-                "type": "string"
-              },
-              "example": "example-org"
-            }
-          ]
-        }
-      },
-      "/organisations/{organisation}/fdd/{fdd_history_id}/assignments": {
-        "post": {
-          "tags": [
-            "FDD assignments"
-          ],
-          "summary": "Assign a finding",
-          "description": "Submit a Firebase user ID for an assignment linked to a finding.",
-          "operationId": "assign_a_finding",
-          "responses": {
-            "201": {
-              "description": "Finding assigned successfully. (Provisional status and placeholder body; verify against the running API.)",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object"
-                  },
-                  "example": {}
-                }
-              }
-            }
-          },
-          "parameters": [
-            {
-              "name": "organisation",
-              "in": "path",
-              "description": "Organisation identifier.",
-              "required": true,
-              "schema": {
-                "type": "string"
-              },
-              "example": "example-org"
-            },
-            {
-              "name": "fdd_history_id",
-              "in": "path",
-              "description": "FDD finding identifier.",
-              "required": true,
-              "schema": {
-                "type": "string"
-              },
-              "example": "1"
-            }
-          ],
-          "requestBody": {
-            "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+      }
+    },
+    "/organisations/{organisation}/fdd": {
+      "get": {
+        "tags": [
+          "FDD findings"
+        ],
+        "summary": "List FDD findings",
+        "description": "Retrieve findings for an organisation.",
+        "operationId": "list_fdd_findings",
+        "responses": {
+          "200": {
+            "description": "FDD findings retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "firebase_user_id": {
-                      "type": "string"
-                    }
-                  }
+                  "type": "object"
                 },
-                "example": {
-                  "firebase_user_id": "example-user-id"
-                }
+                "example": {}
               }
             }
           }
         },
-        "get": {
-          "tags": [
-            "FDD assignments"
-          ],
-          "summary": "Get finding assignments",
-          "description": "Retrieve assignments linked to a finding.",
-          "operationId": "get_finding_assignments",
-          "responses": {
-            "200": {
-              "description": "Finding assignments retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object"
-                  },
-                  "example": {}
-                }
-              }
-            }
-          },
-          "parameters": [
-            {
-              "name": "organisation",
-              "in": "path",
-              "description": "Organisation identifier.",
-              "required": true,
-              "schema": {
-                "type": "string"
-              },
-              "example": "example-org"
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
             },
-            {
-              "name": "fdd_history_id",
-              "in": "path",
-              "description": "FDD finding identifier.",
-              "required": true,
-              "schema": {
-                "type": "string"
-              },
-              "example": "1"
-            }
-          ]
-        }
-      },
-      "/organisations/{organisation}/fdd/assignments/{fdd_assignment_id}/comments": {
-        "post": {
-          "tags": [
-            "FDD comments"
-          ],
-          "summary": "Create a comment",
-          "description": "Add a comment to a finding assignment.",
-          "operationId": "create_a_comment",
-          "responses": {
-            "201": {
-              "description": "Comment created successfully. (Provisional status and placeholder body; verify against the running API.)",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object"
-                  },
-                  "example": {}
-                }
-              }
-            }
-          },
-          "parameters": [
-            {
-              "name": "organisation",
-              "in": "path",
-              "description": "Organisation identifier.",
-              "required": true,
-              "schema": {
-                "type": "string"
-              },
-              "example": "example-org"
-            },
-            {
-              "name": "fdd_assignment_id",
-              "in": "path",
-              "description": "FDD assignment identifier.",
-              "required": true,
-              "schema": {
-                "type": "string"
-              },
-              "example": "2"
-            }
-          ],
-          "requestBody": {
-            "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+            "example": "example-org"
+          }
+        ]
+      }
+    },
+    "/organisations/{organisation}/fdd/{fdd_history_id}/assignments": {
+      "post": {
+        "tags": [
+          "FDD assignments"
+        ],
+        "summary": "Assign a finding",
+        "description": "Submit a Firebase user ID for an assignment linked to a finding.",
+        "operationId": "assign_a_finding",
+        "responses": {
+          "201": {
+            "description": "Finding assigned successfully. (Provisional status and placeholder body; verify against the running API.)",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "comment": {
-                      "type": "string"
-                    }
-                  }
+                  "type": "object"
                 },
-                "example": {
-                  "comment": "Example comment for a finding."
-                }
+                "example": {}
               }
             }
           }
         },
-        "get": {
-          "tags": [
-            "FDD comments"
-          ],
-          "summary": "Get assignment comments",
-          "description": "Retrieve comments linked to a finding assignment.",
-          "operationId": "get_assignment_comments",
-          "responses": {
-            "200": {
-              "description": "Assignment comments retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object"
-                  },
-                  "example": {}
-                }
-              }
-            }
-          },
-          "parameters": [
-            {
-              "name": "organisation",
-              "in": "path",
-              "description": "Organisation identifier.",
-              "required": true,
-              "schema": {
-                "type": "string"
-              },
-              "example": "example-org"
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
             },
-            {
-              "name": "fdd_assignment_id",
-              "in": "path",
-              "description": "FDD assignment identifier.",
-              "required": true,
+            "example": "example-org"
+          },
+          {
+            "name": "fdd_history_id",
+            "in": "path",
+            "description": "FDD finding identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "1"
+          }
+        ],
+        "requestBody": {
+          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "content": {
+            "application/json": {
               "schema": {
-                "type": "string"
-              },
-              "example": "2"
-            }
-          ]
-        }
-      },
-      "/organisations/{organisation}/tasks/{taskId}/schedule-entries": {
-        "post": {
-          "tags": [
-            "Schedule entries"
-          ],
-          "summary": "Create a schedule entry",
-          "description": "Create a booking for a task using a scheduled timestamp, status and lock flag in the example.",
-          "operationId": "create_a_schedule_entry",
-          "responses": {
-            "201": {
-              "description": "Schedule entry created successfully. (Provisional status and placeholder body; verify against the running API.)",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object"
-                  },
-                  "example": {
-                    "id": "5323c12c-2650-41a9-8b2b-b1d330678212",
-                    "task_id": "1",
-                    "scheduled_time": "2026-11-17T09:00:00.000Z",
-                    "status": "Planned",
-                    "is_locked": false,
-                    "created_at": "2026-11-26T10:43:54.775Z",
-                    "updated_at": "2026-11-26T10:43:54.775Z"
+                "type": "object",
+                "properties": {
+                  "firebase_user_id": {
+                    "type": "string"
                   }
                 }
+              },
+              "example": {
+                "firebase_user_id": "example-user-id"
               }
             }
-          },
-          "parameters": [
-            {
-              "name": "organisation",
-              "in": "path",
-              "description": "Organisation identifier.",
-              "required": true,
-              "schema": {
-                "type": "string"
-              },
-              "example": "example-org"
-            },
-            {
-              "name": "taskId",
-              "in": "path",
-              "description": "Task identifier.",
-              "required": true,
-              "schema": {
-                "type": "string"
-              },
-              "example": "1"
-            }
-          ],
-          "requestBody": {
-            "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "FDD assignments"
+        ],
+        "summary": "Get finding assignments",
+        "description": "Retrieve assignments linked to a finding.",
+        "operationId": "get_finding_assignments",
+        "responses": {
+          "200": {
+            "description": "Finding assignments retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "scheduled_time": {
-                      "type": "string"
-                    },
-                    "status": {
-                      "type": "string"
-                    },
-                    "is_locked": {
-                      "type": "boolean"
-                    }
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          },
+          {
+            "name": "fdd_history_id",
+            "in": "path",
+            "description": "FDD finding identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "1"
+          }
+        ]
+      }
+    },
+    "/organisations/{organisation}/fdd/assignments/{fdd_assignment_id}/comments": {
+      "post": {
+        "tags": [
+          "FDD comments"
+        ],
+        "summary": "Create a comment",
+        "description": "Add a comment to a finding assignment.",
+        "operationId": "create_a_comment",
+        "responses": {
+          "201": {
+            "description": "Comment created successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          },
+          {
+            "name": "fdd_assignment_id",
+            "in": "path",
+            "description": "FDD assignment identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "2"
+          }
+        ],
+        "requestBody": {
+          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "comment": {
+                    "type": "string"
                   }
+                }
+              },
+              "example": {
+                "comment": "Example comment for a finding."
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "FDD comments"
+        ],
+        "summary": "Get assignment comments",
+        "description": "Retrieve comments linked to a finding assignment.",
+        "operationId": "get_assignment_comments",
+        "responses": {
+          "200": {
+            "description": "Assignment comments retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          },
+          {
+            "name": "fdd_assignment_id",
+            "in": "path",
+            "description": "FDD assignment identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "2"
+          }
+        ]
+      }
+    },
+    "/organisations/{organisation}/tasks/{taskId}/schedule-entries": {
+      "post": {
+        "tags": [
+          "Schedule entries"
+        ],
+        "summary": "Create a schedule entry",
+        "description": "Create a booking for a task using a scheduled timestamp, status and lock flag in the example.",
+        "operationId": "create_a_schedule_entry",
+        "responses": {
+          "201": {
+            "description": "Schedule entry created successfully. (Example response; status and contract pending verification.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
                 },
                 "example": {
-                  "scheduled_time": "2026-01-01T09:00:00Z",
+                  "id": "00000000-0000-4000-8000-000000000003",
+                  "task_id": "1",
+                  "scheduled_time": "2026-11-17T09:00:00.000Z",
                   "status": "Planned",
-                  "is_locked": false
+                  "is_locked": false,
+                  "created_at": "2026-11-26T10:43:54.775Z",
+                  "updated_at": "2026-11-26T10:43:54.775Z"
                 }
               }
             }
           }
         },
-        "get": {
-          "tags": [
-            "Schedule entries"
-          ],
-          "summary": "Get schedule entries for a task",
-          "description": "Retrieve bookings associated with a task.",
-          "operationId": "get_schedule_entries_for_a_task",
-          "responses": {
-            "200": {
-              "description": "Task schedule entries retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object"
-                  },
-                  "example": {}
-                }
-              }
-            }
-          },
-          "parameters": [
-            {
-              "name": "organisation",
-              "in": "path",
-              "description": "Organisation identifier.",
-              "required": true,
-              "schema": {
-                "type": "string"
-              },
-              "example": "example-org"
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
             },
-            {
-              "name": "taskId",
-              "in": "path",
-              "description": "Task identifier.",
-              "required": true,
+            "example": "example-org"
+          },
+          {
+            "name": "taskId",
+            "in": "path",
+            "description": "Task identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "1"
+          }
+        ],
+        "requestBody": {
+          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "content": {
+            "application/json": {
               "schema": {
-                "type": "string"
-              },
-              "example": "1"
-            }
-          ]
-        }
-      },
-      "/organisations/{organisation}/tasks/{taskId}/schedule-entries/{entryId}": {
-        "patch": {
-          "tags": [
-            "Schedule entries"
-          ],
-          "summary": "Update a schedule entry",
-          "description": "Update the scheduled timestamp of a task booking. The sample only demonstrates a time change.",
-          "operationId": "update_a_schedule_entry",
-          "responses": {
-            "200": {
-              "description": "Schedule entry updated successfully. (Provisional status and placeholder body; verify against the running API.)",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object"
+                "type": "object",
+                "properties": {
+                  "scheduled_time": {
+                    "type": "string",
+                    "format": "date-time"
                   },
-                  "example": {
-                    "id": "8d7f1b9a-7908-4689-8678-f7bd75a09f57",
-                    "task_id": "4",
-                    "scheduled_time": "2026-11-12T09:00:00.000Z",
-                    "status": "Planned",
-                    "is_locked": false,
-                    "created_at": "2026-11-19T13:47:19.937Z",
-                    "updated_at": "2026-11-26T10:34:23.945Z"
+                  "status": {
+                    "type": "string"
+                  },
+                  "is_locked": {
+                    "type": "boolean"
                   }
                 }
-              }
-            }
-          },
-          "parameters": [
-            {
-              "name": "organisation",
-              "in": "path",
-              "description": "Organisation identifier.",
-              "required": true,
-              "schema": {
-                "type": "string"
               },
-              "example": "example-org"
-            },
-            {
-              "name": "taskId",
-              "in": "path",
-              "description": "Task identifier.",
-              "required": true,
-              "schema": {
-                "type": "string"
-              },
-              "example": "1"
-            },
-            {
-              "name": "entryId",
-              "in": "path",
-              "description": "Schedule entry identifier.",
-              "required": true,
-              "schema": {
-                "type": "string"
-              },
-              "example": "00000000-0000-4000-8000-000000000001"
-            }
-          ],
-          "requestBody": {
-            "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "scheduled_time": {
-                      "type": "string"
-                    }
-                  }
-                },
-                "example": {
-                  "scheduled_time": "2026-01-01T09:00:00Z"
-                }
+              "example": {
+                "scheduled_time": "2026-11-17T09:00:00.000Z",
+                "status": "Planned",
+                "is_locked": false
               }
             }
           }
         }
       },
-      "/organisations/{organisation}/schedule-entries": {
-        "get": {
-          "tags": [
-            "Schedule entries"
-          ],
-          "summary": "Get organisation schedule",
-          "description": "Retrieve the organisation schedule for a date range.",
-          "operationId": "get_organisation_schedule",
-          "responses": {
-            "200": {
-              "description": "Organisation schedule retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "type": "object"
-                  },
-                  "example": {
-                    "records": [
-                      {
-                        "id": "891f932d-bf00-4c64-b87f-3e1cc00e3611",
-                        "task_id": "9",
-                        "scheduled_time": "2026-11-25T09:00:00.000Z",
-                        "status": "Planned",
-                        "is_locked": false,
-                        "created_at": "2026-11-24T15:18:48.011Z",
-                        "updated_at": "2026-11-25T11:27:08.055Z",
-                        "assignments": [
-                          {
-                            "room": "[CAL-DEMO-20261124-9] Office 201",
-                            "level": "level-02",
-                            "rule_id": "FDD_FCU_CONTROL_LOOP_HUNTING_OR_UNST_008",
-                            "building": "GB-LON-9213",
-                            "device_id": "fcu-42",
-                            "assignment_id": "29",
-                            "fdd_history_id": "23",
-                            "firebase_user_id": "4D7Pegur09VJyLUpjvGg0HdoWN13"
-                          }
-                        ]
-                      },
-                      {
-                        "id": "ff8af6b4-101f-4cfb-85f2-35e746dd8ba1",
-                        "task_id": "12",
-                        "scheduled_time": "2026-11-26T09:00:00.000Z",
-                        "status": "Planned",
-                        "is_locked": false,
-                        "created_at": "2026-11-24T15:19:30.630Z",
-                        "updated_at": "2026-11-25T16:08:02.728Z",
-                        "assignments": [
-                          {
-                            "room": "[CAL-DEMO-20261124-3] Heat Pump Plant Room",
-                            "level": "level-02",
-                            "rule_id": "FDD_ASHP_SETPOINT_OUTSIDE_AGREED_OPER_009",
-                            "building": "GB-LON-9213",
-                            "device_id": "QSE-21",
-                            "assignment_id": "50",
-                            "fdd_history_id": "18",
-                            "firebase_user_id": "4D7Pegur09VJyLUpjvGg0HdoWN13"
-                          }
-                        ]
-                      }
-                    ],
-                    "count": 10
+      "get": {
+        "tags": [
+          "Schedule entries"
+        ],
+        "summary": "Get schedule entries for a task",
+        "description": "Retrieve bookings associated with a task.",
+        "operationId": "get_schedule_entries_for_a_task",
+        "responses": {
+          "200": {
+            "description": "Task schedule entries retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          },
+          {
+            "name": "taskId",
+            "in": "path",
+            "description": "Task identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "1"
+          }
+        ]
+      }
+    },
+    "/organisations/{organisation}/tasks/{taskId}/schedule-entries/{entryId}": {
+      "patch": {
+        "tags": [
+          "Schedule entries"
+        ],
+        "summary": "Update a schedule entry",
+        "description": "Update the scheduled timestamp of a task booking. The sample only demonstrates a time change.",
+        "operationId": "update_a_schedule_entry",
+        "responses": {
+          "200": {
+            "description": "Schedule entry updated successfully. (Example response; status and contract pending verification.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "id": "00000000-0000-4000-8000-000000000002",
+                  "task_id": "4",
+                  "scheduled_time": "2026-11-12T09:00:00.000Z",
+                  "status": "Planned",
+                  "is_locked": false,
+                  "created_at": "2026-11-19T13:47:19.937Z",
+                  "updated_at": "2026-11-26T10:34:23.945Z"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "organisation",
+            "in": "path",
+            "description": "Organisation identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "example-org"
+          },
+          {
+            "name": "taskId",
+            "in": "path",
+            "description": "Task identifier.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "4"
+          },
+          {
+            "name": "entryId",
+            "in": "path",
+            "description": "Schedule entry identifier.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "00000000-0000-4000-8000-000000000002"
+          }
+        ],
+        "requestBody": {
+          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "scheduled_time": {
+                    "type": "string",
+                    "format": "date-time"
                   }
+                }
+              },
+              "example": {
+                "scheduled_time": "2026-11-12T09:00:00.000Z"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/organisations/{organisation}/schedule-entries": {
+      "get": {
+        "tags": [
+          "Schedule entries"
+        ],
+        "summary": "Get organisation schedule",
+        "description": "Retrieve the organisation schedule for a date range.",
+        "operationId": "get_organisation_schedule",
+        "responses": {
+          "200": {
+            "description": "Organisation schedule retrieved successfully. (Example response; status and contract pending verification.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "records": [
+                    {
+                      "id": "00000000-0000-4000-8000-000000000001",
+                      "task_id": "9",
+                      "scheduled_time": "2026-11-25T09:00:00.000Z",
+                      "status": "Planned",
+                      "is_locked": false,
+                      "created_at": "2026-11-24T15:18:48.011Z",
+                      "updated_at": "2026-11-25T11:27:08.055Z",
+                      "assignments": [
+                        {
+                          "room": "Office 201",
+                          "level": "level-02",
+                          "rule_id": "FDD_FCU_CONTROL_LOOP_HUNTING_OR_UNST_008",
+                          "building": "example-building",
+                          "device_id": "FCU-000001",
+                          "assignment_id": "29",
+                          "fdd_history_id": "23",
+                          "firebase_user_id": "example-source-user-id"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "00000000-0000-4000-8000-000000000004",
+                      "task_id": "12",
+                      "scheduled_time": "2026-11-26T09:00:00.000Z",
+                      "status": "Planned",
+                      "is_locked": false,
+                      "created_at": "2026-11-24T15:19:30.630Z",
+                      "updated_at": "2026-11-25T16:08:02.728Z",
+                      "assignments": [
+                        {
+                          "room": "Heat Pump Plant Room",
+                          "level": "level-02",
+                          "rule_id": "FDD_ASHP_SETPOINT_OUTSIDE_AGREED_OPER_009",
+                          "building": "example-building",
+                          "device_id": "QSE-000001",
+                          "assignment_id": "50",
+                          "fdd_history_id": "18",
+                          "firebase_user_id": "example-source-user-id"
+                        }
+                      ]
+                    }
+                  ],
+                  "count": 2
                 }
               }
             }
@@ -2317,22 +2358,24 @@
           {
             "name": "from",
             "in": "query",
-            "description": "Beginning of the requested time range. Requiredness not verified.",
+            "description": "Start date of the requested schedule range.",
             "schema": {
               "type": "string",
               "format": "date"
             },
-            "example": "2026-01-01"
+            "example": "2026-11-09",
+            "required": true
           },
           {
             "name": "to",
             "in": "query",
-            "description": "End of the requested time range. Requiredness not verified.",
+            "description": "End date of the requested schedule range.",
             "schema": {
               "type": "string",
               "format": "date"
             },
-            "example": "2026-01-02"
+            "example": "2026-11-26",
+            "required": true
           }
         ]
       }
@@ -2347,7 +2390,7 @@
         "operationId": "create_a_task",
         "responses": {
           "201": {
-            "description": "Task created successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "description": "Task created successfully. (Example response; status and contract pending verification.)",
             "content": {
               "application/json": {
                 "schema": {
@@ -2454,7 +2497,7 @@
         "operationId": "get_a_task",
         "responses": {
           "200": {
-            "description": "Task retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "description": "Task retrieved successfully. (Example response; status and contract pending verification.)",
             "content": {
               "application/json": {
                 "schema": {
@@ -2505,7 +2548,7 @@
         "operationId": "add_an_assignment_to_a_task",
         "responses": {
           "201": {
-            "description": "Assignment added to the task successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "description": "Assignment added to the task successfully. (Example response; status and contract pending verification.)",
             "content": {
               "application/json": {
                 "schema": {
@@ -2614,11 +2657,11 @@
           "Schedule entries"
         ],
         "summary": "Transfer a scheduled task",
-        "description": "Transfer a scheduled task between engineers. The collection does not contain a request body for this operation; confirm the required fields before use.",
+        "description": "Transfer a scheduled task between engineers and update its scheduled time. The request and response examples are illustrative; confirm the exact contract against the current API.",
         "operationId": "transfer_a_scheduled_task",
         "responses": {
           "200": {
-            "description": "Scheduled task transferred successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "description": "Scheduled task transferred successfully. (Example response; status and contract pending verification.)",
             "content": {
               "application/json": {
                 "schema": {
@@ -2668,7 +2711,7 @@
             "schema": {
               "type": "string"
             },
-            "example": "1"
+            "example": "9"
           },
           {
             "name": "entryId",
@@ -2676,7 +2719,8 @@
             "description": "Schedule entry identifier.",
             "required": true,
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "uuid"
             },
             "example": "00000000-0000-4000-8000-000000000001"
           }
