@@ -1687,7 +1687,15 @@
                 "schema": {
                   "type": "object"
                 },
-                "example": {}
+                "example": {
+                  "id": "5323c12c-2650-41a9-8b2b-b1d330678212",
+                  "task_id": "1",
+                  "scheduled_time": "2026-11-17T09:00:00.000Z",
+                  "status": "Planned",
+                  "is_locked": false,
+                  "created_at": "2026-11-26T10:43:54.775Z",
+                  "updated_at": "2026-11-26T10:43:54.775Z"
+                }
               }
             }
           }
@@ -1801,7 +1809,15 @@
                 "schema": {
                   "type": "object"
                 },
-                "example": {}
+                "example": {
+                  "id": "8d7f1b9a-7908-4689-8678-f7bd75a09f57",
+                  "task_id": "4",
+                  "scheduled_time": "2026-11-12T09:00:00.000Z",
+                  "status": "Planned",
+                  "is_locked": false,
+                  "created_at": "2026-11-19T13:47:19.937Z",
+                  "updated_at": "2026-11-26T10:34:23.945Z"
+                }
               }
             }
           }
@@ -1874,99 +1890,110 @@
                 "schema": {
                   "type": "object"
                 },
-                "example": {}
-              }
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "organisation",
-            "in": "path",
-            "description": "Organisation identifier.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "example": "example-org"
-          },
-          {
-            "name": "from",
-            "in": "query",
-            "description": "Beginning of the requested time range. Requiredness not verified.",
-            "schema": {
-              "type": "string",
-              "format": "date"
-            },
-            "example": "2026-01-01"
-          },
-          {
-            "name": "to",
-            "in": "query",
-            "description": "End of the requested time range. Requiredness not verified.",
-            "schema": {
-              "type": "string",
-              "format": "date"
-            },
-            "example": "2026-01-02"
-          }
-        ]
-      }
-    },
-    "/organisations/{organisation}/tasks": {
-      "post": {
-        "tags": [
-          "Tasks"
-        ],
-        "summary": "Create a task",
-        "description": "Submit assignment IDs to associate findings with a new task.",
-        "operationId": "create_a_task",
-        "responses": {
-          "201": {
-            "description": "Task created successfully. (Provisional status and placeholder body; verify against the running API.)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                },
                 "example": {
-                  "task_id": "15",
-                  "assignment_ids": [
-                    "2"
-                  ]
+                  "records": [
+                    {
+                      "id": "891f932d-bf00-4c64-b87f-3e1cc00e3611",
+                      "task_id": "9",
+                      "scheduled_time": "2026-11-25T09:00:00.000Z",
+                      "status": "Planned",
+                      "is_locked": false,
+                      "created_at": "2026-11-24T15:18:48.011Z",
+                      "updated_at": "2026-11-25T11:27:08.055Z",
+                      "assignments": [
+                        {
+                          "room": "[CAL-DEMO-20261124-9] Office 201",
+                          "level": "level-02",
+                          "rule_id": "FDD_FCU_CONTROL_LOOP_HUNTING_OR_UNST_008",
+                          "building": "GB-LON-9213",
+                          "device_id": "fcu-42",
+                          "assignment_id": "29",
+                          "fdd_history_id": "23",
+                          "firebase_user_id": "4D7Pegur09VJyLUpjvGg0HdoWN13"
+                        }
+                      ]
+                    },
+                    {
+                      "id": "ff8af6b4-101f-4cfb-85f2-35e746dd8ba1",
+                      "task_id": "12",
+                      "scheduled_time": "2026-11-26T09:00:00.000Z",
+                      "status": "Planned",
+                      "is_locked": false,
+                      "created_at": "2026-11-24T15:19:30.630Z",
+                      "updated_at": "2026-11-25T16:08:02.728Z",
+                      "assignments": [
+                        {
+                          "room": "[CAL-DEMO-20261124-3] Heat Pump Plant Room",
+                          "level": "level-02",
+                          "rule_id": "FDD_ASHP_SETPOINT_OUTSIDE_AGREED_OPER_009",
+                          "building": "GB-LON-9213",
+                          "device_id": "QSE-21",
+                          "assignment_id": "50",
+                          "fdd_history_id": "18",
+                          "firebase_user_id": "4D7Pegur09VJyLUpjvGg0HdoWN13"
+                        }
+                      ]
+                    }
+                  ],
+                  "count": 10
                 }
               }
             }
           }
+        }
+      },
+      "parameters": [
+        {
+          "name": "organisation",
+          "in": "path",
+          "description": "Organisation identifier.",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "example": "example-org"
         },
-        "parameters": [
-          {
-            "name": "organisation",
-            "in": "path",
-            "description": "Organisation identifier.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "example": "example-org"
-          }
-        ],
-        "requestBody": {
-          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+        {
+          "name": "from",
+          "in": "query",
+          "description": "Beginning of the requested time range. Requiredness not verified.",
+          "schema": {
+            "type": "string",
+            "format": "date"
+          },
+          "example": "2026-01-01"
+        },
+        {
+          "name": "to",
+          "in": "query",
+          "description": "End of the requested time range. Requiredness not verified.",
+          "schema": {
+            "type": "string",
+            "format": "date"
+          },
+          "example": "2026-01-02"
+        }
+      ]
+    }
+  },
+  "/organisations/{organisation}/tasks": {
+    "post": {
+      "tags": [
+        "Tasks"
+      ],
+      "summary": "Create a task",
+      "description": "Submit assignment IDs to associate findings with a new task.",
+      "operationId": "create_a_task",
+      "responses": {
+        "201": {
+          "description": "Task created successfully. (Provisional status and placeholder body; verify against the running API.)",
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "assignment_ids": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
-                  }
-                }
+                "type": "object"
               },
               "example": {
+                "task_id": "15",
                 "assignment_ids": [
                   "2"
                 ]
@@ -1975,687 +2002,779 @@
           }
         }
       },
-      "get": {
-        "tags": [
-          "Tasks"
-        ],
-        "summary": "List tasks",
-        "description": "Retrieve tasks for an organisation.",
-        "operationId": "list_tasks",
-        "responses": {
-          "200": {
-            "description": "Tasks retrieved successfully.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                },
-                "example": {
-                  "records": [
-                    {
-                      "task_id": "1",
-                      "assignment_ids": [
-                        "2",
-                        "3"
-                      ]
-                    }
-                  ],
-                  "count": 1
-                }
-              }
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "organisation",
-            "in": "path",
-            "description": "Organisation identifier.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "example": "example-org"
-          }
-        ]
-      }
-    },
-    "/organisations/{organisation}/tasks/{taskId}": {
-      "get": {
-        "tags": [
-          "Tasks"
-        ],
-        "summary": "Get a task",
-        "description": "Retrieve a particular task by ID.",
-        "operationId": "get_a_task",
-        "responses": {
-          "200": {
-            "description": "Task retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                },
-                "example": {
-                  "task_id": "1",
-                  "assignment_ids": [
-                    "2",
-                    "3"
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "organisation",
-            "in": "path",
-            "description": "Organisation identifier.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "example": "example-org"
+      "parameters": [
+        {
+          "name": "organisation",
+          "in": "path",
+          "description": "Organisation identifier.",
+          "required": true,
+          "schema": {
+            "type": "string"
           },
-          {
-            "name": "taskId",
-            "in": "path",
-            "description": "Task identifier.",
-            "required": true,
+          "example": "example-org"
+        }
+      ],
+      "requestBody": {
+        "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+        "content": {
+          "application/json": {
             "schema": {
-              "type": "string"
-            },
-            "example": "1"
-          }
-        ]
-      }
-    },
-    "/organisations/{organisation}/tasks/{taskId}/assignments": {
-      "post": {
-        "tags": [
-          "Tasks"
-        ],
-        "summary": "Add an assignment to a task",
-        "description": "Submit an assignment ID to associate with the specified task.",
-        "operationId": "add_an_assignment_to_a_task",
-        "responses": {
-          "201": {
-            "description": "Assignment added to the task successfully. (Provisional status and placeholder body; verify against the running API.)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                },
-                "example": {
-                  "task_id": "14",
-                  "assignment_ids": [
-                    "2",
-                    "3"
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "organisation",
-            "in": "path",
-            "description": "Organisation identifier.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "example": "example-org"
-          },
-          {
-            "name": "taskId",
-            "in": "path",
-            "description": "Task identifier.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "example": "14"
-          }
-        ],
-        "requestBody": {
-          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "assignment_id": {
+              "type": "object",
+              "properties": {
+                "assignment_ids": {
+                  "type": "array",
+                  "items": {
                     "type": "string"
                   }
                 }
-              },
-              "example": {
-                "assignment_id": "3"
               }
+            },
+            "example": {
+              "assignment_ids": [
+                "2"
+              ]
             }
           }
         }
       }
     },
-    "/organisations/{organisation}/fdd/unscheduled": {
-      "get": {
-        "tags": [
-          "Schedule entries"
-        ],
-        "summary": "Get unscheduled findings",
-        "description": "Retrieve unscheduled findings. The collection demonstrates filtering by Firebase user ID.",
-        "operationId": "get_unscheduled_findings",
-        "responses": {
-          "200": {
-            "description": "Unscheduled findings retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                },
-                "example": {}
-              }
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "organisation",
-            "in": "path",
-            "description": "Organisation identifier.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "example": "example-org"
-          },
-          {
-            "name": "firebase_user_id",
-            "in": "query",
-            "description": "Firebase user identifier for the requested filter. Requiredness not verified.",
-            "schema": {
-              "type": "string"
-            },
-            "example": "example-user-id"
-          }
-        ]
-      }
-    },
-    "/organisations/{organisation}/tasks/{taskId}/schedule-entries/{entryId}/transfer": {
-      "patch": {
-        "tags": [
-          "Schedule entries"
-        ],
-        "summary": "Transfer a scheduled task",
-        "description": "Transfer a scheduled task between engineers. The collection does not contain a request body for this operation; confirm the required fields before use.",
-        "operationId": "transfer_a_scheduled_task",
-        "responses": {
-          "200": {
-            "description": "Scheduled task transferred successfully. (Provisional status and placeholder body; verify against the running API.)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                },
-                "example": {}
-              }
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "organisation",
-            "in": "path",
-            "description": "Organisation identifier.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "example": "example-org"
-          },
-          {
-            "name": "taskId",
-            "in": "path",
-            "description": "Task identifier.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "example": "1"
-          },
-          {
-            "name": "entryId",
-            "in": "path",
-            "description": "Schedule entry identifier.",
-            "required": true,
-            "schema": {
-              "type": "string"
-            },
-            "example": "00000000-0000-4000-8000-000000000001"
-          }
-        ]
-      }
-    },
-    "/device_metadata/data": {
-      "get": {
-        "tags": [
-          "Device metadata"
-        ],
-        "summary": "Get device metadata",
-        "description": "Retrieve device metadata for a time range.",
-        "operationId": "get_device_metadata",
-        "responses": {
-          "200": {
-            "description": "Device metadata retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                },
-                "example": {}
-              }
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "from",
-            "in": "query",
-            "description": "Beginning of the requested time range. Requiredness not verified.",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            },
-            "example": "2026-01-01T00:00:00Z"
-          },
-          {
-            "name": "to",
-            "in": "query",
-            "description": "End of the requested time range. Requiredness not verified.",
-            "schema": {
-              "type": "string",
-              "format": "date-time"
-            },
-            "example": "2026-01-02T00:00:00Z"
-          }
-        ]
-      },
-      "post": {
-        "tags": [
-          "Device metadata"
-        ],
-        "summary": "Create device metadata",
-        "description": "Submit metadata describing devices, their location, physical tags and point definitions.",
-        "operationId": "create_device_metadata",
-        "responses": {
-          "201": {
-            "description": "Device metadata created successfully. (Provisional status and placeholder body; verify against the running API.)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                },
-                "example": {}
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+    "get": {
+      "tags": [
+        "Tasks"
+      ],
+      "summary": "List tasks",
+      "description": "Retrieve tasks for an organisation.",
+      "operationId": "list_tasks",
+      "responses": {
+        "200": {
+          "description": "Tasks retrieved successfully.",
           "content": {
             "application/json": {
               "schema": {
-                "type": "object",
-                "properties": {
-                  "items": {
-                    "type": "array",
-                    "items": {
-                      "type": "object",
-                      "properties": {
-                        "version": {
-                          "type": "string"
-                        },
-                        "timestamp": {
-                          "type": "string"
-                        },
-                        "system": {
-                          "type": "object",
-                          "properties": {
-                            "location": {
-                              "type": "object",
-                              "properties": {
-                                "site": {
-                                  "type": "string"
-                                },
-                                "section": {
-                                  "type": "string"
-                                },
-                                "room": {
-                                  "type": "string"
-                                },
-                                "floor": {
-                                  "type": "string"
-                                },
-                                "floor_seq": {
-                                  "type": "integer"
-                                },
-                                "position": {
-                                  "type": "object",
-                                  "properties": {
-                                    "x": {
-                                      "type": "number"
-                                    },
-                                    "y": {
-                                      "type": "number"
-                                    },
-                                    "z": {
-                                      "type": "number"
-                                    }
-                                  }
-                                }
-                              }
-                            },
-                            "physical_tag": {
-                              "type": "object",
-                              "properties": {
-                                "asset": {
-                                  "type": "object",
-                                  "properties": {
-                                    "guid": {
-                                      "type": "string"
-                                    },
-                                    "site": {
-                                      "type": "string"
-                                    },
-                                    "name": {
-                                      "type": "string"
-                                    }
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        },
-                        "pointset": {
-                          "type": "object",
-                          "properties": {
-                            "points": {
-                              "type": "object",
-                              "properties": {
-                                "co2_level": {
-                                  "type": "object",
-                                  "properties": {
-                                    "unit": {
-                                      "type": "string"
-                                    },
-                                    "tags": {
-                                      "type": "array",
-                                      "items": {
-                                        "type": "string"
-                                      }
-                                    }
-                                  }
-                                },
-                                "total_volatile_organic_compounds": {
-                                  "type": "object",
-                                  "properties": {
-                                    "unit": {
-                                      "type": "string"
-                                    },
-                                    "tags": {
-                                      "type": "array",
-                                      "items": {
-                                        "type": "string"
-                                      }
-                                    }
-                                  }
-                                },
-                                "air_quality_index": {
-                                  "type": "object",
-                                  "properties": {
-                                    "tags": {
-                                      "type": "array",
-                                      "items": {
-                                        "type": "string"
-                                      }
-                                    }
-                                  }
-                                },
-                                "temperature": {
-                                  "type": "object",
-                                  "properties": {
-                                    "unit": {
-                                      "type": "string"
-                                    },
-                                    "tags": {
-                                      "type": "array",
-                                      "items": {
-                                        "type": "string"
-                                      }
-                                    }
-                                  }
-                                },
-                                "pressure": {
-                                  "type": "object",
-                                  "properties": {
-                                    "unit": {
-                                      "type": "string"
-                                    },
-                                    "tags": {
-                                      "type": "array",
-                                      "items": {
-                                        "type": "string"
-                                      }
-                                    }
-                                  }
-                                },
-                                "humidity": {
-                                  "type": "object",
-                                  "properties": {
-                                    "unit": {
-                                      "type": "string"
-                                    },
-                                    "tags": {
-                                      "type": "array",
-                                      "items": {
-                                        "type": "string"
-                                      }
-                                    }
-                                  }
-                                },
-                                "minute_sound_level": {
-                                  "type": "object",
-                                  "properties": {
-                                    "unit": {
-                                      "type": "string"
-                                    },
-                                    "tags": {
-                                      "type": "array",
-                                      "items": {
-                                        "type": "string"
-                                      }
-                                    }
-                                  }
-                                },
-                                "illuminance_sensor": {
-                                  "type": "object",
-                                  "properties": {
-                                    "unit": {
-                                      "type": "string"
-                                    },
-                                    "tags": {
-                                      "type": "array",
-                                      "items": {
-                                        "type": "string"
-                                      }
-                                    }
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
+                "type": "object"
               },
               "example": {
-                "items": [
+                "records": [
                   {
-                    "version": "1.4.2",
-                    "timestamp": "2026-01-01T09:00:00Z",
-                    "system": {
-                      "location": {
-                        "site": "example-building",
-                        "section": "example-zone",
-                        "room": "Example room",
-                        "floor": "level-01",
-                        "floor_seq": 1,
-                        "position": {
-                          "x": 10.0,
-                          "y": 20.0,
-                          "z": 3.0
+                    "task_id": "1",
+                    "assignment_ids": [
+                      "2",
+                      "3"
+                    ]
+                  }
+                ],
+                "count": 1
+              }
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name": "organisation",
+          "in": "path",
+          "description": "Organisation identifier.",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "example": "example-org"
+        }
+      ]
+    }
+  },
+  "/organisations/{organisation}/tasks/{taskId}": {
+    "get": {
+      "tags": [
+        "Tasks"
+      ],
+      "summary": "Get a task",
+      "description": "Retrieve a particular task by ID.",
+      "operationId": "get_a_task",
+      "responses": {
+        "200": {
+          "description": "Task retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "task_id": "1",
+                "assignment_ids": [
+                  "2",
+                  "3"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name": "organisation",
+          "in": "path",
+          "description": "Organisation identifier.",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "example": "example-org"
+        },
+        {
+          "name": "taskId",
+          "in": "path",
+          "description": "Task identifier.",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "example": "1"
+        }
+      ]
+    }
+  },
+  "/organisations/{organisation}/tasks/{taskId}/assignments": {
+    "post": {
+      "tags": [
+        "Tasks"
+      ],
+      "summary": "Add an assignment to a task",
+      "description": "Submit an assignment ID to associate with the specified task.",
+      "operationId": "add_an_assignment_to_a_task",
+      "responses": {
+        "201": {
+          "description": "Assignment added to the task successfully. (Provisional status and placeholder body; verify against the running API.)",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "task_id": "14",
+                "assignment_ids": [
+                  "2",
+                  "3"
+                ]
+              }
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name": "organisation",
+          "in": "path",
+          "description": "Organisation identifier.",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "example": "example-org"
+        },
+        {
+          "name": "taskId",
+          "in": "path",
+          "description": "Task identifier.",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "example": "14"
+        }
+      ],
+      "requestBody": {
+        "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "assignment_id": {
+                  "type": "string"
+                }
+              }
+            },
+            "example": {
+              "assignment_id": "3"
+            }
+          }
+        }
+      }
+    }
+  },
+  "/organisations/{organisation}/fdd/unscheduled": {
+    "get": {
+      "tags": [
+        "Schedule entries"
+      ],
+      "summary": "Get unscheduled findings",
+      "description": "Retrieve unscheduled findings. The collection demonstrates filtering by Firebase user ID.",
+      "operationId": "get_unscheduled_findings",
+      "responses": {
+        "200": {
+          "description": "Unscheduled findings retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {}
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name": "organisation",
+          "in": "path",
+          "description": "Organisation identifier.",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "example": "example-org"
+        },
+        {
+          "name": "firebase_user_id",
+          "in": "query",
+          "description": "Firebase user identifier for the requested filter. Requiredness not verified.",
+          "schema": {
+            "type": "string"
+          },
+          "example": "example-user-id"
+        }
+      ]
+    }
+  },
+  "/organisations/{organisation}/tasks/{taskId}/schedule-entries/{entryId}/transfer": {
+    "patch": {
+      "tags": [
+        "Schedule entries"
+      ],
+      "summary": "Transfer a scheduled task",
+      "description": "Transfer a scheduled task between engineers. The collection does not contain a request body for this operation; confirm the required fields before use.",
+      "operationId": "transfer_a_scheduled_task",
+      "responses": {
+        "200": {
+          "description": "Scheduled task transferred successfully. (Provisional status and placeholder body; verify against the running API.)",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {
+                "id": "00000000-0000-4000-8000-000000000001",
+                "task_id": "9",
+                "scheduled_time": "2026-11-26T09:00:00.000Z",
+                "status": "Planned",
+                "is_locked": false,
+                "created_at": "2026-11-24T15:18:48.011Z",
+                "updated_at": "2026-11-26T08:30:00.000Z",
+                "assignments": [
+                  {
+                    "room": "Office 201",
+                    "level": "level-02",
+                    "rule_id": "FDD_FCU_CONTROL_LOOP_HUNTING_OR_UNST_008",
+                    "building": "example-building",
+                    "device_id": "FCU-000001",
+                    "assignment_id": "30",
+                    "fdd_history_id": "23",
+                    "firebase_user_id": "example-target-user-id"
+                  }
+                ]
+              }
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name": "organisation",
+          "in": "path",
+          "description": "Organisation identifier.",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "example": "example-org"
+        },
+        {
+          "name": "taskId",
+          "in": "path",
+          "description": "Task identifier.",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "example": "1"
+        },
+        {
+          "name": "entryId",
+          "in": "path",
+          "description": "Schedule entry identifier.",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "example": "00000000-0000-4000-8000-000000000001"
+        }
+      ],
+      "requestBody": {
+        "description": "Specify the current engineer, the destination engineer and the new scheduled time.",
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "scheduled_time",
+                "source_firebase_user_id",
+                "target__firebase_user_id"
+              ],
+              "properties": {
+                "scheduled_time": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "The new scheduled date and time."
+                },
+                "source_firebase_user_id": {
+                  "type": "string",
+                  "description": "The Firebase ID of the currently assigned engineer."
+                },
+                "target__firebase_user_id": {
+                  "type": "string",
+                  "description": "The Firebase ID of the engineer receiving the task."
+                }
+              }
+            },
+            "example": {
+              "scheduled_time": "2026-11-26T09:00:00.000Z",
+              "source_firebase_user_id": "example-source-user-id",
+              "target__firebase_user_id": "example-target-user-id"
+            }
+          }
+        }
+      }
+    }
+  },
+  "/device_metadata/data": {
+    "get": {
+      "tags": [
+        "Device metadata"
+      ],
+      "summary": "Get device metadata",
+      "description": "Retrieve device metadata for a time range.",
+      "operationId": "get_device_metadata",
+      "responses": {
+        "200": {
+          "description": "Device metadata retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {}
+            }
+          }
+        }
+      },
+      "parameters": [
+        {
+          "name": "from",
+          "in": "query",
+          "description": "Beginning of the requested time range. Requiredness not verified.",
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "example": "2026-01-01T00:00:00Z"
+        },
+        {
+          "name": "to",
+          "in": "query",
+          "description": "End of the requested time range. Requiredness not verified.",
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "example": "2026-01-02T00:00:00Z"
+        }
+      ]
+    },
+    "post": {
+      "tags": [
+        "Device metadata"
+      ],
+      "summary": "Create device metadata",
+      "description": "Submit metadata describing devices, their location, physical tags and point definitions.",
+      "operationId": "create_device_metadata",
+      "responses": {
+        "201": {
+          "description": "Device metadata created successfully. (Provisional status and placeholder body; verify against the running API.)",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {}
+            }
+          }
+        }
+      },
+      "requestBody": {
+        "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "version": {
+                        "type": "string"
+                      },
+                      "timestamp": {
+                        "type": "string"
+                      },
+                      "system": {
+                        "type": "object",
+                        "properties": {
+                          "location": {
+                            "type": "object",
+                            "properties": {
+                              "site": {
+                                "type": "string"
+                              },
+                              "section": {
+                                "type": "string"
+                              },
+                              "room": {
+                                "type": "string"
+                              },
+                              "floor": {
+                                "type": "string"
+                              },
+                              "floor_seq": {
+                                "type": "integer"
+                              },
+                              "position": {
+                                "type": "object",
+                                "properties": {
+                                  "x": {
+                                    "type": "number"
+                                  },
+                                  "y": {
+                                    "type": "number"
+                                  },
+                                  "z": {
+                                    "type": "number"
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          "physical_tag": {
+                            "type": "object",
+                            "properties": {
+                              "asset": {
+                                "type": "object",
+                                "properties": {
+                                  "guid": {
+                                    "type": "string"
+                                  },
+                                  "site": {
+                                    "type": "string"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  }
+                                }
+                              }
+                            }
+                          }
                         }
                       },
-                      "physical_tag": {
-                        "asset": {
-                          "guid": "guid://example-asset-001",
-                          "site": "example-building",
-                          "name": "QSE-000001"
-                        }
-                      }
-                    },
-                    "pointset": {
-                      "points": {
-                        "co2_level": {
-                          "unit": "ppm",
-                          "tags": [
-                            "point",
-                            "sensor",
-                            "air",
-                            "co2",
-                            "concentration"
-                          ]
-                        },
-                        "total_volatile_organic_compounds": {
-                          "unit": "ppb",
-                          "tags": [
-                            "point",
-                            "sensor",
-                            "air",
-                            "tvoc",
-                            "concentration"
-                          ]
-                        },
-                        "air_quality_index": {
-                          "tags": [
-                            "point",
-                            "sensor",
-                            "air",
-                            "airQuality"
-                          ]
-                        },
-                        "temperature": {
-                          "unit": "°C",
-                          "tags": [
-                            "point",
-                            "sensor",
-                            "air",
-                            "temp"
-                          ]
-                        },
-                        "pressure": {
-                          "unit": "mbar",
-                          "tags": [
-                            "point",
-                            "sensor",
-                            "barometric",
-                            "pressure"
-                          ]
-                        },
-                        "humidity": {
-                          "unit": "%RH",
-                          "tags": [
-                            "point",
-                            "sensor",
-                            "air",
-                            "humidity"
-                          ]
-                        },
-                        "minute_sound_level": {
-                          "unit": "db",
-                          "tags": [
-                            "point",
-                            "sensor",
-                            "soundLevel"
-                          ]
-                        },
-                        "illuminance_sensor": {
-                          "unit": "lx",
-                          "tags": [
-                            "point",
-                            "sensor",
-                            "light",
-                            "illuminance"
-                          ]
+                      "pointset": {
+                        "type": "object",
+                        "properties": {
+                          "points": {
+                            "type": "object",
+                            "properties": {
+                              "co2_level": {
+                                "type": "object",
+                                "properties": {
+                                  "unit": {
+                                    "type": "string"
+                                  },
+                                  "tags": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              },
+                              "total_volatile_organic_compounds": {
+                                "type": "object",
+                                "properties": {
+                                  "unit": {
+                                    "type": "string"
+                                  },
+                                  "tags": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              },
+                              "air_quality_index": {
+                                "type": "object",
+                                "properties": {
+                                  "tags": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              },
+                              "temperature": {
+                                "type": "object",
+                                "properties": {
+                                  "unit": {
+                                    "type": "string"
+                                  },
+                                  "tags": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              },
+                              "pressure": {
+                                "type": "object",
+                                "properties": {
+                                  "unit": {
+                                    "type": "string"
+                                  },
+                                  "tags": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              },
+                              "humidity": {
+                                "type": "object",
+                                "properties": {
+                                  "unit": {
+                                    "type": "string"
+                                  },
+                                  "tags": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              },
+                              "minute_sound_level": {
+                                "type": "object",
+                                "properties": {
+                                  "unit": {
+                                    "type": "string"
+                                  },
+                                  "tags": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              },
+                              "illuminance_sensor": {
+                                "type": "object",
+                                "properties": {
+                                  "unit": {
+                                    "type": "string"
+                                  },
+                                  "tags": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
                         }
                       }
                     }
                   }
-                ]
+                }
               }
+            },
+            "example": {
+              "items": [
+                {
+                  "version": "1.4.2",
+                  "timestamp": "2026-01-01T09:00:00Z",
+                  "system": {
+                    "location": {
+                      "site": "example-building",
+                      "section": "example-zone",
+                      "room": "Example room",
+                      "floor": "level-01",
+                      "floor_seq": 1,
+                      "position": {
+                        "x": 10.0,
+                        "y": 20.0,
+                        "z": 3.0
+                      }
+                    },
+                    "physical_tag": {
+                      "asset": {
+                        "guid": "guid://example-asset-001",
+                        "site": "example-building",
+                        "name": "QSE-000001"
+                      }
+                    }
+                  },
+                  "pointset": {
+                    "points": {
+                      "co2_level": {
+                        "unit": "ppm",
+                        "tags": [
+                          "point",
+                          "sensor",
+                          "air",
+                          "co2",
+                          "concentration"
+                        ]
+                      },
+                      "total_volatile_organic_compounds": {
+                        "unit": "ppb",
+                        "tags": [
+                          "point",
+                          "sensor",
+                          "air",
+                          "tvoc",
+                          "concentration"
+                        ]
+                      },
+                      "air_quality_index": {
+                        "tags": [
+                          "point",
+                          "sensor",
+                          "air",
+                          "airQuality"
+                        ]
+                      },
+                      "temperature": {
+                        "unit": "°C",
+                        "tags": [
+                          "point",
+                          "sensor",
+                          "air",
+                          "temp"
+                        ]
+                      },
+                      "pressure": {
+                        "unit": "mbar",
+                        "tags": [
+                          "point",
+                          "sensor",
+                          "barometric",
+                          "pressure"
+                        ]
+                      },
+                      "humidity": {
+                        "unit": "%RH",
+                        "tags": [
+                          "point",
+                          "sensor",
+                          "air",
+                          "humidity"
+                        ]
+                      },
+                      "minute_sound_level": {
+                        "unit": "db",
+                        "tags": [
+                          "point",
+                          "sensor",
+                          "soundLevel"
+                        ]
+                      },
+                      "illuminance_sensor": {
+                        "unit": "lx",
+                        "tags": [
+                          "point",
+                          "sensor",
+                          "light",
+                          "illuminance"
+                        ]
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "delete": {
+      "tags": [
+        "Device metadata"
+      ],
+      "summary": "Delete device metadata",
+      "description": "Submit IDs to delete device metadata. Confirm the deletion scope before use.",
+      "operationId": "delete_device_metadata",
+      "responses": {
+        "200": {
+          "description": "Device metadata deleted successfully. (Provisional status and placeholder body; verify against the running API.)",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              },
+              "example": {}
             }
           }
         }
       },
-      "delete": {
-        "tags": [
-          "Device metadata"
-        ],
-        "summary": "Delete device metadata",
-        "description": "Submit IDs to delete device metadata. Confirm the deletion scope before use.",
-        "operationId": "delete_device_metadata",
-        "responses": {
-          "200": {
-            "description": "Device metadata deleted successfully. (Provisional status and placeholder body; verify against the running API.)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object"
-                },
-                "example": {}
-              }
-            }
-          }
-        },
-        "requestBody": {
-          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "ids": {
-                    "type": "array",
-                    "items": {
-                      "type": "string"
-                    }
+      "requestBody": {
+        "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
                   }
                 }
-              },
-              "example": {
-                "ids": [
-                  "QSE-000001"
-                ]
               }
+            },
+            "example": {
+              "ids": [
+                "QSE-000001"
+              ]
             }
           }
         }
       }
     }
   }
+}
 }
