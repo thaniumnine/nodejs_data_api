@@ -1929,7 +1929,12 @@
                 "schema": {
                   "type": "object"
                 },
-                "example": {}
+                "example": {
+                  "task_id": "15",
+                  "assignment_ids": [
+                    "2"
+                  ]
+                }
               }
             }
           }
@@ -2031,7 +2036,13 @@
                 "schema": {
                   "type": "object"
                 },
-                "example": {}
+                "example": {
+                  "task_id": "1",
+                  "assignment_ids": [
+                    "2",
+                    "3"
+                  ]
+                }
               }
             }
           }
@@ -2076,7 +2087,13 @@
                 "schema": {
                   "type": "object"
                 },
-                "example": {}
+                "example": {
+                  "task_id": "14",
+                  "assignment_ids": [
+                    "2",
+                    "3"
+                  ]
+                }
               }
             }
           }
@@ -2100,7 +2117,7 @@
             "schema": {
               "type": "string"
             },
-            "example": "1"
+            "example": "14"
           }
         ],
         "requestBody": {
