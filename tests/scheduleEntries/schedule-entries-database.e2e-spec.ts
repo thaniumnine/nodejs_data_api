@@ -55,6 +55,9 @@ describe('Schedule Entries Database E2E', () => {
                 createdIds.push(body.id);
             }
 
+            if (result.statusCode !== 201) {
+                console.error('Booking creation failed:', result.payload);
+            }
             expect(result.statusCode).toBe(201);
             expect(body.id).toEqual(expect.any(String));
             expect(body.task_id).toBe(String(testTaskId));

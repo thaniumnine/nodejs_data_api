@@ -84,6 +84,7 @@ export type FddHistoryTypeTable = {
   closed: boolean;
   rule_id: string;
   created_at: Generated<Date>;
+  estimated_minutes: Generated<number | null>;
 }
 
 export type FddAssignmentTypeTable = {
