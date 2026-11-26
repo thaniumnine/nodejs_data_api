@@ -78,8 +78,8 @@
         "description": "Obtain an access token and refresh token.",
         "operationId": "log_in",
         "responses": {
-          "default": {
-            "description": "Illustrative token fields referenced by Postman test scripts. HTTP status and full response contract are not verified.",
+          "200": {
+            "description": "Login successful. Illustrative token fields referenced by Postman test scripts. HTTP status and full response contract are not verified.",
             "content": {
               "application/json": {
                 "schema": {
@@ -137,8 +137,16 @@
         "description": "Revoke the current session using the bearer access token.",
         "operationId": "log_out",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "200": {
+            "description": "Session revoked successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
           }
         }
       }
@@ -152,8 +160,8 @@
         "description": "Submit the refresh token to obtain updated tokens.",
         "operationId": "refresh_access_token",
         "responses": {
-          "default": {
-            "description": "Illustrative token fields referenced by Postman test scripts. HTTP status and full response contract are not verified.",
+          "200": {
+            "description": "Access token refreshed successfully. Illustrative token fields referenced by Postman test scripts. HTTP status and full response contract are not verified.",
             "content": {
               "application/json": {
                 "schema": {
@@ -206,8 +214,16 @@
         "description": "Retrieve aggregated records for a device type and time range. The collection demonstrates MTS, ACU, QSE and LT queries.",
         "operationId": "get_aggregation_records",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "200": {
+            "description": "Aggregation records retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
           }
         },
         "parameters": [
@@ -277,8 +293,16 @@
         "description": "Submit a batch of aggregated measurements for a device type. Payload point names vary with the device type.",
         "operationId": "create_aggregation_records",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "201": {
+            "description": "Aggregation records created successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
           }
         },
         "parameters": [
@@ -447,8 +471,16 @@
         "description": "Submit device IDs to delete aggregation records. Confirm the deletion scope against the API implementation before use.",
         "operationId": "delete_aggregation_records",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "200": {
+            "description": "Aggregation records deleted successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
           }
         },
         "parameters": [
@@ -528,8 +560,16 @@
         "description": "Retrieve the aggregation device types for an organisation.",
         "operationId": "list_aggregation_device_types",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "200": {
+            "description": "Aggregation device types retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
           }
         },
         "parameters": [
@@ -553,8 +593,16 @@
         "description": "Submit a device type and its measurement column definitions.",
         "operationId": "create_an_aggregation_device_type",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "201": {
+            "description": "Aggregation device type created successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
           }
         },
         "parameters": [
@@ -722,8 +770,16 @@
         "description": "Submit IDs to delete device type definitions. Confirm the exact deletion scope before use.",
         "operationId": "delete_aggregation_device_types",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "200": {
+            "description": "Aggregation device types deleted successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
           }
         },
         "parameters": [
@@ -772,8 +828,16 @@
         "description": "Retrieve the definition of a particular aggregation device type.",
         "operationId": "get_an_aggregation_device_type",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "200": {
+            "description": "Aggregation device type retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
           }
         },
         "parameters": [
@@ -809,8 +873,16 @@
         "description": "Submit device IDs and a time range to delete historical records. Confirm the deletion scope before use.",
         "operationId": "delete_device_history",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "200": {
+            "description": "Device history deleted successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
           }
         },
         "parameters": [
@@ -899,8 +971,16 @@
         "description": "Submit historical point observations for a single device.",
         "operationId": "create_device_history",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "201": {
+            "description": "Device history created successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
           }
         },
         "parameters": [
@@ -1017,8 +1097,16 @@
         "description": "Retrieve historical records for a device over a specified time range.",
         "operationId": "get_history_for_one_device",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "200": {
+            "description": "Device history retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
           }
         },
         "parameters": [
@@ -1094,8 +1182,16 @@
         "description": "Retrieve historical device records. The collection demonstrates time-range and device-prefix filters.",
         "operationId": "get_history_for_devices",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "200": {
+            "description": "Device histories retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
           }
         },
         "parameters": [
@@ -1170,8 +1266,16 @@
         "description": "Retrieve device IDs at a building level. The collection demonstrates filtering by device prefix.",
         "operationId": "list_device_ids",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "200": {
+            "description": "Device IDs retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
           }
         },
         "parameters": [
@@ -1226,8 +1330,16 @@
         "description": "Submit findings containing a timestamp, room and rule identifier for a device.",
         "operationId": "create_fdd_findings",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "201": {
+            "description": "FDD findings created successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
           }
         },
         "parameters": [
@@ -1321,8 +1433,16 @@
         "description": "Retrieve findings for an organisation.",
         "operationId": "list_fdd_findings",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "200": {
+            "description": "FDD findings retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
           }
         },
         "parameters": [
@@ -1348,8 +1468,16 @@
         "description": "Submit a Firebase user ID for an assignment linked to a finding.",
         "operationId": "assign_a_finding",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "201": {
+            "description": "Finding assigned successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
           }
         },
         "parameters": [
@@ -1401,8 +1529,16 @@
         "description": "Retrieve assignments linked to a finding.",
         "operationId": "get_finding_assignments",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "200": {
+            "description": "Finding assignments retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
           }
         },
         "parameters": [
@@ -1438,8 +1574,16 @@
         "description": "Add a comment to a finding assignment.",
         "operationId": "create_a_comment",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "201": {
+            "description": "Comment created successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
           }
         },
         "parameters": [
@@ -1491,8 +1635,16 @@
         "description": "Retrieve comments linked to a finding assignment.",
         "operationId": "get_assignment_comments",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "200": {
+            "description": "Assignment comments retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
           }
         },
         "parameters": [
@@ -1528,8 +1680,16 @@
         "description": "Create a booking for a task using a scheduled timestamp, status and lock flag in the example.",
         "operationId": "create_a_schedule_entry",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "201": {
+            "description": "Schedule entry created successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
           }
         },
         "parameters": [
@@ -1589,8 +1749,16 @@
         "description": "Retrieve bookings associated with a task.",
         "operationId": "get_schedule_entries_for_a_task",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "200": {
+            "description": "Task schedule entries retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
           }
         },
         "parameters": [
@@ -1626,8 +1794,16 @@
         "description": "Update the scheduled timestamp of a task booking. The sample only demonstrates a time change.",
         "operationId": "update_a_schedule_entry",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "200": {
+            "description": "Schedule entry updated successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
           }
         },
         "parameters": [
@@ -1691,8 +1867,16 @@
         "description": "Retrieve the organisation schedule for a date range.",
         "operationId": "get_organisation_schedule",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "200": {
+            "description": "Organisation schedule retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
           }
         },
         "parameters": [
@@ -1738,8 +1922,16 @@
         "description": "Submit assignment IDs to associate findings with a new task.",
         "operationId": "create_a_task",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "201": {
+            "description": "Task created successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
           }
         },
         "parameters": [
@@ -1786,8 +1978,27 @@
         "description": "Retrieve tasks for an organisation.",
         "operationId": "list_tasks",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "200": {
+            "description": "Tasks retrieved successfully.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "records": [
+                    {
+                      "task_id": "1",
+                      "assignment_ids": [
+                        "2",
+                        "3"
+                      ]
+                    }
+                  ],
+                  "count": 1
+                }
+              }
+            }
           }
         },
         "parameters": [
@@ -1813,8 +2024,16 @@
         "description": "Retrieve a particular task by ID.",
         "operationId": "get_a_task",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "200": {
+            "description": "Task retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
           }
         },
         "parameters": [
@@ -1850,8 +2069,16 @@
         "description": "Submit an assignment ID to associate with the specified task.",
         "operationId": "add_an_assignment_to_a_task",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "201": {
+            "description": "Assignment added to the task successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
           }
         },
         "parameters": [
@@ -1905,8 +2132,16 @@
         "description": "Retrieve unscheduled findings. The collection demonstrates filtering by Firebase user ID.",
         "operationId": "get_unscheduled_findings",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "200": {
+            "description": "Unscheduled findings retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
           }
         },
         "parameters": [
@@ -1941,8 +2176,16 @@
         "description": "Transfer a scheduled task between engineers. The collection does not contain a request body for this operation; confirm the required fields before use.",
         "operationId": "transfer_a_scheduled_task",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "200": {
+            "description": "Scheduled task transferred successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
           }
         },
         "parameters": [
@@ -1988,8 +2231,16 @@
         "description": "Retrieve device metadata for a time range.",
         "operationId": "get_device_metadata",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "200": {
+            "description": "Device metadata retrieved successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
           }
         },
         "parameters": [
@@ -2023,8 +2274,16 @@
         "description": "Submit metadata describing devices, their location, physical tags and point definitions.",
         "operationId": "create_device_metadata",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "201": {
+            "description": "Device metadata created successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
           }
         },
         "requestBody": {
@@ -2344,8 +2603,16 @@
         "description": "Submit IDs to delete device metadata. Confirm the deletion scope before use.",
         "operationId": "delete_device_metadata",
         "responses": {
-          "default": {
-            "description": "Response status and payload not captured in a matching Postman example; verify against the running API."
+          "200": {
+            "description": "Device metadata deleted successfully. (Provisional status and placeholder body; verify against the running API.)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {}
+              }
+            }
           }
         },
         "requestBody": {
