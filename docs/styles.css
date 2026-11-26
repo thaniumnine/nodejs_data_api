@@ -50,3 +50,93 @@
     --scalar-sidebar-item-active-background: #25214a;
     --scalar-sidebar-color-active: #c4b5fd;
 }
+
+/* thanium header */
+
+.thanium-header {
+    display:flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 24px;
+    background: #080b20;
+    color: #ffffff;
+    border-bottom: 3px solid transparent;
+    border-image: linear-gradient(
+        90deg,
+        #4169ff,
+        #8b5cf6,
+        #d12cff
+    ) 1;
+
+    box-sizing: border-box;
+}
+
+.thanium-brand {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.thanium-logo{
+    display: block;
+    height: 48px;
+    width: auto;
+    object-fit: contain;
+}
+
+.thanium-divider {
+    height: 28px;
+    width: 1px;
+    background: rgba(235, 255, 255, 0.2);
+}
+
+.thanium-header-title {
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+    color: #e2e8f0;
+}
+
+.thanium-website-link {
+    font-size: 13px;
+    color: #cbd5e1;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.thanium-website-link:hover {
+    color: #d12cff;
+}
+
+#thanium-header .thanium-logo {
+    display:block;
+    height:48px;
+    max-height: 48px;
+    width: auto;
+    max-width: 120px;
+    object-fit: contain
+}
+
+/* Mobile responsiveness */
+
+@media (max-width: 600px) {
+    .thanium-header {
+        padding: 10px 12px;
+    }
+
+    .thanium-logo {
+        height: 36px;
+    }
+
+    .thanium-brand {
+        gap: 10px;
+    }
+
+    .thanium-header-title {
+        font-size: 12px;
+    }
+
+    .thanium-website-link {
+        display: none;
+    }
+}
