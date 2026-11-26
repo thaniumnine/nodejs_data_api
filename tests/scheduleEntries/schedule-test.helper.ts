@@ -143,22 +143,24 @@ async function seedScheduleTestData(app: NestFastifyApplication) {
 
         if (!finding.rows.length) {
             finding = await sql<{ id: string }>`
-                INSERT INTO public.sim_fdd_history (
-                    device_ref_id,
-                    timestamp,
-                    room,
-                    closed,
-                    rule_id
-                )
-                VALUES (
-                    ${deviceId}::bigint,
-                    '1970-01-01T09:00:00Z',
-                    'Test Room',
-                    FALSE,
-                    ${testRuleId}
-                )
-                RETURNING id::text AS id
-            `.execute(trx);
+            INSERT INTO public.sim_fdd_history (
+                device_ref_id,
+                timestamp,
+                room,
+                closed,
+                rule_id,
+                estimated_minutes
+            )
+            VALUES (
+                ${deviceId}::bigint,
+                '1970-01-01T09:00:00Z',
+                'Test Room',
+                FALSE,
+                ${testRuleId},
+                240
+            )
+            RETURNING id::text AS id
+        `.execute(trx);
         }
 
         const findingId = finding.rows[0].id;

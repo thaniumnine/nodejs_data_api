@@ -3,7 +3,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import type { ScheduleEntryStatus } from '../database/db.types';
 import { OrganisationService } from '../organisations/organisations.service';
-import { ScheduleReschedulerService } from './schedule-rescheduler.service';
+import { ScheduleReschedulerService, type ScheduleTransfer } from './schedule-rescheduler.service';
+import {
+    DEFAULT_DAILY_CAPACITY_MINUTES
+} from './schedule-duration.utils';
 
 const SCHEDULE_ENTRIES_TABLE_NAME = 'schedule_entries';
 
@@ -27,6 +30,8 @@ export type OrganisationScheduleEntryRecord = ScheduleEntryRecord & {
         building: string;
         level: string;
         device_id: string;
+        estimated_minutes: number | null;
+        estimated_hours: number | null;
     }[];
 };
 
@@ -34,9 +39,10 @@ export type CreateScheduleEntryInput = {
     scheduled_time: string;
     status?: ScheduleEntryStatus;
     is_locked?: boolean;
+    implementation_cost_gbp?: number;
 };
 
-export type UpdateScheduleEntryInput = Partial<CreateScheduleEntryInput>;
+export type UpdateScheduleEntryInput = Partial<Omit<CreateScheduleEntryInput, 'implementation_cost_gbp'>>;
 
 const scheduleEntrySelect = `
     SELECT s.id, s.task_id::text AS task_id, s.scheduled_time,
@@ -103,20 +109,22 @@ export class ScheduleEntriesService {
         taskId: string,
         input: CreateScheduleEntryInput,
     ): Promise<ScheduleEntryRecord> {
+
         await this.requireTask(organisation, taskId);
 
-        const created = await this.database.db
-            .insertInto(SCHEDULE_ENTRIES_TABLE_NAME)
-            .values({
-                task_id: taskId,
-                scheduled_time: input.scheduled_time,
-                status: input.status ?? 'Planned',
-                is_locked: input.is_locked ?? false,
-            })
-            .returning('id')
-            .executeTakeFirstOrThrow();
+        const {
+            implementation_cost_gbp,
+            ...scheduleInput
+        } = input;
 
-        return this.getScheduleEntry(taskId, created.id);
+        const entryId = await this.rescheduler.create(
+            organisation,
+            taskId,
+            scheduleInput,
+            implementation_cost_gbp,
+        );
+
+        return this.getScheduleEntry(taskId, entryId);
     }
 
     // GET: List bookings for one task.
@@ -155,7 +163,9 @@ export class ScheduleEntriesService {
                         'room', h.room,
                         'building', di.building,
                         'level', di.level,
-                        'device_id', di.device_id
+                        'device_id', di.device_id,
+                        'estimated_minutes', h.estimated_minutes,
+                        'estimated_hours', ROUND(h.estimated_minutes::numeric / 60, 2) 
                     ) ORDER BY a.id
                 ) AS assignments
              FROM public.schedule_entries s
@@ -183,7 +193,11 @@ export class ScheduleEntriesService {
             [metadata.id, from, to],
         );
 
-        return { records: result.rows, count: result.rows.length };
+        return {
+            records: result.rows,
+            count: result.rows.length,
+            daily_capacity_minutes: DEFAULT_DAILY_CAPACITY_MINUTES,
+        };
     }
 
     // PATCH: Move a booking or update its other fields.
@@ -223,6 +237,28 @@ export class ScheduleEntriesService {
                 `Schedule entry '${entryId}' not found or cannot be updated`,
             );
         }
+
+        return this.getScheduleEntry(taskId, entryId);
+    }
+
+
+    async transferScheduleEntry(
+        organisation: string,
+        taskId: string,
+        entryId: string,
+        scheduledTime: string,
+        transfer: ScheduleTransfer,
+    ): Promise<ScheduleEntryRecord> {
+
+        await this.requireTask(organisation, taskId);
+
+        await this.rescheduler.reschedule(
+            organisation,
+            taskId,
+            entryId,
+            { scheduled_time: scheduledTime },
+            transfer,
+        );
 
         return this.getScheduleEntry(taskId, entryId);
     }

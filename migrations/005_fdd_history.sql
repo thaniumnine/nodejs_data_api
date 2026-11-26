@@ -5,6 +5,7 @@ CREATE TABLE sim_fdd_history (
     room  TEXT NOT NULL,
     closed BOOLEAN NOT NULL,
     rule_id  TEXT NOT NULL,
+    estimated_minutes INTEGER CHECK (estimated_minutes >= 0),
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     CONSTRAINT fk_devices_identity
         FOREIGN KEY(device_ref_id)
