@@ -201,7 +201,7 @@
         },
         "security": [],
         "requestBody": {
-          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "description": "Illustrative JSON structure inferred from supplied examples.",
           "content": {
             "application/json": {
               "schema": {
@@ -302,7 +302,7 @@
           {
             "name": "from",
             "in": "query",
-            "description": "Beginning of the requested time range. Requiredness not verified.",
+            "description": "Beginning of the requested time range.",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -312,7 +312,7 @@
           {
             "name": "to",
             "in": "query",
-            "description": "End of the requested time range. Requiredness not verified.",
+            "description": "End of the requested time range.",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -322,7 +322,7 @@
           {
             "name": "aggType",
             "in": "query",
-            "description": "Aggregation type. The collection demonstrates mean and max; other supported values are not verified. Requiredness not verified.",
+            "description": "Aggregation type. The collection demonstrates mean and max; other supported values are not verified.",
             "schema": {
               "type": "string"
             },
@@ -380,7 +380,7 @@
           }
         ],
         "requestBody": {
-          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "description": "Illustrative JSON structure inferred from supplied examples.",
           "content": {
             "application/json": {
               "schema": {
@@ -558,7 +558,7 @@
           }
         ],
         "requestBody": {
-          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "description": "Illustrative JSON structure inferred from supplied examples.",
           "content": {
             "application/json": {
               "schema": {
@@ -802,7 +802,7 @@
           }
         ],
         "requestBody": {
-          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "description": "Illustrative JSON structure inferred from supplied examples.",
           "content": {
             "application/json": {
               "schema": {
@@ -979,7 +979,7 @@
           }
         ],
         "requestBody": {
-          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "description": "Illustrative JSON structure inferred from supplied examples.",
           "content": {
             "application/json": {
               "schema": {
@@ -1103,7 +1103,7 @@
           {
             "name": "from",
             "in": "query",
-            "description": "Beginning of the requested time range. Requiredness not verified.",
+            "description": "Beginning of the requested time range.",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -1113,7 +1113,7 @@
           {
             "name": "to",
             "in": "query",
-            "description": "End of the requested time range. Requiredness not verified.",
+            "description": "End of the requested time range.",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -1122,7 +1122,7 @@
           }
         ],
         "requestBody": {
-          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "description": "Illustrative JSON structure inferred from supplied examples.",
           "content": {
             "application/json": {
               "schema": {
@@ -1210,7 +1210,7 @@
           }
         ],
         "requestBody": {
-          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "description": "Illustrative JSON structure inferred from supplied examples.",
           "content": {
             "application/json": {
               "schema": {
@@ -1445,7 +1445,7 @@
           {
             "name": "from",
             "in": "query",
-            "description": "Beginning of the requested time range. Requiredness not verified.",
+            "description": "Beginning of the requested time range.",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -1455,7 +1455,7 @@
           {
             "name": "to",
             "in": "query",
-            "description": "End of the requested time range. Requiredness not verified.",
+            "description": "End of the requested time range.",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -1628,7 +1628,7 @@
           {
             "name": "from",
             "in": "query",
-            "description": "Beginning of the requested time range. Requiredness not verified.",
+            "description": "Beginning of the requested time range.",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -1638,7 +1638,7 @@
           {
             "name": "to",
             "in": "query",
-            "description": "End of the requested time range. Requiredness not verified.",
+            "description": "End of the requested time range.",
             "schema": {
               "type": "string",
               "format": "date-time"
@@ -1648,7 +1648,7 @@
           {
             "name": "devicePrefix",
             "in": "query",
-            "description": "Filter devices by their identifier prefix. Requiredness not verified.",
+            "description": "Filter devices by their identifier prefix.",
             "schema": {
               "type": "string"
             },
@@ -1712,7 +1712,7 @@
           {
             "name": "devicePrefix",
             "in": "query",
-            "description": "Filter devices by their identifier prefix. Requiredness not verified.",
+            "description": "Filter devices by their identifier prefix.",
             "schema": {
               "type": "string"
             },
@@ -1785,7 +1785,7 @@
           }
         ],
         "requestBody": {
-          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "description": "Illustrative JSON structure inferred from supplied examples.",
           "content": {
             "application/json": {
               "schema": {
@@ -1936,7 +1936,7 @@
           }
         ],
         "requestBody": {
-          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "description": "Illustrative JSON structure inferred from supplied examples.",
           "content": {
             "application/json": {
               "schema": {
@@ -2064,7 +2064,7 @@
           }
         ],
         "requestBody": {
-          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "description": "Illustrative JSON structure inferred from supplied examples.",
           "content": {
             "application/json": {
               "schema": {
@@ -2200,7 +2200,7 @@
           }
         ],
         "requestBody": {
-          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "description": "Illustrative JSON structure inferred from supplied examples.",
           "content": {
             "application/json": {
               "schema": {
@@ -2334,7 +2334,7 @@
           }
         ],
         "requestBody": {
-          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "description": "Illustrative JSON structure inferred from supplied examples.",
           "content": {
             "application/json": {
               "schema": {
@@ -2496,7 +2496,7 @@
           }
         ],
         "requestBody": {
-          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "description": "Illustrative JSON structure inferred from supplied examples.",
           "content": {
             "application/json": {
               "schema": {
@@ -2665,7 +2665,7 @@
           }
         ],
         "requestBody": {
-          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "description": "Illustrative JSON structure inferred from supplied examples.",
           "content": {
             "application/json": {
               "schema": {
@@ -2719,7 +2719,7 @@
           {
             "name": "firebase_user_id",
             "in": "query",
-            "description": "Firebase user identifier for the requested filter. Requiredness not verified.",
+            "description": "Firebase user identifier for the requested filter.",
             "schema": {
               "type": "string"
             },
@@ -2857,112 +2857,110 @@
                   "type": "object"
                 },
                 "example": {
-                  {
-                    "records": [
-                      {
-                        "version": "1.4.2",
-                        "timestamp": "2026-03-20T00:54:38.000Z",
-                        "system": {
-                          "location": {
-                            "site": "GB-LON-9212",
-                            "section": "TENANT-ZONE-1",
-                            "room": "Plant-Room",
-                            "floor": "FIRST-FLOOR",
-                            "floor_seq": "1",
-                            "position": {
-                              "x": "2010658",
-                              "y": "-283739",
-                              "z": "3"
-                            }
-                          },
-                          "physical_tag": {
-                            "asset": {
-                              "guid": "guid://c5A_Of5Kcn2bUJSkAlfUS5",
-                              "site": "GB-LON-9212",
-                              "name": "QSE-00002"
-                            }
+                  "records": [
+                    {
+                      "version": "1.4.2",
+                      "timestamp": "2026-03-20T00:54:38.000Z",
+                      "system": {
+                        "location": {
+                          "site": "example-building",
+                          "section": "example-zone",
+                          "room": "Example plant room",
+                          "floor": "level-01",
+                          "floor_seq": "1",
+                          "position": {
+                            "x": "10",
+                            "y": "20",
+                            "z": "3"
                           }
                         },
-                        "pointset": {
-                          "points": {
-                            "humidity": {
-                              "tags": [
-                                "point",
-                                "sensor",
-                                "air",
-                                "humidity"
-                              ],
-                              "unit": "%RH"
-                            },
-                            "pressure": {
-                              "tags": [
-                                "point",
-                                "sensor",
-                                "barometric",
-                                "pressure"
-                              ],
-                              "unit": "mbar"
-                            },
-                            "co2_level": {
-                              "tags": [
-                                "point",
-                                "sensor",
-                                "air",
-                                "co2",
-                                "concentration"
-                              ],
-                              "unit": "ppm"
-                            },
-                            "temperature": {
-                              "tags": [
-                                "point",
-                                "sensor",
-                                "air",
-                                "temp"
-                              ],
-                              "unit": "°C"
-                            },
-                            "air_quality_index": {
-                              "tags": [
-                                "point",
-                                "sensor",
-                                "air",
-                                "airQuality"
-                              ]
-                            },
-                            "illuminance_sensor": {
-                              "tags": [
-                                "point",
-                                "sensor",
-                                "light",
-                                "illuminance"
-                              ],
-                              "unit": "lx"
-                            },
-                            "minute_sound_level": {
-                              "tags": [
-                                "point",
-                                "sensor",
-                                "soundLevel"
-                              ],
-                              "unit": "db"
-                            },
-                            "total_volatile_organic_compounds": {
-                              "tags": [
-                                "point",
-                                "sensor",
-                                "air",
-                                "tvoc",
-                                "concentration"
-                              ],
-                              "unit": "ppb"
-                            }
+                        "physical_tag": {
+                          "asset": {
+                            "guid": "guid://example-asset-002",
+                            "site": "example-building",
+                            "name": "QSE-000002"
+                          }
+                        }
+                      },
+                      "pointset": {
+                        "points": {
+                          "humidity": {
+                            "tags": [
+                              "point",
+                              "sensor",
+                              "air",
+                              "humidity"
+                            ],
+                            "unit": "%RH"
+                          },
+                          "pressure": {
+                            "tags": [
+                              "point",
+                              "sensor",
+                              "barometric",
+                              "pressure"
+                            ],
+                            "unit": "mbar"
+                          },
+                          "co2_level": {
+                            "tags": [
+                              "point",
+                              "sensor",
+                              "air",
+                              "co2",
+                              "concentration"
+                            ],
+                            "unit": "ppm"
+                          },
+                          "temperature": {
+                            "tags": [
+                              "point",
+                              "sensor",
+                              "air",
+                              "temp"
+                            ],
+                            "unit": "°C"
+                          },
+                          "air_quality_index": {
+                            "tags": [
+                              "point",
+                              "sensor",
+                              "air",
+                              "airQuality"
+                            ]
+                          },
+                          "illuminance_sensor": {
+                            "tags": [
+                              "point",
+                              "sensor",
+                              "light",
+                              "illuminance"
+                            ],
+                            "unit": "lx"
+                          },
+                          "minute_sound_level": {
+                            "tags": [
+                              "point",
+                              "sensor",
+                              "soundLevel"
+                            ],
+                            "unit": "db"
+                          },
+                          "total_volatile_organic_compounds": {
+                            "tags": [
+                              "point",
+                              "sensor",
+                              "air",
+                              "tvoc",
+                              "concentration"
+                            ],
+                            "unit": "ppb"
                           }
                         }
                       }
-                    ],
-                    "count": 1
-                  }
+                    }
+                  ],
+                  "count": 1
                 }
               }
             }
@@ -2972,22 +2970,22 @@
           {
             "name": "from",
             "in": "query",
-            "description": "Beginning of the requested time range. Requiredness not verified.",
+            "description": "Beginning of the requested time range.",
             "schema": {
               "type": "string",
               "format": "date-time"
             },
-            "example": "2026-01-01T00:00:00Z"
+            "example": "2026-03-20T00:00:00Z"
           },
           {
             "name": "to",
             "in": "query",
-            "description": "End of the requested time range. Requiredness not verified.",
+            "description": "End of the requested time range.",
             "schema": {
               "type": "string",
               "format": "date-time"
             },
-            "example": "2026-01-02T00:00:00Z"
+            "example": "2026-03-21T00:00:00Z"
           }
         ]
       },
@@ -3012,7 +3010,7 @@
           }
         },
         "requestBody": {
-          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "description": "Illustrative JSON structure inferred from supplied examples.",
           "content": {
             "application/json": {
               "schema": {
@@ -3341,7 +3339,7 @@
           }
         },
         "requestBody": {
-          "description": "Illustrative JSON structure inferred from supplied examples; required fields and validation constraints are not verified.",
+          "description": "Illustrative JSON structure inferred from supplied examples.",
           "content": {
             "application/json": {
               "schema": {
