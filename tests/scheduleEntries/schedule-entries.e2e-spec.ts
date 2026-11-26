@@ -1,5 +1,9 @@
 import type { NestFastifyApplication } from '@nestjs/platform-fastify';
-import { baseUrl, cleanupScheduleTestData, createScheduleTestApp } from './schedule-test.helper';
+import {
+    baseUrl,
+    cleanupScheduleTestData,
+    createScheduleTestApp,
+} from './schedule-test.helper';
 
 describe('Schedule Entries E2E', () => {
     let app: NestFastifyApplication;
@@ -18,28 +22,26 @@ describe('Schedule Entries E2E', () => {
         }
     });
 
-
     // -------------------------------
     // GET TESTS
     // -------------------------------
 
-    // it should be tasks/{id} so setting it to invalid should return a 400 bad request
-    it(`GET schedule entries - invalid task ID`, async () => {
+    it('GET schedule entries - invalid task ID', async () => {
         const result = await app.inject({
             method: 'GET',
             url: `${baseUrl}/tasks/invalid/schedule-entries`,
         });
 
-        expect(result.statusCode).toEqual(400);
+        expect(result.statusCode).toBe(400);
     });
 
-    it(`GET organisation schedule entries`, async () => {
+    it('GET organisation schedule entries', async () => {
         const result = await app.inject({
             method: 'GET',
             url: `${baseUrl}/schedule-entries?from=1970-01-01&to=1970-01-31`,
         });
 
-        expect(result.statusCode).toEqual(200);
+        expect(result.statusCode).toBe(200);
 
         const body = JSON.parse(result.payload);
 
@@ -47,9 +49,9 @@ describe('Schedule Entries E2E', () => {
         expect(body.count).toBe(body.records.length);
     });
 
-    it(`GET missing to date`, async () => {
+    it('GET missing to date', async () => {
         const result = await app.inject({
-            method: `GET`,
+            method: 'GET',
             url: `${baseUrl}/schedule-entries?from=1970-01-01`,
         });
 
@@ -83,10 +85,9 @@ describe('Schedule Entries E2E', () => {
         expect(result.statusCode).toBe(400);
     });
 
-
-    // -----------------------------------------
+    // -------------------------------
     // POST VALIDATION TESTS
-    // -----------------------------------------
+    // -------------------------------
 
     it('POST - invalid task ID', async () => {
         const result = await app.inject({
@@ -116,13 +117,11 @@ describe('Schedule Entries E2E', () => {
             url: `${baseUrl}/tasks/1/schedule-entries`,
             payload: {
                 scheduled_time: '1970-01-05',
-            }
+            },
         });
 
         expect(result.statusCode).toBe(400);
     });
-
-
 
     it('POST - invalid status', async () => {
         const result = await app.inject({
@@ -150,10 +149,9 @@ describe('Schedule Entries E2E', () => {
         expect(result.statusCode).toBe(400);
     });
 
-
-    // -----------------------------------------
+    // -------------------------------
     // PATCH VALIDATION TESTS
-    // -----------------------------------------
+    // -------------------------------
 
     it('PATCH - invalid entry UUID', async () => {
         const result = await app.inject({
@@ -187,5 +185,15 @@ describe('Schedule Entries E2E', () => {
         });
 
         expect(result.statusCode).toBe(400);
+
+        expect(result.json()).toMatchObject({
+            message: 'Validation failed',
+            issues: expect.arrayContaining([
+                {
+                    path: '',
+                    message: 'Unrecognized key: "scheduled_minutes"',
+                },
+            ]),
+        });
     });
 });

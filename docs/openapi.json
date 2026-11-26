@@ -2277,7 +2277,7 @@
           "Schedule entries"
         ],
         "summary": "Update a schedule entry",
-        "description": "Update the scheduled timestamp of a task booking. The sample only demonstrates a time change.",
+        "description": "Update the scheduled time or lock status of a task booking. The returned scheduled time may differ from the requested time due to scheduling rules.",
         "operationId": "update_a_schedule_entry",
         "responses": {
           "200": {
@@ -2289,12 +2289,12 @@
                 },
                 "example": {
                   "id": "00000000-0000-4000-8000-000000000002",
-                  "task_id": "4",
-                  "scheduled_time": "2026-11-12T09:00:00.000Z",
+                  "task_id": "11",
+                  "scheduled_time": "2026-11-30T09:00:00.000Z",
                   "status": "Planned",
-                  "is_locked": false,
-                  "created_at": "2026-11-19T13:47:19.937Z",
-                  "updated_at": "2026-11-26T10:34:23.945Z"
+                  "is_locked": true,
+                  "created_at": "2026-11-24T15:19:24.855Z",
+                  "updated_at": "2026-11-26T13:43:26.538Z"
                 }
               }
             }
@@ -2334,7 +2334,7 @@
           }
         ],
         "requestBody": {
-          "description": "Illustrative JSON structure inferred from supplied examples.",
+          "description": "Update the scheduled time and lock status of a schedule entry.",
           "content": {
             "application/json": {
               "schema": {
@@ -2343,11 +2343,15 @@
                   "scheduled_time": {
                     "type": "string",
                     "format": "date-time"
+                  },
+                  "is_locked": {
+                    "type": "boolean"
                   }
                 }
               },
               "example": {
-                "scheduled_time": "2026-11-12T09:00:00.000Z"
+                "scheduled_time": "2026-11-27T09:00:00.000Z",
+                "is_locked": true
               }
             }
           }
