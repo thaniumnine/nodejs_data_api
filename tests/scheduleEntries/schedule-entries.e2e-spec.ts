@@ -178,14 +178,24 @@ describe('Schedule Entries E2E', () => {
     });
 
     it('PATCH - unknown field', async () => {
-        const result = await app.inject({
-            method: 'PATCH',
-            url: `${baseUrl}/tasks/1/schedule-entries/00000000-0000-4000-8000-000000000000`,
-            payload: {
-                scheduled_minutes: 60,
-            },
-        });
-
-        expect(result.statusCode).toBe(400);
+    const result = await app.inject({
+        method: 'PATCH',
+        url: `${baseUrl}/tasks/1/schedule-entries/00000000-0000-4000-8000-000000000000`,
+        payload: {
+            scheduled_minutes: 60,
+        },
     });
+
+    expect(result.statusCode).toBe(400);
+
+    expect(result.json()).toMatchObject({
+        message: 'Validation failed',
+        issues: expect.arrayContaining([
+            {
+                path: '',
+                message: 'Unrecognized key: "scheduled_minutes"',
+            },
+        ]),
+    });
+});
 });
