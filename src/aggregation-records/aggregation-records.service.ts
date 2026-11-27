@@ -40,10 +40,7 @@ export class AggregationRecordsService {
           ...Object.fromEntries(payload)
         }
       })).onConflict((oc) => oc
-        // .columns(['event_timestamp', 'agg_type', 'device_ref_id'])
-        .columns(['event_timestamp', 'agg_type', 'device_id'])
-        //TODO - keeping device_id for now as need it to determine which devices were flipped. but once removed also remove its constraint and remove it from here
-        // replace the constraint with device_ref_id, agg_type and event_timestamp
+        .columns(['event_timestamp', 'agg_type', 'device_ref_id'])
         .doUpdateSet((eb) =>
           Object.fromEntries(
             columns.map((column) => [
