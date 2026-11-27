@@ -54,7 +54,7 @@ export class UsersService {
           email: input.email.toLowerCase(),
           password_hash: input.passwordHash,
           display_name: input.displayName ?? null,
-          roles: (input.roles ?? []) as JsonValue,
+          roles: sql<JsonValue>`${JSON.stringify(input.roles ?? [])}::jsonb`,
           org_ref_ids: input.orgRefIds ?? []
         })
         .returningAll()
