@@ -7,6 +7,8 @@ import { ScheduleReschedulerService, type ScheduleTransfer } from './schedule-re
 import {
     DEFAULT_DAILY_CAPACITY_MINUTES
 } from './schedule-duration.utils';
+import { AuditLogService } from '../auditLogs/audit-log.service';
+import type { JsonValue } from '../database/db.types';
 
 const SCHEDULE_ENTRIES_TABLE_NAME = 'schedule_entries';
 
@@ -56,12 +58,13 @@ export class ScheduleEntriesService {
         private readonly database: DatabaseService,
         private readonly organisationService: OrganisationService,
         private readonly rescheduler: ScheduleReschedulerService,
+        private readonly auditLogService: AuditLogService,
     ) { }
 
     private async requireTask(
         organisation: string,
         taskId: string,
-    ): Promise<void> {
+    ): Promise<string> {
         const metadata =
             await this.organisationService.queryOrganisationMetadata(organisation);
 
@@ -82,6 +85,7 @@ export class ScheduleEntriesService {
                 `Task '${taskId}' not found in this organisation`,
             );
         }
+        return String(metadata.id);
     }
 
     private async getScheduleEntry(
@@ -206,8 +210,12 @@ export class ScheduleEntriesService {
         taskId: string,
         entryId: string,
         input: UpdateScheduleEntryInput,
+        actorUserId: string,
     ): Promise<ScheduleEntryRecord> {
-        await this.requireTask(organisation, taskId);
+        const orgRefId = await this.requireTask(
+            organisation,
+            taskId
+        );
 
         // if scheduled time isnt changing perform a normal update
         if (input.scheduled_time !== undefined) {
@@ -222,21 +230,45 @@ export class ScheduleEntriesService {
         }
 
         // Unchanged: non-date PATCH updates only unlocked Planned entries.
-        const updated = await this.database.db
-            .updateTable(SCHEDULE_ENTRIES_TABLE_NAME)
-            .set(input)
-            .where('id', '=', entryId)
-            .where('task_id', '=', taskId)
-            .where('is_locked', '=', false)
-            .where('status', '=', 'Planned')
-            .returning('id')
-            .executeTakeFirst();
+        await this.database.db.transaction().execute(async (trx) => {
+            const updated = await trx
+                .updateTable(SCHEDULE_ENTRIES_TABLE_NAME)
+                .set(input)
+                .where('id', '=', entryId)
+                .where('task_id', '=', taskId)
+                .where('is_locked', '=', false)
+                .where('status', '=', 'Planned')
+                .returning('id')
+                .executeTakeFirst();
 
-        if (!updated) {
-            throw new NotFoundException(
-                `Schedule entry '${entryId}' not found or cannot be updated`,
-            );
-        }
+            if (!updated) {
+                throw new NotFoundException(
+                    `Schedule entry '${entryId}' not found or cannot be updated`
+                );
+            }
+
+            const changes: Record<string, JsonValue> = {};
+
+            if (input.status !== undefined) {
+                changes.status = input.status;
+            }
+
+            if (input.is_locked !== undefined) {
+                changes.is_locked = input.is_locked;
+            }
+
+            await this.auditLogService.record(trx, {
+                userId: actorUserId,
+                orgRefId,
+                action: 'UPDATE_SCHEDULE_ENTRY',
+                actionInfo: {
+                    task_id: taskId,
+                    entry_id: entryId,
+                    http_method: 'PATCH',
+                    changes
+                }
+            });
+        });
 
         return this.getScheduleEntry(taskId, entryId);
     }
