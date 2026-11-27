@@ -135,6 +135,15 @@ export type TaskEntriesTypeTable = {
   assignment_id: string;
 };
 
+export interface ApiAuditLogsTable {
+  id: Generated<string>;
+  timestamp: Generated<Date>;
+  user_id: string;
+  org_ref_id: string;
+  action: string;
+  action_info: JsonValue;
+}
+
 
 type BaseAggregationTable = {
     id: Generated<number>;
@@ -198,6 +207,7 @@ export type DB = {
   user_sessions: UserSessionsTable;
   device_metadata: DeviceMetadataTypeTable;
   organisations: OrganisationsTable;
+  api_audit_logs: ApiAuditLogsTable;
 } & AggregationsDeviceTypeTable & AggregationsTable & DeviceHistoryTables & FddHistoryTables & FddAssignmentTables & FddCommentTables & DeviceIdentifierTables & ScheduleEntriesTables & TaskEntriesTables;
 
 
