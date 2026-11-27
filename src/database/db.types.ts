@@ -12,6 +12,7 @@ export interface UsersTable {
   password_hash: string;
   display_name: string | null;
   roles: JsonValue;
+  org_ref_ids: Generated<string[]>;
   is_active: ColumnType<boolean, boolean | undefined, boolean | undefined>;
   created_at: TimestampColumn;
   updated_at: TimestampColumn;
