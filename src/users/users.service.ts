@@ -1,6 +1,7 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { DatabaseService } from '../database/database.service';
 import { JsonValue, User } from '../database/db.types';
+import { sql } from 'kysely';
 
 @Injectable()
 export class UsersService {
@@ -23,11 +24,28 @@ export class UsersService {
       .executeTakeFirst();
   }
 
+  async findOrganisationIdByName(
+    name: string
+  ): Promise<string | undefined> {
+    const organisations = await this.database.db
+      .selectFrom('organisations')
+      .select(sql<string>`id::text`.as('id'))
+      .where('name', '=', name)
+      .execute();
+
+    if (organisations.length !== 1) {
+      return undefined;
+    }
+
+    return organisations[0].id;
+  }
+
   async createUser(input: {
     email: string;
     passwordHash: string;
     displayName?: string;
     roles?: string[];
+    orgRefIds?: string[];
   }): Promise<User> {
     try {
       return await this.database.db
@@ -36,7 +54,8 @@ export class UsersService {
           email: input.email.toLowerCase(),
           password_hash: input.passwordHash,
           display_name: input.displayName ?? null,
-          roles: (input.roles ?? []) as JsonValue
+          roles: (input.roles ?? []) as JsonValue,
+          org_ref_ids: input.orgRefIds ?? []
         })
         .returningAll()
         .executeTakeFirstOrThrow();

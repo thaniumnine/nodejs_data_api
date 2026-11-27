@@ -7,6 +7,21 @@ import { UsersService } from '../users/users.service';
 import { hashPassword, verifyPassword } from './password';
 import { AccessTokenPayload } from './types/access-token-payload';
 import { Logger } from '@nestjs/common';
+import type { AuthenticatedUser } from '../common/types/authenticated-user.type';
+
+type CreateUserInput = {
+  email: string;
+  password: string;
+  displayName?: string;
+};
+
+type CreatedUser = {
+  id: string;
+  email: string;
+  display_name: string | null;
+};
+
+
 @Injectable()
 export class AuthService {
   constructor(
@@ -15,24 +30,58 @@ export class AuthService {
     private readonly sessionsService: SessionsService
   ) { }
 
-  async register(input: {
-    email: string;
-    password: string;
-    displayName?: string;
-  }): Promise<{ id: string; email: string; display_name: string | null }> {
+  async register(input: CreateUserInput): Promise<CreatedUser> {
     if (!env.AUTH_ALLOW_REGISTRATION) {
       throw new ForbiddenException('Registration is disabled');
     }
 
+    return this.createStandardUser(input);
+  }
+
+  async createUserByAdmin(
+    admin: AuthenticatedUser,
+    organisationName: string,
+    input: CreateUserInput
+  ): Promise<CreatedUser> {
+    if (!admin.roles.includes('admin')) {
+      throw new ForbiddenException(
+        'Only administrators can create users'
+      );
+    }
+
+    const orgRefId =
+      await this.usersService.findOrganisationIdByName(
+        organisationName
+      );
+
+    if (!orgRefId || !admin.orgRefIds.includes(orgRefId)) {
+      throw new ForbiddenException(
+        'You do not have access to this organisation'
+      );
+    }
+
+    return this.createStandardUser(input, [orgRefId]);
+  }
+
+  private async createStandardUser(
+    input: CreateUserInput,
+    orgRefIds: string[] = []
+  ): Promise<CreatedUser> {
     const passwordHash = await hashPassword(input.password);
+
     const user = await this.usersService.createUser({
       email: input.email,
       passwordHash,
       displayName: input.displayName,
-      roles: ['user']
+      roles: ['user'],
+      orgRefIds
     });
 
-    return { id: user.id, email: user.email, display_name: user.display_name };
+    return {
+      id: user.id,
+      email: user.email,
+      display_name: user.display_name
+    };
   }
 
   async login(input: {
