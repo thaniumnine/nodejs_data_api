@@ -64,7 +64,7 @@ async function createAggregationRecordDatabase(client: Client, orgPrefix: string
 
             ${columnQuery},
 
-            UNIQUE (device_id,agg_type, event_timestamp),
+            UNIQUE (device_ref_id,agg_type, event_timestamp),
             created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
             device_ref_id BIGINT NOT NULL,
             CONSTRAINT fk_device_identity
