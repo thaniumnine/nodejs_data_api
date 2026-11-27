@@ -37,7 +37,10 @@ export class JwtAuthGuard implements CanActivate {
         id: user.id,
         email: user.email,
         roles: Array.isArray(user.roles) ? (user.roles as string[]) : [],
-        sessionId: payload.sid
+        sessionId: payload.sid,
+        orgRefIds: Array.isArray(user.org_ref_ids)
+          ? user.org_ref_ids.map(String)
+          : []
       };
 
       return true;
