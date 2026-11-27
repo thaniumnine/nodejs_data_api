@@ -13,6 +13,8 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
 import { ScheduleEntriesService } from './schedule-entries.service';
 import { OrganisationAccessGuard } from '../auth/organisation-access.guard';
+import { CurrentUser } from '../common/decorators/current-user.decorator';
+import { AuthenticatedUser } from '../common/types/authenticated-user.type';
 
 // Validate task IDs as positive PostgreSQL BIGINTs.
 const taskIdSchema = z.string().refine(
@@ -113,12 +115,14 @@ export class ScheduleEntriesController {
     entryId: string,
     @Body(new ZodValidationPipe(updateScheduleEntrySchema))
     body: UpdateScheduleEntryBody,
+    @CurrentUser() user: AuthenticatedUser,
   ) {
     return this.scheduleEntriesService.updateScheduleEntry(
       organisation,
       taskId,
       entryId,
       body,
+      user.id,
     );
   }
 
