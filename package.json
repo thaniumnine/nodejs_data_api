@@ -14,6 +14,7 @@
 
     "db:migrate": "tsx scripts/migrate.ts",
     "seed:admin": "tsx scripts/seed-admin.ts",
+    "seed:org-admin": "tsx scripts/seed-admin.ts --organisation",
     "hash:password": "tsx scripts/hash-password.ts",
     "iterate:deviceType": "tsx scripts/iterate-types-json-into-table-deviceType.ts",
     "insert-new:organisation": "tsx scripts/insert-new-organisation.ts",
