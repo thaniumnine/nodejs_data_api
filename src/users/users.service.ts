@@ -66,4 +66,22 @@ export class UsersService {
       throw error;
     }
   }
+
+  async getUsersByOrganisation(orgRefId: string) {
+  return this.database.db
+    .selectFrom('users')
+    .select([
+      'id',
+      'email',
+      'display_name',
+      'roles',
+      'is_active',
+      'created_at'
+    ])
+    .where(
+      sql<boolean>`${orgRefId}::BIGINT = ANY(org_ref_ids)`
+    )
+    .orderBy('created_at', 'asc')
+    .execute();
+}
 }

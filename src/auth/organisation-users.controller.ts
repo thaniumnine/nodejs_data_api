@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   Post,
   UseGuards
@@ -19,7 +20,7 @@ import { RegisterDto, RegisterSchema } from './dto/auth.dto';
 export class OrganisationUsersController {
   constructor(
     private readonly authService: AuthService
-  ) {}
+  ) { }
 
   @Post()
   createUser(
@@ -36,6 +37,17 @@ export class OrganisationUsersController {
         password: body.password,
         displayName: body.display_name
       }
+    );
+  }
+
+  @Get()
+  getUsers(
+    @Param('organisation') organisation: string,
+    @CurrentUser() user: AuthenticatedUser
+  ) {
+    return this.authService.getOrganisationUsers(
+      user,
+      organisation
     );
   }
 }

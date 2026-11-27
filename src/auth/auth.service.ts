@@ -43,22 +43,10 @@ export class AuthService {
     organisationName: string,
     input: CreateUserInput
   ): Promise<CreatedUser> {
-    if (!admin.roles.includes('admin')) {
-      throw new ForbiddenException(
-        'Only administrators can create users'
-      );
-    }
-
-    const orgRefId =
-      await this.usersService.findOrganisationIdByName(
-        organisationName
-      );
-
-    if (!orgRefId || !admin.orgRefIds.includes(orgRefId)) {
-      throw new ForbiddenException(
-        'You do not have access to this organisation'
-      );
-    }
+    const orgRefId = await this.requireOrganisationAdmin(
+      admin,
+      organisationName
+    );
 
     return this.createStandardUser(input, [orgRefId]);
   }
@@ -81,6 +69,50 @@ export class AuthService {
       id: user.id,
       email: user.email,
       display_name: user.display_name
+    };
+  }
+
+  private async requireOrganisationAdmin(
+    admin: AuthenticatedUser,
+    organisationName: string
+  ): Promise<string> {
+    if (!admin.roles.includes('admin')) {
+      throw new ForbiddenException(
+        'Administrator access required'
+      );
+    }
+
+    const orgRefId =
+      await this.usersService.findOrganisationIdByName(
+        organisationName
+      );
+
+    if (!orgRefId || !admin.orgRefIds.includes(orgRefId)) {
+      throw new ForbiddenException(
+        'You do not have access to this organisation'
+      );
+    }
+
+    return orgRefId;
+  }
+
+
+  async getOrganisationUsers(
+    admin: AuthenticatedUser,
+    organisationName: string
+  ) {
+    // must be an admin and be part of that org to get users
+    const orgRefId = await this.requireOrganisationAdmin(
+      admin,
+      organisationName
+    );
+
+    const records =
+      await this.usersService.getUsersByOrganisation(orgRefId);
+
+    return {
+      records,
+      count: records.length
     };
   }
 
