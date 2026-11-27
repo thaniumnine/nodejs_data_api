@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
 import { FddCommentService } from './fdd-comment.service';
+import { OrganisationAccessGuard } from '../auth/organisation-access.guard';
 
 const fddAssignmentIdSchema = z.string().refine(
   (id) => /^[1-9]\d*$/.test(id) && BigInt(id) <= 9223372036854775807n,
@@ -18,7 +19,7 @@ const createCommentSchema = z.object({
 
 type CreateCommentBody = z.infer<typeof createCommentSchema>;
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, OrganisationAccessGuard)
 @Controller('organisations/:organisation/fdd/assignments/:fdd_assignment_id/comments')
 export class FddCommentController {
   constructor(private readonly commentService: FddCommentService) { }

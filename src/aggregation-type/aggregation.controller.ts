@@ -1,12 +1,12 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { number, string } from 'zod';
-
+import { OrganisationAccessGuard } from '../auth/organisation-access.guard';
 import { AggregationService, AggregationDeviceTypeRecord} from './aggregation.service'
 import { ZodValidationPipe } from 'src/common/pipes/zod-validation.pipe.js';
 
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, OrganisationAccessGuard)
 @Controller('aggregation/organisations/:organisation/device_types')
 export class AggregationController {
   constructor(private readonly aggregationService: AggregationService) { }

@@ -11,6 +11,7 @@ import { z } from 'zod';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
 import { TaskEntriesService } from './task-entries.service';
+import { OrganisationAccessGuard } from 'src/auth/organisation-access.guard';
 
 // Validate PostgreSQL BIGINT IDs.
 const idSchema = z.string().refine(
@@ -36,7 +37,7 @@ const addAssignmentSchema = z.object({
 type CreateTaskBody = z.infer<typeof createTaskSchema>;
 type AddAssignmentBody = z.infer<typeof addAssignmentSchema>;
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, OrganisationAccessGuard)
 @Controller('organisations/:organisation/tasks')
 export class TaskEntriesController {
   constructor(

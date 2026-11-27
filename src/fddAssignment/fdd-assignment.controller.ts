@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
 import { FddAssignmentService } from './fdd-assignment.service';
+import { OrganisationAccessGuard } from '../auth/organisation-access.guard';
 
 const fddHistoryIdSchema = z.string().refine(
   (id) => /^[1-9]\d*$/.test(id) && BigInt(id) <= 9223372036854775807n,
@@ -14,7 +15,7 @@ const createAssignmentSchema = z.object({
 
 type CreateAssignmentBody = z.infer<typeof createAssignmentSchema>;
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, OrganisationAccessGuard)
 @Controller('organisations/:organisation/fdd/:fdd_history_id/assignments')
 export class FddAssignmentController {
   constructor(private readonly assignmentService: FddAssignmentService) { }
@@ -48,7 +49,7 @@ export class FddAssignmentController {
 
 }
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, OrganisationAccessGuard)
 @Controller('organisations/:organisation/fdd')
 export class FddUnscheduledController {
     constructor(

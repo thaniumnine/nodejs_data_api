@@ -3,9 +3,10 @@
   import { JwtAuthGuard } from  '../auth/jwt-auth.guard';
   import { number, string } from 'zod';
   import {  FddHistoryData, FddHistoryService} from './fdd-history.service'
+import { OrganisationAccessGuard } from 'src/auth/organisation-access.guard';
 
 
-  @UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard, OrganisationAccessGuard)
   @Controller()
   export class FddHistoryController {
     constructor(   private readonly historyService: FddHistoryService) {}

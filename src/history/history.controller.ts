@@ -3,6 +3,7 @@ import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query, UseGuards 
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { HistoryService } from './history.service'
 import { DeviceHistoryData, QueryDeviceHistoryPrefixRecords, QueryDeviceHistoryPrefixSchema, QueryDeviceHistoryRecords, QueryDeviceHistorySchema } from './history.dto';
+import { OrganisationAccessGuard } from 'src/auth/organisation-access.guard';
 
 type HistoryDeviceParams = {
     organisation: string,
@@ -10,7 +11,7 @@ type HistoryDeviceParams = {
     level: string,
 }
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, OrganisationAccessGuard)
 @Controller()
 export class HistoryController {
   constructor(private readonly historyService: HistoryService) { }

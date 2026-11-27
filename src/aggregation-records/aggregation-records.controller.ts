@@ -3,6 +3,7 @@ import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { AggregationRecordsService } from './aggregation-records.service'
 import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
 import { AggregationData, QueryAggregationRecords, QueryAggregationRecordsSchema } from './aggregation-records.dto';
+import { OrganisationAccessGuard } from '../auth/organisation-access.guard';
 
 type AggregationDeviceParams = {
   organisation: string,
@@ -13,7 +14,7 @@ type AggregationDeviceParams = {
 type AggregationDeviceParamsNoLevels = Omit<AggregationDeviceParams, 'level'>;
 
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, OrganisationAccessGuard)
 @Controller('organisations/:organisation/buildings/:building/')
 export class AggregationRecordsController {
   constructor(private readonly aggregationService: AggregationRecordsService) { }
