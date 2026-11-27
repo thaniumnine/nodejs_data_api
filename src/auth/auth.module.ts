@@ -6,11 +6,12 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { OrganisationUsersController } from './organisation-users.controller';
+import { OrganisationAccessGuard } from './organisation-access.guard';
 
 @Module({
   imports: [JwtModule.register({}), UsersModule, SessionsModule],
   controllers: [AuthController, OrganisationUsersController],
-  providers: [AuthService, JwtAuthGuard],
-  exports: [JwtAuthGuard, AuthService, JwtModule, UsersModule, SessionsModule]
+  providers: [AuthService, JwtAuthGuard, OrganisationAccessGuard],
+  exports: [JwtAuthGuard, AuthService, JwtModule, UsersModule, SessionsModule, OrganisationAccessGuard, AuthService]
 })
 export class AuthModule { }

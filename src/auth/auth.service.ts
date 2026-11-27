@@ -82,12 +82,26 @@ export class AuthService {
       );
     }
 
+    return this.requireOrganisationAccess(
+      admin,
+      organisationName
+    );
+  }
+
+  async requireOrganisationAccess(
+    user: AuthenticatedUser,
+    organisationName: string
+  ): Promise<string> {
     const orgRefId =
       await this.usersService.findOrganisationIdByName(
         organisationName
       );
 
-    if (!orgRefId || !admin.orgRefIds.includes(orgRefId)) {
+    if (
+      !orgRefId ||
+      !Array.isArray(user.orgRefIds) ||
+      !user.orgRefIds.includes(orgRefId)
+    ) {
       throw new ForbiddenException(
         'You do not have access to this organisation'
       );
