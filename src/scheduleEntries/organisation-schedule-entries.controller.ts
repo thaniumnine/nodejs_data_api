@@ -10,6 +10,7 @@ import { z } from 'zod';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
 import { ScheduleEntriesService } from './schedule-entries.service';
+import { OrganisationAccessGuard } from '../auth/organisation-access.guard';
 
 // Validate YYYY-MM-DD dates.
 const dateSchema = z.string()
@@ -30,7 +31,7 @@ const scheduleRangeSchema = z.object({
 
 type ScheduleRange = z.infer<typeof scheduleRangeSchema>;
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, OrganisationAccessGuard)
 @Controller('organisations/:organisation/schedule-entries')
 export class OrganisationScheduleEntriesController {
   constructor(

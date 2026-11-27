@@ -12,6 +12,7 @@ import { z } from 'zod';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { ZodValidationPipe } from '../common/pipes/zod-validation.pipe';
 import { ScheduleEntriesService } from './schedule-entries.service';
+import { OrganisationAccessGuard } from '../auth/organisation-access.guard';
 
 // Validate task IDs as positive PostgreSQL BIGINTs.
 const taskIdSchema = z.string().refine(
@@ -66,7 +67,7 @@ type CreateScheduleEntryBody =
 type UpdateScheduleEntryBody =
   z.infer<typeof updateScheduleEntrySchema>;
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, OrganisationAccessGuard)
 @Controller('organisations/:organisation/tasks/:task_id/schedule-entries')
 export class ScheduleEntriesController {
   constructor(
